@@ -27,6 +27,7 @@ import {
   Menu,
   X,
   Crown,
+  Languages,
 } from 'lucide-react';
 import { Toaster, toast } from './ui';
 import { cn, formatDateTime } from '@/lib/utils';
@@ -61,6 +62,7 @@ const NAV = [
     items: [
       { href: '/admin/header', label: 'Header & menu', icon: PanelTop },
       { href: '/admin/footer', label: 'Footer', icon: PanelBottom },
+      { href: '/admin/languages', label: 'Languages', icon: Languages },
       { href: '/admin/settings', label: 'Site settings', icon: Settings, adminOnly: true },
     ],
   },

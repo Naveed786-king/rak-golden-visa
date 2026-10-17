@@ -5,9 +5,11 @@ import { Plus, Minus, TriangleAlert, CircleCheck, Quote, Star, ArrowRight, Check
 import { Icon } from '@/components/ui/Icon';
 import SmartLink from '@/components/ui/SmartLink';
 import { cn } from '@/lib/utils';
+import { useT } from '@/components/site/SiteProvider';
 
 /* ---------------- Vertical tabs ---------------- */
 export function TabsView({ items, dark, cta }: { items: any[]; dark?: boolean; cta?: any }) {
+  const t = useT();
   const [active, setActive] = useState(0);
   const cur = items[active];
   return (
@@ -42,10 +44,10 @@ export function TabsView({ items, dark, cta }: { items: any[]; dark?: boolean; c
               <p className="mt-5 text-[0.98rem] leading-relaxed opacity-75 whitespace-pre-line">{cur.content}</p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <SmartLink href={cta?.href || '/apply'} className="btn btn-gold btn-sm">
-                  {cta?.label || 'Check my eligibility'} <ArrowRight className="h-4 w-4" />
+                  {cta?.label || t('Check my eligibility')} <ArrowRight className="h-4 w-4" />
                 </SmartLink>
                 <SmartLink href="whatsapp" className={cn('btn btn-sm', dark ? 'btn-ghost-light' : 'btn-outline')}>
-                  Ask a consultant
+                  {t('Ask a consultant')}
                 </SmartLink>
               </div>
             </motion.div>
@@ -58,6 +60,7 @@ export function TabsView({ items, dark, cta }: { items: any[]; dark?: boolean; c
 
 /* ---------------- Problems & solutions ---------------- */
 export function RejectionsView({ items, dark }: { items: any[]; dark?: boolean }) {
+  const t = useT();
   const [active, setActive] = useState(0);
   const cur = items[active];
   return (
@@ -80,13 +83,13 @@ export function RejectionsView({ items, dark }: { items: any[]; dark?: boolean }
             <div className="mt-8 grid gap-5 md:grid-cols-2">
               <div className="rounded-3xl border border-red-500/20 bg-red-500/[0.06] p-7">
                 <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-red-500">
-                  <TriangleAlert className="h-5 w-5" /> The issue
+                  <TriangleAlert className="h-5 w-5" /> {t('The issue')}
                 </p>
                 <p className="mt-3 leading-relaxed opacity-80">{cur.issue}</p>
               </div>
               <div className="rounded-3xl border border-emerald-500/25 bg-emerald-500/[0.07] p-7">
                 <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-emerald-600">
-                  <CircleCheck className="h-5 w-5" /> How to avoid
+                  <CircleCheck className="h-5 w-5" /> {t('How to avoid')}
                 </p>
                 <p className="mt-3 leading-relaxed opacity-80">{cur.solution}</p>
               </div>
@@ -133,12 +136,13 @@ export function AccordionView({ items, dark, html = false }: { items: { title: s
 
 /* ---------------- Testimonials ---------------- */
 export function TestimonialsView({ items, dark }: { items: any[]; dark?: boolean }) {
+  const t = useT();
   const [i, setI] = useState(0);
   const per = 3;
   const pages = Math.max(1, Math.ceil(items.length / per));
   const page = Math.floor(i / per);
   const visible = items.slice(page * per, page * per + per);
-  if (!items.length) return <p className="text-center opacity-60">No testimonials yet.</p>;
+  if (!items.length) return <p className="text-center opacity-60">{t('No testimonials yet.')}</p>;
   return (
     <div>
       <AnimatePresence mode="wait">
@@ -189,6 +193,7 @@ export function TestimonialsView({ items, dark }: { items: any[]; dark?: boolean
 
 /* ---------------- Eligibility calculator ---------------- */
 export function Calculator({ dark }: { dark?: boolean }) {
+  const t = useT();
   const [path, setPath] = useState<'property' | 'deposit' | 'income' | 'professional'>('property');
   const [value, setValue] = useState(2000000);
   const [age, setAge] = useState(40);
@@ -198,39 +203,40 @@ export function Calculator({ dark }: { dark?: boolean }) {
   const result = useMemo(() => {
     const out: { title: string; ok: boolean; text: string }[] = [];
     if (path === 'property' || path === 'deposit') {
-      const label = path === 'property' ? 'property in Ras Al Khaimah' : 'fixed deposit in a UAE bank';
+      const label = path === 'property' ? t('Property in Ras Al Khaimah') : t('Fixed deposit in a UAE bank');
       out.push({
-        title: '10-Year Golden Visa (Investor)',
+        title: t('10-Year Golden Visa (Investor)'),
         ok: value >= 2000000,
-        text: value >= 2000000 ? `Your AED ${value.toLocaleString()} ${label} meets the AED 2M threshold.` : `You need AED ${(2000000 - value).toLocaleString()} more to reach AED 2M.`,
+        text: value >= 2000000 ? `${label}: AED ${value.toLocaleString()} — ${t('meets the AED 2M threshold.')}` : `${t('You need more to reach AED 2M:')} AED ${(2000000 - value).toLocaleString()}`,
       });
       out.push({
-        title: '5-Year Retirement Visa',
+        title: t('5-Year Retirement Visa'),
         ok: value >= 1000000 && age >= 55,
-        text: age < 55 ? 'Available from age 55.' : value >= 1000000 ? 'Meets the AED 1M requirement for retirees aged 55+.' : 'Requires AED 1M or more.',
+        text: age < 55 ? t('Available from age 55.') : value >= 1000000 ? t('Meets the AED 1M requirement for retirees aged 55+.') : t('Requires AED 1M or more.'),
       });
     } else if (path === 'income') {
       out.push({
-        title: '5-Year Retirement Visa (income route)',
+        title: t('5-Year Retirement Visa (income route)'),
         ok: age >= 55 && salary * 12 >= 180000 && years >= 15,
-        text: `Requires age 55+, 15+ years of work and AED 180,000+ yearly income (AED 15,000/month). You entered AED ${(salary * 12).toLocaleString()}/year.`,
+        text: `${t('Requires age 55+, 15+ years of work and AED 180,000+ yearly income (AED 15,000/month).')} ${t('Your yearly income:')} AED ${(salary * 12).toLocaleString()}`,
       });
     } else {
       out.push({
-        title: '10-Year Golden Visa (Skilled professional)',
+        title: t('10-Year Golden Visa (Skilled professional)'),
         ok: salary >= 30000,
-        text: salary >= 30000 ? 'Monthly salary meets the AED 30,000 requirement (degree + MOHRE level 1/2 also needed).' : 'Requires a monthly salary of AED 30,000 or more.',
+        text: salary >= 30000 ? t('Monthly salary meets the AED 30,000 requirement (degree + MOHRE level 1/2 also needed).') : t('Requires a monthly salary of AED 30,000 or more.'),
       });
     }
     return out;
-  }, [path, value, age, salary, years]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path, value, age, salary, years, t]);
 
   const anyOk = result.some((r) => r.ok);
   const tabs = [
-    { k: 'property', l: 'Property' },
-    { k: 'deposit', l: 'Bank deposit' },
-    { k: 'income', l: 'Retirement income' },
-    { k: 'professional', l: 'Professional' },
+    { k: 'property', l: t('Property') },
+    { k: 'deposit', l: t('Bank deposit') },
+    { k: 'income', l: t('Retirement income') },
+    { k: 'professional', l: t('Professional') },
   ] as const;
 
   return (
@@ -246,23 +252,23 @@ export function Calculator({ dark }: { dark?: boolean }) {
 
         <div className="mt-8 space-y-7">
           {(path === 'property' || path === 'deposit') && (
-            <Range label={path === 'property' ? 'Property value' : 'Deposit amount'} value={value} min={500000} max={5000000} step={50000} onChange={setValue} fmt={(v) => `AED ${v.toLocaleString()}`} />
+            <Range label={path === 'property' ? t('Property value') : t('Deposit amount')} value={value} min={500000} max={5000000} step={50000} onChange={setValue} fmt={(v) => `AED ${v.toLocaleString()}`} />
           )}
-          {path !== 'professional' && <Range label="Your age" value={age} min={18} max={85} step={1} onChange={setAge} fmt={(v) => `${v} years`} />}
+          {path !== 'professional' && <Range label={t('Your age')} value={age} min={18} max={85} step={1} onChange={setAge} fmt={(v) => `${v} ${t('years')}`} />}
           {(path === 'income' || path === 'professional') && (
-            <Range label={path === 'income' ? 'Monthly income / pension' : 'Monthly salary'} value={salary} min={5000} max={100000} step={1000} onChange={setSalary} fmt={(v) => `AED ${v.toLocaleString()}`} />
+            <Range label={path === 'income' ? t('Monthly income / pension') : t('Monthly salary')} value={salary} min={5000} max={100000} step={1000} onChange={setSalary} fmt={(v) => `AED ${v.toLocaleString()}`} />
           )}
-          {path === 'income' && <Range label="Years of employment" value={years} min={0} max={45} step={1} onChange={setYears} fmt={(v) => `${v} years`} />}
+          {path === 'income' && <Range label={t('Years of employment')} value={years} min={0} max={45} step={1} onChange={setYears} fmt={(v) => `${v} ${t('years')}`} />}
         </div>
       </div>
 
       <div className={cn('relative overflow-hidden rounded-[2rem] p-7', anyOk ? 'bg-gradient-to-br from-gold-light via-gold to-gold-deep text-ink' : 'bg-ink text-white')}>
         <div className="absolute inset-0 bg-pattern opacity-15 mix-blend-overlay" />
         <div className="relative">
-          <p className="text-xs font-extrabold uppercase tracking-[0.25em] opacity-70">Your result</p>
+          <p className="text-xs font-extrabold uppercase tracking-[0.25em] opacity-70">{t('Your result')}</p>
           <AnimatePresence mode="wait">
             <motion.h3 key={String(anyOk)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={cn('mt-2 font-display text-4xl font-bold', anyOk ? '!text-ink' : '!text-white')}>
-              {anyOk ? 'Good news — you may qualify!' : 'Not yet — but we can help'}
+              {anyOk ? t('Good news — you may qualify!') : t('Not yet — but we can help')}
             </motion.h3>
           </AnimatePresence>
           <ul className="mt-6 space-y-4">
@@ -280,13 +286,13 @@ export function Calculator({ dark }: { dark?: boolean }) {
           </ul>
           <div className="mt-8 flex flex-wrap gap-3">
             <SmartLink href="/apply" className={cn('btn btn-sm', anyOk ? 'btn-dark' : 'btn-gold')}>
-              Start my application <ArrowRight className="h-4 w-4" />
+              {t('Start my application')} <ArrowRight className="h-4 w-4" />
             </SmartLink>
             <SmartLink href="whatsapp" className={cn('btn btn-sm', anyOk ? 'bg-white/80 text-ink' : 'btn-ghost-light')}>
-              Talk to an expert
+              {t('Talk to an expert')}
             </SmartLink>
           </div>
-          <p className="mt-5 text-[0.7rem] opacity-60">Indicative only. Final eligibility is decided by UAE authorities.</p>
+          <p className="mt-5 text-[0.7rem] opacity-60">{t('Indicative only. Final eligibility is decided by UAE authorities.')}</p>
         </div>
       </div>
     </div>

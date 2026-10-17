@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import ApplyWizard from '@/components/portal/ApplyWizard';
 import { Skyline } from '@/components/blocks/Hero';
+import T from '@/components/ui/T';
 
 export const metadata = {
   title: 'Apply Online for RAK Golden Visa',
@@ -14,11 +15,11 @@ export default function ApplyPage() {
         <div className="absolute inset-0 bg-pattern opacity-[0.06]" />
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-[480px] w-[900px] rounded-full bg-gold/15 blur-[130px]" />
         <div className="container-x relative text-center">
-          <span className="eyebrow justify-center">Online application</span>
+          <span className="eyebrow justify-center"><T>Online application</T></span>
           <h1 className="mt-5 font-display text-5xl md:text-6xl font-semibold text-white">
-            Apply for your <span className="text-gold-gradient italic">Golden Visa</span>
+            <T>Apply for your</T> <span className="text-gold-gradient italic"><T>Golden Visa</T></span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-white/65">Three simple steps. A dedicated consultant reviews your application within one working day.</p>
+          <p className="mx-auto mt-5 max-w-2xl text-white/65"><T>Three simple steps. A dedicated consultant reviews your application within one working day.</T></p>
         </div>
         <Skyline className="absolute bottom-0 left-0 w-full h-24 text-white/[0.04]" />
       </section>

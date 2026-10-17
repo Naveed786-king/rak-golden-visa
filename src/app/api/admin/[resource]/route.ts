@@ -6,6 +6,14 @@ import { slugify } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
+const ENTITY: Record<string, string> = { pages: 'page', posts: 'post', faqs: 'faq', services: 'service', testimonials: 'testimonial' };
+function autoTranslate(resource: string, id: string) {
+  const e = ENTITY[resource];
+  if (!e) return;
+  import('@/lib/i18n/jobs').then((m) => m.onContentSaved(e as any, id)).catch(() => {});
+}
+
+
 type Ctx = { params: Promise<{ resource: string }> };
 
 export async function GET(req: Request, { params }: Ctx) {
@@ -57,6 +65,7 @@ export async function POST(req: Request, { params }: Ctx) {
     if (resource === 'posts' && data.content === undefined) data.content = '';
     const item = await (prisma as any)[cfg.model].create({ data, ...(cfg.select ? { select: cfg.select } : {}) });
     refreshSite();
+    autoTranslate(resource, item.id);
     return ok({ item });
   } catch (e: any) {
     if (e.code === 'P2002') return fail('That value is already used (must be unique)');

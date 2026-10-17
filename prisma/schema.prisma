@@ -207,3 +207,27 @@ model Subscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 }
+
+// Translated copies of content (pages, posts, FAQs, services, settings, UI text)
+model Translation {
+  id         String   @id @default(cuid())
+  entity     String // page | post | faq | service | testimonial | settings | ui
+  entityId   String
+  locale     String
+  data       String // JSON
+  status     String   @default("auto") // auto | edited | outdated
+  sourceHash String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([entity, entityId, locale])
+  @@index([locale])
+}
+
+// Cache of translated sentences (re-used across pages to save time)
+model TranslationMemory {
+  id        String   @id @default(cuid())
+  key       String   @unique // locale + ":" + sha1(text)
+  text      String
+  createdAt DateTime @default(now())
+}

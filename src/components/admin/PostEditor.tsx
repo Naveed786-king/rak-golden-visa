@@ -7,12 +7,14 @@ import RichEditor from './RichEditor';
 import { ImageInput } from './MediaPicker';
 import { Btn, Card, api, toast } from './ui';
 import { slugify } from '@/lib/utils';
+import { LanguageTabs, PostTranslation } from './TranslationEditor';
 
 export default function PostEditor({ initial }: { initial: any }) {
   const router = useRouter();
   const [p, setP] = useState<any>({ ...initial, publishedAt: (initial.publishedAt || new Date().toISOString()).slice(0, 16) });
   const [saving, setSaving] = useState(false);
   const [autoSlug, setAutoSlug] = useState(!initial.id);
+  const [lang, setLang] = useState('en');
   const set = (k: string, v: any) => setP((x: any) => ({ ...x, [k]: v }));
 
   async function save() {
@@ -22,11 +24,11 @@ export default function PostEditor({ initial }: { initial: any }) {
       const body = { ...p, slug: p.slug || slugify(p.title), publishedAt: new Date(p.publishedAt).toISOString() };
       if (p.id) {
         await api(`/api/admin/posts/${p.id}`, 'PUT', body);
-        toast('Post saved');
+        toast('Post saved — translations are updating automatically');
         router.refresh();
       } else {
         const d = await api<{ item: any }>('/api/admin/posts', 'POST', body);
-        toast('Post published');
+        toast('Post published — translating into all languages…');
         router.replace(`/admin/posts/${d.item.id}`);
       }
     } catch (e: any) {
@@ -64,6 +66,13 @@ export default function PostEditor({ initial }: { initial: any }) {
           <Save className="h-4 w-4" /> {p.id ? 'Save' : 'Publish'}
         </Btn>
       </div>
+      <div className="mb-5">
+        <LanguageTabs entityId={p.id} value={lang} onChange={setLang} />
+        {!p.id && <p className="mt-2 text-xs text-gray-500">Publish the post first — it is then translated automatically into all languages.</p>}
+      </div>
+      {lang !== 'en' && p.id ? (
+        <PostTranslation id={p.id} slug={p.slug} locale={lang} />
+      ) : (
       <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
         <div className="space-y-5 min-w-0">
           <Card className="p-5 space-y-4">
@@ -145,6 +154,7 @@ export default function PostEditor({ initial }: { initial: any }) {
           </Card>
         </div>
       </div>
+      )}
     </div>
   );
 }

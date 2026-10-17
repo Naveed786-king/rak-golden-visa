@@ -54,6 +54,23 @@ jobs:
           curl -sf -b cookies.txt http://localhost:3000/api/admin/leads | grep -q "CI Test"
           curl -sf -b cookies.txt http://localhost:3000/api/admin/pages | grep -q "about-us"
           code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://localhost:3000/admin); echo "/admin -> $code"; [ "$code" = "200" ]
+          # --- languages ---
+          check /ar 200
+          check /ar/about-us 200
+          check /ru/ras-al-khaimah-property-golden-visa 200
+          check /zh/latest-news-blogs 200
+          curl -s http://localhost:3000/ar | grep -q 'dir="rtl"' && echo "Arabic page is right-to-left"
+          curl -s http://localhost:3000/ar | grep -q 'hreflang' && echo "hreflang tags present"
+          curl -sf -b cookies.txt http://localhost:3000/api/admin/translations | grep -q '"locale":"ar"'
+          RES=$(curl -s -b cookies.txt -X POST http://localhost:3000/api/admin/translations -H 'Content-Type: application/json' -d '{"action":"test","locale":"ar"}')
+          echo "Translation test: $RES"
+          echo "$RES" | grep -q '"result"'
+          # translate a blog post into Arabic right now and check it is served
+          PID=$(curl -s -b cookies.txt "http://localhost:3000/api/admin/posts?take=1" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).items[0].id))")
+          SLUG=$(curl -s -b cookies.txt "http://localhost:3000/api/admin/posts?take=1" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).items[0].slug))")
+          curl -s -b cookies.txt -X POST http://localhost:3000/api/admin/translations -H 'Content-Type: application/json' -d "{\"action\":\"entity\",\"entity\":\"post\",\"id\":\"$PID\",\"locale\":\"ar\"}"
+          echo
+          curl -s "http://localhost:3000/ar/$SLUG" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{const n=(d.match(/[\u0600-\u06FF]/g)||[]).length;console.log('Arabic letters on translated post:',n);if(n<200)process.exit(1)})"
           echo "All smoke tests passed"
       - name: Server log
         if: always()

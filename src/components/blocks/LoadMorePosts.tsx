@@ -3,15 +3,18 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LoaderCircle } from 'lucide-react';
 import PostCard from './PostCard';
+import { useT, useLocale } from '@/components/site/SiteProvider';
 
 export default function LoadMorePosts({ start, total, category, dark }: { start: number; total: number; category?: string; dark?: boolean }) {
+  const t = useT();
+  const locale = useLocale();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const shown = start + posts.length;
 
   async function more() {
     setLoading(true);
-    const q = new URLSearchParams({ skip: String(shown), take: '6' });
+    const q = new URLSearchParams({ skip: String(shown), take: '6', locale });
     if (category) q.set('category', category);
     const r = await fetch(`/api/posts?${q}`);
     const d = await r.json();
@@ -33,7 +36,7 @@ export default function LoadMorePosts({ start, total, category, dark }: { start:
       {shown < total && (
         <div className="mt-12 text-center">
           <button onClick={more} disabled={loading} className="btn btn-dark">
-            {loading && <LoaderCircle className="h-4 w-4 animate-spin" />} Load more articles
+            {loading && <LoaderCircle className="h-4 w-4 animate-spin" />} {t('Load more articles')}
           </button>
         </div>
       )}

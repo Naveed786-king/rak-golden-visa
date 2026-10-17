@@ -16,9 +16,9 @@ export function slugify(input: string) {
     .replace(/^-+|-+$/g, '');
 }
 
-export function formatDate(d: Date | string, opts?: Intl.DateTimeFormatOptions) {
+export function formatDate(d: Date | string, opts?: Intl.DateTimeFormatOptions, lang = 'en-GB') {
   const date = typeof d === 'string' ? new Date(d) : d;
-  return date.toLocaleDateString('en-GB', opts || { day: 'numeric', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString(lang, opts || { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 export function formatDateTime(d: Date | string) {

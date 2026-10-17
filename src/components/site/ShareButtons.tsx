@@ -2,8 +2,10 @@
 import { useState } from 'react';
 import { Link2, Check } from 'lucide-react';
 import { SocialIcon } from '@/components/ui/Icon';
+import { useT } from './SiteProvider';
 
 export default function ShareButtons({ title }: { title: string }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
   const share = (net: string) => {
     const url = encodeURIComponent(window.location.href);
@@ -25,7 +27,7 @@ export default function ShareButtons({ title }: { title: string }) {
   };
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <span className="text-sm font-bold text-ink/60">Share:</span>
+      <span className="text-sm font-bold text-ink/60">{t('Share:')}</span>
       {['whatsapp', 'facebook', 'twitter', 'linkedin'].map((n) => (
         <button key={n} onClick={() => share(n)} className="grid h-10 w-10 place-items-center rounded-full bg-sand text-ink/70 hover:bg-gold hover:text-ink transition" aria-label={`Share on ${n}`}>
           <SocialIcon name={n} />

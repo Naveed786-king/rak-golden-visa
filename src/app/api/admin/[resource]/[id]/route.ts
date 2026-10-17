@@ -7,6 +7,14 @@ import { deleteStored } from '@/lib/upload';
 
 export const dynamic = 'force-dynamic';
 
+const ENTITY: Record<string, string> = { pages: 'page', posts: 'post', faqs: 'faq', services: 'service', testimonials: 'testimonial' };
+function autoTranslate(resource: string, id: string) {
+  const e = ENTITY[resource];
+  if (!e) return;
+  import('@/lib/i18n/jobs').then((m) => m.onContentSaved(e as any, id)).catch(() => {});
+}
+
+
 type Ctx = { params: Promise<{ resource: string; id: string }> };
 
 async function guard(params: Ctx['params']) {
@@ -53,6 +61,7 @@ export async function PUT(req: Request, { params }: Ctx) {
     }
     const item = await (prisma as any)[g.cfg.model].update({ where: { id: g.id }, data, ...(g.cfg.select ? { select: g.cfg.select } : {}) });
     refreshSite();
+    autoTranslate(g.resource, g.id);
     return ok({ item });
   } catch (e: any) {
     if (e.code === 'P2002') return fail('That value is already used (must be unique)');

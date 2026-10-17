@@ -201,3 +201,21 @@ export const APPLICATION_STATUSES: { value: string; label: string; progress: num
 ];
 
 export const LEAD_STATUSES = ['new', 'contacted', 'qualified', 'converted', 'closed'];
+
+export type TranslationSettings = {
+  provider: 'google' | 'claude' | 'deepl' | 'off';
+  apiKey: string;
+  model: string;
+  autoTranslate: boolean;
+  enabled: string[]; // language codes shown on the website
+  showSwitcher: boolean;
+};
+
+export const defaultTranslation: TranslationSettings = {
+  provider: 'google',
+  apiKey: '',
+  model: 'claude-haiku-5-5',
+  autoTranslate: true,
+  enabled: ['en', 'ar', 'ru', 'tr', 'zh', 'fr', 'de', 'es', 'ro', 'hi'],
+  showSwitcher: true,
+};

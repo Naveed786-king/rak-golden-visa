@@ -7,13 +7,19 @@ import { ChevronDown, Menu, X, Phone, User, ArrowUpRight, Mail, Clock } from 'lu
 import type { HeaderSettings, SiteSettings } from '@/lib/defaults';
 import { cn } from '@/lib/utils';
 import Logo from './Logo';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useT, useLocalize } from './SiteProvider';
+import { splitLocale } from '@/lib/i18n/config';
 import SmartLink from '@/components/ui/SmartLink';
 import { SocialIcon } from '@/components/ui/Icon';
 
 type Me = { name: string; role: string } | null;
 
 export default function Header({ site, header }: { site: SiteSettings; header: HeaderSettings }) {
-  const pathname = usePathname();
+  const fullPath = usePathname() || '/';
+  const pathname = splitLocale(fullPath).path;
+  const t = useT();
+  const L = useLocalize();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [drop, setDrop] = useState<number | null>(null);
@@ -44,7 +50,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
   }, [open]);
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname?.startsWith(href));
-  const accountHref = me ? (me.role === 'CUSTOMER' ? '/account' : '/admin') : '/login';
+  const accountHref = me ? (me.role === 'CUSTOMER' ? '/account' : '/admin') : L('/login');
 
   return (
     <>
@@ -138,12 +144,15 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 <Phone className="h-4 w-4 text-gold" />
               </span>
               <span className="leading-tight">
-                <span className="block text-[0.65rem] uppercase tracking-widest text-white/50">Free consultation</span>
+                <span className="block text-[0.65rem] uppercase tracking-widest text-white/50">{t('Free consultation')}</span>
                 <span className="block text-sm font-bold">{site.phoneDisplay}</span>
               </span>
             </a>
+            <div className="hidden md:block">
+              <LanguageSwitcher />
+            </div>
             {header.showLogin && (
-              <Link href={accountHref} className="hidden md:grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white hover:border-gold hover:text-gold transition-colors" aria-label={me ? 'My account' : 'Login'} title={me ? `Hi, ${me.name}` : 'Client login'}>
+              <Link href={accountHref} className="hidden md:grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white hover:border-gold hover:text-gold transition-colors" aria-label={me ? t('My account') : t('Client login')} title={me ? me.name : t('Client login')}>
                 <User className="h-4 w-4" />
               </Link>
             )}
@@ -152,7 +161,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 {header.cta.label}
               </SmartLink>
             )}
-            <button onClick={() => setOpen(true)} className="lg:hidden grid h-11 w-11 place-items-center rounded-full border border-white/15 text-white" aria-label="Open menu">
+            <button onClick={() => setOpen(true)} className="lg:hidden grid h-11 w-11 place-items-center rounded-full border border-white/15 text-white" aria-label={t('Menu')}>
               <Menu className="h-5 w-5" />
             </button>
           </div>
@@ -173,7 +182,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
               <div className="absolute inset-0 bg-pattern opacity-[0.05] pointer-events-none" />
               <div className="relative flex items-center justify-between p-5 border-b border-white/10">
                 <Logo src={site.logoLight || site.logo} name={site.name} />
-                <button onClick={() => setOpen(false)} className="grid h-10 w-10 place-items-center rounded-full border border-white/15" aria-label="Close menu">
+                <button onClick={() => setOpen(false)} className="grid h-10 w-10 place-items-center rounded-full border border-white/15" aria-label={t('Close')}>
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -196,11 +205,12 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 ))}
                 {header.showLogin && (
                   <Link href={accountHref} className="mt-5 flex items-center gap-2 text-white/80">
-                    <User className="h-4 w-4 text-gold" /> {me ? `My account (${me.name})` : 'Client login / Register'}
+                    <User className="h-4 w-4 text-gold" /> {me ? `${t('My account')} (${me.name})` : t('Client login / Register')}
                   </Link>
                 )}
               </nav>
               <div className="relative p-5 space-y-3 border-t border-white/10">
+                <LanguageSwitcher variant="drawer" />
                 <SmartLink href={header.cta.href} className="btn btn-gold w-full">
                   {header.cta.label}
                 </SmartLink>

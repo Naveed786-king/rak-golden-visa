@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Clock, MapPin, Mail, Phone, CalendarDays } from 'lucide-react';
 import { Section, Heading } from '@/components/ui/Section';
 import Reveal, { Stagger, StaggerItem } from '@/components/ui/Reveal';
@@ -11,6 +10,7 @@ import { TabsView, RejectionsView, AccordionView, TestimonialsView, Calculator }
 import LeadForm from './LeadForm';
 import LoadMorePosts from './LoadMorePosts';
 import PostCard from './PostCard';
+import T from '@/components/ui/T';
 
 type P = { data: any; site: SiteSettings };
 
@@ -58,16 +58,16 @@ export async function Faq({ data }: P) {
     <Section theme={data.theme} anchor={data.anchor}>
       <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="lg:sticky lg:top-28 self-start">
-          <Heading eyebrow={data.eyebrow || 'FAQ'} title={data.title} subtitle={data.subtitle} align="left" className="!mb-8" />
+          <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} align="left" className="!mb-8" />
           <Reveal className={cn('rounded-3xl p-7', data.theme === 'dark' ? 'glass' : 'bg-ink text-white')}>
-            <h3 className="font-display text-2xl font-semibold !text-white">Still have questions?</h3>
-            <p className="mt-2 text-sm text-white/65">Our Golden Visa specialists are one message away.</p>
+            <h3 className="font-display text-2xl font-semibold !text-white"><T>Still have questions?</T></h3>
+            <p className="mt-2 text-sm text-white/65"><T>Our Golden Visa specialists are one message away.</T></p>
             <div className="mt-5 flex flex-wrap gap-2">
               <SmartLink href="whatsapp" className="btn btn-gold btn-sm">
-                <SocialIcon name="whatsapp" className="h-4 w-4" /> WhatsApp
+                <SocialIcon name="whatsapp" className="h-4 w-4" /> <T>WhatsApp</T>
               </SmartLink>
               <SmartLink href="/contact-us" className="btn btn-ghost-light btn-sm">
-                Contact us
+                <T>Contact us</T>
               </SmartLink>
             </div>
           </Reveal>
@@ -86,7 +86,7 @@ export async function Testimonials({ data }: P) {
   if (!items.length) return null;
   return (
     <Section theme={data.theme} anchor={data.anchor}>
-      <Heading eyebrow={data.eyebrow || 'Testimonials'} title={data.title} subtitle={data.subtitle} />
+      <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
       <TestimonialsView items={JSON.parse(JSON.stringify(items))} dark={data.theme === 'dark'} />
     </Section>
   );
@@ -138,7 +138,7 @@ export async function Services({ data }: P) {
                   <Icon name={s.icon || 'badge'} className="h-6 w-6" />
                 </span>
               )}
-              {s.featured && <span className="absolute right-6 top-6 rounded-full bg-gold px-2.5 py-1 text-[0.6rem] font-extrabold uppercase tracking-wider text-ink">Popular</span>}
+              {s.featured && <span className="absolute right-6 top-6 rounded-full bg-gold px-2.5 py-1 text-[0.6rem] font-extrabold uppercase tracking-wider text-ink"><T>Popular</T></span>}
               <h3 className="relative mt-5 font-display text-2xl font-semibold leading-snug">{s.title}</h3>
               {s.subtitle && <p className="mt-1 text-xs font-bold uppercase tracking-wider text-gold-deep">{s.subtitle}</p>}
               {s.description && <p className="mt-3 flex-1 text-sm leading-relaxed opacity-70">{s.description}</p>}
@@ -147,20 +147,20 @@ export async function Services({ data }: P) {
                   <div>
                     {s.price && (
                       <>
-                        <p className="text-[0.65rem] font-bold uppercase tracking-widest opacity-50">From</p>
+                        <p className="text-[0.65rem] font-bold uppercase tracking-widest opacity-50"><T>From</T></p>
                         <p className="font-display text-2xl font-bold text-gold-deep">{s.price.replace(/^From\s*/i, '')}</p>
                       </>
                     )}
                   </div>
                   <div className="flex gap-2">
                     {s.link && (
-                      <SmartLink href={s.link} className="grid h-11 w-11 place-items-center rounded-full ring-1 ring-current/15 hover:bg-ink hover:text-gold transition" ariaLabel={`More about ${s.title}`}>
+                      <SmartLink href={s.link} className="grid h-11 w-11 place-items-center rounded-full ring-1 ring-current/15 hover:bg-ink hover:text-gold transition" ariaLabel={s.title}>
                         <ArrowUpRight className="h-4 w-4" />
                       </SmartLink>
                     )}
-                    <Link href={`/apply?service=${encodeURIComponent(s.title)}`} className="btn btn-gold btn-sm">
-                      Apply
-                    </Link>
+                    <SmartLink href={`/apply?service=${encodeURIComponent((s as any).sourceTitle || s.title)}`} className="btn btn-gold btn-sm">
+                      <T>Apply</T>
+                    </SmartLink>
                   </div>
                 </div>
               )}
@@ -179,15 +179,15 @@ export async function Blog({ data }: P) {
   return (
     <Section theme={data.theme} anchor={data.anchor}>
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <Heading eyebrow={data.eyebrow || 'Insights'} title={data.title} subtitle={data.subtitle} align="left" className="!mb-0" />
+        <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} align="left" className="!mb-0" />
         {!data.paginate && (
-          <Link href="/latest-news-blogs" className="btn btn-outline shrink-0">
-            View all articles <ArrowRight className="h-4 w-4" />
-          </Link>
+          <SmartLink href="/latest-news-blogs" className="btn btn-outline shrink-0">
+            <T>View all articles</T> <ArrowRight className="h-4 w-4" />
+          </SmartLink>
         )}
       </div>
       {posts.length === 0 ? (
-        <p className="text-center opacity-60 py-10">No articles published yet.</p>
+        <p className="text-center opacity-60 py-10"><T>No articles published yet.</T></p>
       ) : (
         <Stagger className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((p: any) => (
@@ -274,8 +274,8 @@ function ContactCardInner({ icon, label, value }: { icon: React.ReactNode; label
     <>
       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-gold-light to-gold text-ink">{icon}</span>
       <span className="min-w-0">
-        <span className="block text-[0.68rem] font-extrabold uppercase tracking-widest opacity-50">{label}</span>
-        <span className="mt-1 block text-sm font-semibold leading-snug break-words">{value}</span>
+        <span className="block text-[0.68rem] font-extrabold uppercase tracking-widest opacity-50"><T>{label}</T></span>
+        <span className="mt-1 block text-sm font-semibold leading-snug break-words" dir="auto">{value}</span>
       </span>
     </>
   );

@@ -30,7 +30,7 @@ export default function Counter({ value, duration = 1.8, className }: { value: s
   const decimals = (match[2].split('.')[1] || '').length;
   const formatted = n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={className} dir="ltr">
       {match[1]}
       {formatted}
       {match[3]}

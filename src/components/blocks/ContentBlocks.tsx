@@ -7,6 +7,7 @@ import { Icon, SocialIcon } from '@/components/ui/Icon';
 import { cn, lines } from '@/lib/utils';
 import type { SiteSettings } from '@/lib/defaults';
 import { Skyline } from './Hero';
+import T from '@/components/ui/T';
 
 type P = { data: any; site: SiteSettings };
 
@@ -14,7 +15,7 @@ function Cta({ link, className = 'btn btn-gold', icon = true }: { link?: { label
   if (!link?.label) return null;
   return (
     <SmartLink href={link.href} className={className}>
-      {link.label} {icon && <ArrowRight className="h-4 w-4" />}
+      {link.label === 'Get offer' ? <T>Get offer</T> : link.label} {icon && <ArrowRight className="h-4 w-4" />}
     </SmartLink>
   );
 }
@@ -91,7 +92,7 @@ export function IntroSplit({ data, site }: P) {
               <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-gold/25 blur-3xl" />
               <div className="relative">
                 <span className="inline-flex items-center gap-2 rounded-full bg-gold/15 px-3 py-1 text-xs font-bold text-gold">
-                  <Crown className="h-3.5 w-3.5" /> VIP SERVICE
+                  <Crown className="h-3.5 w-3.5" /> <T>VIP SERVICE</T>
                 </span>
                 <h3 className="mt-5 font-display text-3xl font-semibold">{data.cardTitle}</h3>
                 <ul className="mt-6 space-y-3">
@@ -223,18 +224,18 @@ export function Visit({ data, site }: P) {
     <Section theme={data.theme || 'dark'} anchor={data.anchor}>
       <div className="grid gap-10 lg:grid-cols-2 items-center">
         <Reveal>
-          <span className="eyebrow">Visit us</span>
+          <span className="eyebrow"><T>Visit us</T></span>
           <h2 className="mt-4 font-display text-4xl md:text-5xl font-semibold leading-tight">{data.title}</h2>
           {data.text && <p className="mt-5 text-base opacity-70 leading-relaxed">{data.text}</p>}
           <div className="mt-8 flex flex-wrap gap-3">
             <a href={`tel:${site.phone}`} className="btn btn-gold">
-              <Phone className="h-4 w-4" /> Call {site.phoneDisplay}
+              <Phone className="h-4 w-4" /> <T>Call</T> <span dir="ltr">{site.phoneDisplay}</span>
             </a>
             <SmartLink href="whatsapp" className="btn btn-ghost-light">
-              <SocialIcon name="whatsapp" className="h-4 w-4 text-[#25D366]" /> WhatsApp
+              <SocialIcon name="whatsapp" className="h-4 w-4 text-[#25D366]" /> <T>WhatsApp</T>
             </SmartLink>
             <SmartLink href="/contact-us" className={cn('btn', data.theme === 'dark' || !data.theme ? 'btn-ghost-light' : 'btn-outline')}>
-              <Calendar className="h-4 w-4" /> Book an Appointment
+              <Calendar className="h-4 w-4" /> <T>Book an Appointment</T>
             </SmartLink>
           </div>
         </Reveal>
@@ -246,14 +247,14 @@ export function Visit({ data, site }: P) {
             <div className="grid gap-px sm:grid-cols-2 overflow-hidden rounded-[1.6rem]">
               <div className="p-6">
                 <MapPin className="h-6 w-6 text-gold" />
-                <p className="mt-3 text-xs font-bold uppercase tracking-widest opacity-50">Address</p>
+                <p className="mt-3 text-xs font-bold uppercase tracking-widest opacity-50"><T>Address</T></p>
                 <a href={site.mapUrl} target="_blank" rel="noopener noreferrer" className="mt-1 block text-sm leading-relaxed hover:text-gold">
                   {site.address}
                 </a>
               </div>
               <div className="p-6">
                 <Clock className="h-6 w-6 text-gold" />
-                <p className="mt-3 text-xs font-bold uppercase tracking-widest opacity-50">Operating hours</p>
+                <p className="mt-3 text-xs font-bold uppercase tracking-widest opacity-50"><T>Operating hours</T></p>
                 <p className="mt-1 text-sm">{site.hours}</p>
                 <p className="text-sm opacity-60">{site.hoursClosed}</p>
                 <Mail className="mt-5 h-6 w-6 text-gold" />
@@ -478,7 +479,7 @@ export function Compare({ data }: P) {
           <Reveal key={i} delay={i * 0.1}>
             <div className={cn('card-lift relative h-full overflow-hidden rounded-[2rem] p-8', c.highlight ? 'bg-ink text-white shadow-2xl' : 'bg-white ring-1 ring-ink/10')}>
               {c.highlight && <div className="absolute inset-0 bg-pattern opacity-[0.06]" />}
-              {c.highlight && <span className="absolute right-6 top-6 rounded-full bg-gold px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-ink">Recommended</span>}
+              {c.highlight && <span className="absolute right-6 top-6 rounded-full bg-gold px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-ink"><T>Recommended</T></span>}
               <h3 className={cn('relative font-display text-3xl font-semibold', c.highlight && '!text-gold')}>{c.title}</h3>
               <dl className="relative mt-6 divide-y divide-current/10">
                 {lines(c.items).map((row, j) => {
@@ -537,7 +538,7 @@ export function Pricing({ data }: P) {
                   <div className="absolute inset-0 bg-pattern opacity-[0.06]" />
                   <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-gold/30 blur-3xl" />
                   <span className="absolute right-6 top-6 inline-flex items-center gap-1 rounded-full bg-gold px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-ink">
-                    <Crown className="h-3 w-3" /> Most popular
+                    <Crown className="h-3 w-3" /> <T>Most popular</T>
                   </span>
                 </>
               )}

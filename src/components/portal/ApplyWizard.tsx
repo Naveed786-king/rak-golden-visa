@@ -1,11 +1,12 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Building2, Sun, Users, Briefcase, FileText, ArrowRight, ArrowLeft, Upload, X, LoaderCircle, CircleCheck, Lock, Sparkles } from 'lucide-react';
 import { SERVICE_OPTIONS } from '@/lib/defaults';
 import { cn } from '@/lib/utils';
+import { useT } from '@/components/site/SiteProvider';
+import SmartLink from '@/components/ui/SmartLink';
 
 const FEATURED = [
   { v: 'RAK Golden Visa – Property Investor', icon: Building2, d: '10 years · AED 2M+ property' },
@@ -15,6 +16,7 @@ const FEATURED = [
 ];
 
 export default function ApplyWizard() {
+  const t = useT();
   const sp = useSearchParams();
   const [step, setStep] = useState(0);
   const [service, setService] = useState('');
@@ -47,9 +49,9 @@ export default function ApplyWizard() {
 
   function next() {
     setError('');
-    if (step === 0 && !service) return setError('Please choose a service');
+    if (step === 0 && !service) return setError(t('Please choose a service'));
     if (step === 1) {
-      if (!form.fullName || !form.phone || !form.email) return setError('Please fill in your name, phone and email');
+      if (!form.fullName || !form.phone || !form.email) return setError(t('Please fill in your name, phone and email'));
     }
     setStep((s) => s + 1);
   }
@@ -62,8 +64,8 @@ export default function ApplyWizard() {
 
   async function submit() {
     setError('');
-    if (!me && (!form.password || form.password.length < 8)) return setError('Please choose a password (min 8 characters) to create your client account');
-    if (!form.agree) return setError('Please accept the terms to continue');
+    if (!me && (!form.password || form.password.length < 8)) return setError(t('Please choose a password (min 8 characters) to create your client account'));
+    if (!form.agree) return setError(t('Please accept the terms to continue'));
     setLoading(true);
     const fd = new FormData();
     fd.set('service', service);
@@ -72,7 +74,7 @@ export default function ApplyWizard() {
     try {
       const r = await fetch('/api/apply', { method: 'POST', body: fd });
       const d = await r.json();
-      if (!r.ok) throw new Error(d.error || 'Submission failed');
+      if (!r.ok) throw new Error(d.error || t('Submission failed'));
       setResult(d);
     } catch (e: any) {
       setError(e.message);
@@ -81,7 +83,7 @@ export default function ApplyWizard() {
     }
   }
 
-  const steps = ['Choose service', 'Your details', 'Documents & submit'];
+  const steps = [t('Choose service'), t('Your details'), t('Documents & submit')];
 
   if (result) {
     return (
@@ -89,15 +91,15 @@ export default function ApplyWizard() {
         <motion.span initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', delay: 0.15 }} className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold text-ink shadow-xl shadow-gold/40">
           <CircleCheck className="h-12 w-12" />
         </motion.span>
-        <h2 className="mt-8 font-display text-4xl md:text-5xl font-semibold">Application submitted!</h2>
-        <p className="mt-4 text-ink/65">Your reference number is</p>
+        <h2 className="mt-8 font-display text-4xl md:text-5xl font-semibold">{t('Application submitted!')}</h2>
+        <p className="mt-4 text-ink/65">{t('Your reference number is')}</p>
         <p className="mt-2 inline-block rounded-2xl bg-sand px-6 py-3 font-mono text-2xl font-bold tracking-wider text-ink">{result.refNo}</p>
-        <p className="mt-6 text-sm text-ink/60">A consultant will review your application and contact you shortly. You can track progress, upload documents and chat with us from your account.</p>
+        <p className="mt-6 text-sm text-ink/60">{t('A consultant will review your application and contact you shortly. You can track progress, upload documents and chat with us from your account.')}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link href={`/account/applications/${result.id}`} className="btn btn-gold">
-            Track my application <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link href="/" className="btn btn-outline">Back to home</Link>
+          <SmartLink href={`/account/applications/${result.id}`} className="btn btn-gold">
+            {t('Track my application')} <ArrowRight className="h-4 w-4" />
+          </SmartLink>
+          <SmartLink href="/" className="btn btn-outline">{t('Back to home')}</SmartLink>
         </div>
       </motion.div>
     );
@@ -124,7 +126,7 @@ export default function ApplyWizard() {
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="s0" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}>
-              <h2 className="font-display text-3xl font-semibold">Which visa or service do you need?</h2>
+              <h2 className="font-display text-3xl font-semibold">{t('Which visa or service do you need?')}</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 {FEATURED.map((f) => (
                   <button key={f.v} onClick={() => setService(f.v)} className={cn('group flex items-center gap-4 rounded-2xl p-5 text-left ring-1 transition-all', service === f.v ? 'bg-ink text-white ring-ink shadow-xl' : 'ring-ink/10 hover:ring-gold')}>
@@ -132,17 +134,17 @@ export default function ApplyWizard() {
                       <f.icon className="h-6 w-6" />
                     </span>
                     <span>
-                      <span className="block font-bold">{f.v}</span>
-                      <span className={cn('block text-xs mt-0.5', service === f.v ? 'text-white/60' : 'text-ink/50')}>{f.d}</span>
+                      <span className="block font-bold">{t(f.v)}</span>
+                      <span className={cn('block text-xs mt-0.5', service === f.v ? 'text-white/60' : 'text-ink/50')}>{t(f.d)}</span>
                     </span>
                   </button>
                 ))}
               </div>
-              <label className="mt-6 block text-sm font-bold text-ink/60">Or choose another service</label>
+              <label className="mt-6 block text-sm font-bold text-ink/60">{t('Or choose another service')}</label>
               <select value={FEATURED.some((f) => f.v === service) ? '' : service} onChange={(e) => setService(e.target.value)} className="field mt-2">
-                <option value="">— Other services —</option>
+                <option value="">— {t('Other services')} —</option>
                 {SERVICE_OPTIONS.filter((o) => !FEATURED.some((f) => f.v === o)).map((o) => (
-                  <option key={o}>{o}</option>
+                  <option key={o} value={o}>{t(o)}</option>
                 ))}
               </select>
             </motion.div>
@@ -150,35 +152,35 @@ export default function ApplyWizard() {
 
           {step === 1 && (
             <motion.div key="s1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}>
-              <h2 className="font-display text-3xl font-semibold">Tell us about yourself</h2>
-              <p className="mt-1 text-sm text-ink/55">As written in your passport.</p>
+              <h2 className="font-display text-3xl font-semibold">{t('Tell us about yourself')}</h2>
+              <p className="mt-1 text-sm text-ink/55">{t('As written in your passport.')}</p>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <input value={form.fullName || ''} onChange={set('fullName')} placeholder="Full name *" className="field" />
-                <input value={form.email || ''} onChange={set('email')} type="email" placeholder="Email *" className="field" disabled={!!me} />
-                <input value={form.phone || ''} onChange={set('phone')} placeholder="Phone / WhatsApp *" className="field" />
-                <input value={form.nationality || ''} onChange={set('nationality')} placeholder="Nationality" className="field" />
-                <input value={form.passportNo || ''} onChange={set('passportNo')} placeholder="Passport number" className="field" />
+                <input value={form.fullName || ''} onChange={set('fullName')} placeholder={t('Full name') + ' *'} className="field" />
+                <input value={form.email || ''} onChange={set('email')} type="email" placeholder={t('Email') + ' *'} className="field" disabled={!!me} />
+                <input value={form.phone || ''} onChange={set('phone')} placeholder={t('Phone / WhatsApp') + ' *'} className="field" />
+                <input value={form.nationality || ''} onChange={set('nationality')} placeholder={t('Nationality')} className="field" />
+                <input value={form.passportNo || ''} onChange={set('passportNo')} placeholder={t('Passport number')} className="field" />
                 <label className="relative">
-                  <span className="absolute left-4 top-1.5 text-[0.65rem] font-bold uppercase tracking-wider text-ink/40">Date of birth</span>
+                  <span className="absolute left-4 top-1.5 text-[0.65rem] font-bold uppercase tracking-wider text-ink/40">{t('Date of birth')}</span>
                   <input value={form.dateOfBirth || ''} onChange={set('dateOfBirth')} type="date" className="field pt-6 pb-2" />
                 </label>
-                <input value={form.propertyValue || ''} onChange={set('propertyValue')} placeholder="Property / investment value (AED)" className="field" />
+                <input value={form.propertyValue || ''} onChange={set('propertyValue')} placeholder={t('Property / investment value (AED)')} className="field" />
                 <select value={form.familyMembers} onChange={set('familyMembers')} className="field">
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                     <option key={n} value={n}>
-                      {n === 0 ? 'No family members to sponsor' : `${n} family member${n > 1 ? 's' : ''} to sponsor`}
+                      {n === 0 ? t('No family members to sponsor') : `${t('Family members to sponsor:')} ${n}`}
                     </option>
                   ))}
                 </select>
-                <textarea value={form.notes || ''} onChange={set('notes')} rows={3} placeholder="Anything else we should know?" className="field sm:col-span-2 resize-none" />
+                <textarea value={form.notes || ''} onChange={set('notes')} rows={3} placeholder={t('Anything else we should know?')} className="field sm:col-span-2 resize-none" />
               </div>
             </motion.div>
           )}
 
           {step === 2 && (
             <motion.div key="s2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}>
-              <h2 className="font-display text-3xl font-semibold">Upload documents <span className="text-base font-sans font-normal text-ink/45">(optional)</span></h2>
-              <p className="mt-1 text-sm text-ink/55">Passport copy, photo, title deed / Oqood, SPA, Emirates ID… You can also upload later from your account.</p>
+              <h2 className="font-display text-3xl font-semibold">{t('Upload documents')} <span className="text-base font-sans font-normal text-ink/45">({t('optional')})</span></h2>
+              <p className="mt-1 text-sm text-ink/55">{t('Passport copy, photo, title deed / Oqood, SPA, Emirates ID… You can also upload later from your account.')}</p>
               <div
                 onClick={() => fileRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
@@ -189,8 +191,8 @@ export default function ApplyWizard() {
                 className="mt-6 cursor-pointer rounded-3xl border-2 border-dashed border-gold/40 bg-sand/60 p-8 text-center transition hover:border-gold hover:bg-sand"
               >
                 <Upload className="mx-auto h-10 w-10 text-gold-deep" />
-                <p className="mt-3 font-bold">Drop files here or click to browse</p>
-                <p className="text-xs text-ink/50">PDF, JPG, PNG, HEIC or Word · max 15 MB each · up to 10 files</p>
+                <p className="mt-3 font-bold">{t('Drop files here or click to browse')}</p>
+                <p className="text-xs text-ink/50">{t('PDF, JPG, PNG, HEIC or Word · max 15 MB each · up to 10 files')}</p>
                 <input ref={fileRef} type="file" multiple hidden accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.doc,.docx" onChange={(e) => addFiles(e.target.files)} />
               </div>
               {files.length > 0 && (
@@ -210,20 +212,20 @@ export default function ApplyWizard() {
               {!me ? (
                 <div className="mt-8 rounded-3xl bg-ink p-6 text-white">
                   <p className="flex items-center gap-2 font-bold">
-                    <Lock className="h-4 w-4 text-gold" /> Create your secure client account
+                    <Lock className="h-4 w-4 text-gold" /> {t('Create your secure client account')}
                   </p>
-                  <p className="mt-1 text-xs text-white/55">Your login email: {form.email}. Already have an account? <Link href="/login?next=/apply" className="text-gold underline">Sign in first</Link>.</p>
-                  <input value={form.password || ''} onChange={set('password')} type="password" placeholder="Choose a password (min 8 characters)" className="field mt-4 !bg-white/5 !border-white/15 !text-white" />
+                  <p className="mt-1 text-xs text-white/55">{t('Your login email:')} {form.email}. {t('Already have an account?')} <SmartLink href="/login?next=/apply" className="text-gold underline">{t('Sign in first')}</SmartLink>.</p>
+                  <input value={form.password || ''} onChange={set('password')} type="password" placeholder={t('Choose a password (min 8 characters)')} className="field mt-4 !bg-white/5 !border-white/15 !text-white" />
                 </div>
               ) : (
                 <p className="mt-8 flex items-center gap-2 rounded-2xl bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
-                  <Sparkles className="h-4 w-4" /> Signed in as {me.email}. This application will appear in your account.
+                  <Sparkles className="h-4 w-4" /> {t('Signed in as')} {me.email}. {t('This application will appear in your account.')}
                 </p>
               )}
 
               <label className="mt-6 flex items-start gap-3 text-sm text-ink/70">
                 <input type="checkbox" checked={!!form.agree} onChange={(e) => setForm((f) => ({ ...f, agree: e.target.checked ? '1' : '' }))} className="mt-1 h-4 w-4 accent-[var(--brand-gold)]" />
-                I confirm the information is correct and agree to be contacted about my application. Final visa decisions rest with UAE authorities.
+                {t('I confirm the information is correct and agree to be contacted about my application. Final visa decisions rest with UAE authorities.')}
               </label>
             </motion.div>
           )}
@@ -234,15 +236,15 @@ export default function ApplyWizard() {
 
       <div className="flex items-center justify-between border-t border-ink/5 bg-sand/40 px-6 py-5 md:px-10">
         <button onClick={() => setStep((s) => Math.max(0, s - 1))} className={cn('btn btn-outline btn-sm', step === 0 && 'invisible')}>
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> {t('Back')}
         </button>
         {step < 2 ? (
           <button onClick={next} className="btn btn-gold">
-            Continue <ArrowRight className="h-4 w-4" />
+            {t('Continue')} <ArrowRight className="h-4 w-4" />
           </button>
         ) : (
           <button onClick={submit} disabled={loading} className="btn btn-gold">
-            {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <CircleCheck className="h-4 w-4" />} Submit application
+            {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <CircleCheck className="h-4 w-4" />} {t('Submit application')}
           </button>
         )}
       </div>

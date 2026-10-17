@@ -6,6 +6,7 @@ import SmartLink from '@/components/ui/SmartLink';
 import Counter from '@/components/ui/Counter';
 import { SocialIcon } from '@/components/ui/Icon';
 import { lines } from '@/lib/utils';
+import { useT } from '@/components/site/SiteProvider';
 
 export function Skyline({ className }: { className?: string }) {
   return (
@@ -41,6 +42,7 @@ export function Skyline({ className }: { className?: string }) {
 }
 
 function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
+  const t = useT();
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -73,7 +75,7 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
         <div className="relative flex h-full flex-col justify-between text-ink" style={{ transform: 'translateZ(40px)' }}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[0.62rem] font-extrabold tracking-[0.3em] opacity-70">UNITED ARAB EMIRATES</p>
+              <p className="text-[0.62rem] font-extrabold tracking-[0.3em] opacity-70">{t('UNITED ARAB EMIRATES')}</p>
               <p className="font-display text-2xl md:text-[1.7rem] font-bold leading-tight mt-1">{title || 'UAE Golden Residency'}</p>
             </div>
             <svg viewBox="0 0 24 24" className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round">
@@ -93,11 +95,11 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-[0.6rem] font-bold tracking-[0.25em] opacity-60">HOLDER</p>
-              <p className="font-semibold tracking-wider">YOUR NAME HERE</p>
+              <p className="text-[0.6rem] font-bold tracking-[0.25em] opacity-60">{t('HOLDER')}</p>
+              <p className="font-semibold tracking-wider">{t('YOUR NAME HERE')}</p>
             </div>
             <div className="text-right">
-              <p className="text-[0.6rem] font-bold tracking-[0.25em] opacity-60">VALIDITY</p>
+              <p className="text-[0.6rem] font-bold tracking-[0.25em] opacity-60">{t('VALIDITY')}</p>
               <p className="font-semibold tracking-wider">{subtitle || '10 YEARS'}</p>
             </div>
           </div>
@@ -115,8 +117,8 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
             <Zap className="h-5 w-5" />
           </span>
           <div>
-            <p className="text-xs text-ink/50">Fast-track approval</p>
-            <p className="text-sm font-extrabold text-ink">In 48 working hours</p>
+            <p className="text-xs text-ink/50">{t('Fast-track approval')}</p>
+            <p className="text-sm font-extrabold text-ink">{t('In 48 working hours')}</p>
           </div>
         </div>
       </motion.div>
@@ -131,8 +133,8 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
             <Users className="h-5 w-5" />
           </span>
           <div>
-            <p className="text-xs text-white/60">Sponsor your</p>
-            <p className="text-sm font-bold">Spouse, children & parents</p>
+            <p className="text-xs text-white/60">{t('Sponsor your')}</p>
+            <p className="text-sm font-bold">{t('Spouse, children & parents')}</p>
           </div>
         </div>
       </motion.div>

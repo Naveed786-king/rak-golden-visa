@@ -1,0 +1,267 @@
+// Machine translation engine. Providers:
+//   google  - free Google Translate web endpoint (no key, default)
+//   claude  - Anthropic Claude API (best quality, needs API key)
+//   deepl   - DeepL API (needs API key; falls back to Google for unsupported languages)
+import crypto from 'crypto';
+import { prisma } from '../db';
+import { getSetting } from '../settings';
+import { localeInfo } from './config';
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const hash = (s: string) => crypto.createHash('sha1').update(s).digest('hex');
+const hasLetters = (s: string) => /\p{L}/u.test(s);
+
+/* ------------------------------------------------------------------ memory */
+async function memGet(locale: string, texts: string[]) {
+  const keys = texts.map((t) => `${locale}:${hash(t)}`);
+  try {
+    const rows = await prisma.translationMemory.findMany({ where: { key: { in: keys } } });
+    const map = new Map(rows.map((r) => [r.key, r.text]));
+    return keys.map((k) => map.get(k));
+  } catch {
+    return keys.map(() => undefined);
+  }
+}
+async function memSet(locale: string, pairs: [string, string][]) {
+  for (const [src, out] of pairs) {
+    if (!out || out === src) continue;
+    const key = `${locale}:${hash(src)}`;
+    await prisma.translationMemory.upsert({ where: { key }, update: { text: out }, create: { key, text: out } }).catch(() => {});
+  }
+}
+
+/* ------------------------------------------------------------------ google */
+async function googleOne(text: string, target: string, attempt = 0): Promise<string> {
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${encodeURIComponent(target)}&dt=t`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': 'Mozilla/5.0' },
+    body: 'q=' + encodeURIComponent(text),
+  });
+  if (res.status === 429 || res.status >= 500) {
+    if (attempt < 4) {
+      await sleep(1500 * (attempt + 1));
+      return googleOne(text, target, attempt + 1);
+    }
+  }
+  if (!res.ok) throw new Error(`Google translate HTTP ${res.status}`);
+  const data: any = await res.json();
+  return (data?.[0] || []).map((p: any) => p?.[0] || '').join('');
+}
+
+/** Translates many single-line strings with as few requests as possible */
+async function googleMany(texts: string[], target: string): Promise<string[]> {
+  const out: string[] = new Array(texts.length);
+  let batch: number[] = [];
+  let size = 0;
+  const flush = async () => {
+    if (!batch.length) return;
+    const joined = batch.map((i) => texts[i]).join('\n');
+    let parts: string[] | null = null;
+    try {
+      const tr = await googleOne(joined, target);
+      parts = tr.split('\n');
+      if (parts.length !== batch.length) parts = null;
+    } catch {
+      parts = null;
+    }
+    if (parts) batch.forEach((i, k) => (out[i] = parts![k].trim()));
+    else {
+      for (const i of batch) {
+        try {
+          out[i] = (await googleOne(texts[i], target)).trim();
+        } catch {
+          out[i] = texts[i];
+        }
+        await sleep(120);
+      }
+    }
+    batch = [];
+    size = 0;
+    await sleep(150);
+  };
+  for (let i = 0; i < texts.length; i++) {
+    const len = texts[i].length + 1;
+    if (size + len > 3500) await flush();
+    batch.push(i);
+    size += len;
+  }
+  await flush();
+  return out;
+}
+
+/* ------------------------------------------------------------------ claude */
+async function claudeCall(apiKey: string, model: string, system: string, content: string) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model, max_tokens: 16000, system, messages: [{ role: 'user', content }] }),
+  });
+  if (!res.ok) throw new Error(`Claude API HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const d: any = await res.json();
+  return (d.content || []).map((c: any) => c.text || '').join('');
+}
+const SYS = (lang: string) =>
+  `You are a professional translator for a UAE Golden Visa consultancy website. Translate from English to ${lang}. Keep brand names (RAK Golden Visa, Brightlink, ICP, Emirates ID, Oqood, AED amounts, phone numbers, emails, URLs) unchanged. Use natural, formal, persuasive language.`;
+
+async function claudeMany(texts: string[], locale: string, apiKey: string, model: string) {
+  const lang = localeInfo(locale).name;
+  const out: string[] = [];
+  for (let i = 0; i < texts.length; i += 80) {
+    const chunk = texts.slice(i, i + 80);
+    const raw = await claudeCall(apiKey, model, SYS(lang), `Translate each string in this JSON array. Reply with ONLY a JSON array of the same length, same order.\n\n${JSON.stringify(chunk)}`);
+    const m = raw.match(/\[[\s\S]*\]/);
+    const arr = m ? JSON.parse(m[0]) : null;
+    if (!Array.isArray(arr) || arr.length !== chunk.length) throw new Error('Claude returned an invalid translation list');
+    out.push(...arr.map(String));
+  }
+  return out;
+}
+
+/* ------------------------------------------------------------------ deepl */
+async function deeplMany(texts: string[], locale: string, apiKey: string, html = false) {
+  const target = localeInfo(locale).deepl;
+  if (!target) throw new Error('DeepL does not support ' + locale);
+  const host = apiKey.endsWith(':fx') ? 'https://api-free.deepl.com' : 'https://api.deepl.com';
+  const out: string[] = [];
+  for (let i = 0; i < texts.length; i += 40) {
+    const body = new URLSearchParams();
+    texts.slice(i, i + 40).forEach((t) => body.append('text', t));
+    body.set('source_lang', 'EN');
+    body.set('target_lang', target);
+    if (html) body.set('tag_handling', 'html');
+    const res = await fetch(`${host}/v2/translate`, { method: 'POST', headers: { Authorization: `DeepL-Auth-Key ${apiKey}` }, body });
+    if (!res.ok) throw new Error(`DeepL HTTP ${res.status}`);
+    const d: any = await res.json();
+    out.push(...d.translations.map((t: any) => t.text));
+  }
+  return out;
+}
+
+/* ------------------------------------------------------------------ public */
+export async function translationConfig() {
+  return getSetting('translation');
+}
+
+/** Translate plain strings (multi-line strings are translated line by line). Returns same-length array. */
+export async function translateTexts(texts: string[], locale: string): Promise<string[]> {
+  if (texts.some((t) => t && t.includes('\n'))) {
+    const flat: string[] = [];
+    const shape = texts.map((t) => {
+      const ls = (t || '').split('\n');
+      flat.push(...ls);
+      return ls.length;
+    });
+    const tr = await translateLines(flat, locale);
+    let k = 0;
+    return shape.map((n) => tr.slice(k, (k += n)).join('\n'));
+  }
+  return translateLines(texts, locale);
+}
+
+async function translateLines(texts: string[], locale: string): Promise<string[]> {
+  const cfg = await translationConfig();
+  const result: string[] = texts.slice();
+  const idx: number[] = [];
+  texts.forEach((t, i) => {
+    if (t && hasLetters(t)) idx.push(i);
+  });
+  if (!idx.length || cfg.provider === 'off') return result;
+
+  const unique = Array.from(new Set(idx.map((i) => texts[i])));
+  const cached = await memGet(locale, unique);
+  const todo = unique.filter((_, k) => !cached[k]);
+  const map = new Map<string, string>();
+  unique.forEach((u, k) => cached[k] && map.set(u, cached[k]!));
+
+  if (todo.length) {
+    let translated: string[];
+    const target = localeInfo(locale).google;
+    try {
+      if (cfg.provider === 'claude' && cfg.apiKey) translated = await claudeMany(todo, locale, cfg.apiKey, cfg.model || 'claude-haiku-5-5');
+      else if (cfg.provider === 'deepl' && cfg.apiKey) translated = await deeplMany(todo, locale, cfg.apiKey);
+      else translated = await googleMany(todo, target);
+    } catch (e) {
+      console.error('[translate] provider failed, using Google:', (e as Error).message);
+      translated = await googleMany(todo, target);
+    }
+    todo.forEach((t, k) => translated[k] && map.set(t, translated[k]));
+    await memSet(locale, todo.map((t, k) => [t, translated[k]] as [string, string]));
+  }
+  idx.forEach((i) => (result[i] = map.get(texts[i]) || texts[i]));
+  return result;
+}
+
+const BLOCK_TAG = /^<\/?(p|div|h[1-6]|li|ul|ol|table|thead|tbody|tr|td|th|blockquote|section|article|br|hr|img|figure|figcaption)\b/i;
+
+/** Translate an HTML fragment, keeping all tags. */
+export async function translateHtml(html: string, locale: string): Promise<string> {
+  if (!html || !hasLetters(html.replace(/<[^>]+>/g, ''))) return html;
+  const cfg = await translationConfig();
+  if (cfg.provider === 'off') return html;
+
+  const [cachedWhole] = await memGet(locale, [html]);
+  if (cachedWhole) return cachedWhole;
+
+  if ((cfg.provider === 'claude' || cfg.provider === 'deepl') && cfg.apiKey) {
+    try {
+      let out: string;
+      if (cfg.provider === 'claude') {
+        out = await claudeCall(cfg.apiKey, cfg.model || 'claude-haiku-5-5', SYS(localeInfo(locale).name), `Translate the text inside this HTML. Keep every HTML tag and attribute exactly as it is. Reply with ONLY the translated HTML.\n\n${html}`);
+        out = out.replace(/^```(?:html)?\s*|\s*```$/g, '').trim();
+      } else {
+        out = (await deeplMany([html], locale, cfg.apiKey, true))[0];
+      }
+      await memSet(locale, [[html, out]]);
+      return out;
+    } catch (e) {
+      console.error('[translate] html provider failed, using Google:', (e as Error).message);
+    }
+  }
+
+  // Google: split into "runs" of text + inline tags between block-level tags
+  const tokens = html.split(/(<[^>]+>)/g).filter((t) => t !== '');
+  const runs: { tokens: string[]; block: boolean }[] = [];
+  let cur: string[] = [];
+  const push = () => {
+    if (cur.length) runs.push({ tokens: cur, block: false });
+    cur = [];
+  };
+  for (const t of tokens) {
+    if (t.startsWith('<') && BLOCK_TAG.test(t)) {
+      push();
+      runs.push({ tokens: [t], block: true });
+    } else cur.push(t);
+  }
+  push();
+
+  // Try each run as a whole (keeps sentence context); verify tags survived
+  const texts = runs.map((r) => (r.block ? '' : r.tokens.join('').replace(/\s+/g, ' ')));
+  const whole = await translateTexts(texts.map((t) => (t && hasLetters(t.replace(/<[^>]+>/g, '')) ? t : '')), locale);
+  const out: string[] = [];
+  for (let i = 0; i < runs.length; i++) {
+    const r = runs[i];
+    if (r.block || !texts[i] || !hasLetters(texts[i].replace(/<[^>]+>/g, ''))) {
+      out.push(r.tokens.join(''));
+      continue;
+    }
+    const srcTags = (texts[i].match(/<[^>]+>/g) || []).map((t) => t.replace(/\s+/g, ' ')).sort().join('|');
+    const outTags = (whole[i].match(/<[^>]+>/g) || []).map((t) => t.replace(/\s+/g, ' ')).sort().join('|');
+    if (srcTags === outTags) out.push(whole[i]);
+    else {
+      // fall back: translate the text pieces separately
+      const parts = r.tokens.map((t) => (t.startsWith('<') ? '' : t));
+      const tr = await translateTexts(parts.map((p) => p.trim()), locale);
+      out.push(r.tokens.map((t, k) => (t.startsWith('<') || !parts[k].trim() ? t : t.replace(parts[k].trim(), tr[k]))).join(''));
+    }
+  }
+  const result = out.join('');
+  await memSet(locale, [[html, result]]);
+  return result;
+}
+
+/** Quick self-test used by the admin panel */
+export async function testTranslation(locale = 'ar') {
+  const [out] = await translateTexts(['Apply for your Golden Visa today'], locale);
+  return out;
+}

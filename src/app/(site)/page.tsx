@@ -1,24 +1,28 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPage } from '@/lib/data';
-import { getSetting } from '@/lib/settings';
+import { getLocalizedBundle } from '@/lib/settings';
+import { getLocale } from '@/lib/i18n/server';
+import { seoAlternates } from '@/lib/i18n/config';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
   const page = await getPage('home');
-  const site = await getSetting('site');
+  const { site } = await getLocalizedBundle(locale);
   return {
     title: { absolute: page?.metaTitle || site.seo.defaultTitle },
     description: page?.metaDescription || site.seo.description,
-    alternates: { canonical: '/' },
+    alternates: seoAlternates('/', locale),
     openGraph: page?.ogImage ? { images: [page.ogImage] } : undefined,
   };
 }
 
 export default async function HomePage() {
-  const [page, site] = await Promise.all([getPage('home'), getSetting('site')]);
+  const locale = await getLocale();
+  const [page, { site }] = await Promise.all([getPage('home'), getLocalizedBundle(locale)]);
   if (!page) notFound();
   const orgSchema = {
     '@context': 'https://schema.org',

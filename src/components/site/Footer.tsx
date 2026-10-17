@@ -5,6 +5,7 @@ import SmartLink from '@/components/ui/SmartLink';
 import { SocialIcon } from '@/components/ui/Icon';
 import NewsletterForm from './NewsletterForm';
 import Reveal from '@/components/ui/Reveal';
+import T from '@/components/ui/T';
 
 export default function Footer({ site, footer }: { site: SiteSettings; footer: FooterSettings }) {
   const year = new Date().getFullYear();
@@ -63,7 +64,7 @@ export default function Footer({ site, footer }: { site: SiteSettings; footer: F
         ))}
 
         <div className="lg:col-span-4 space-y-4">
-          <h4 className="text-xs font-extrabold uppercase tracking-[0.25em] text-gold">Get in touch</h4>
+          <h4 className="text-xs font-extrabold uppercase tracking-[0.25em] text-gold"><T>Get in touch</T></h4>
           <a href={site.mapUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex gap-3 text-sm text-white/65 hover:text-white">
             <MapPin className="h-5 w-5 shrink-0 text-gold" />
             <span>
@@ -101,7 +102,7 @@ export default function Footer({ site, footer }: { site: SiteSettings; footer: F
         {footer.disclaimer && (
           <div className="container-x pb-8">
             <p className="text-[0.7rem] leading-relaxed text-white/35">
-              <strong className="text-white/55">Disclaimer:</strong> {footer.disclaimer}
+              <strong className="text-white/55"><T>Disclaimer:</T></strong> {footer.disclaimer}
             </p>
           </div>
         )}

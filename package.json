@@ -12,7 +12,8 @@
     "start:cpanel": "node server.js",
     "seed": "node prisma/seed.mjs",
     "seed:reset": "node prisma/seed.mjs --force",
-    "create-admin": "node prisma/create-admin.mjs"
+    "create-admin": "node prisma/create-admin.mjs",
+    "i18n:scan": "node scripts/scan-ui-strings.mjs"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.2.0",

@@ -7,7 +7,9 @@ import '@fontsource-variable/manrope';
 import '@fontsource/noto-kufi-arabic/400.css';
 import '@fontsource/noto-kufi-arabic/600.css';
 import './globals.css';
-import { getSetting } from '@/lib/settings';
+import { getSetting, getLocalizedBundle } from '@/lib/settings';
+import { getLocale } from '@/lib/i18n/server';
+import { localeInfo } from '@/lib/i18n/config';
 
 // Always render with live data from the database (admin changes appear instantly)
 export const dynamic = 'force-dynamic';
@@ -15,7 +17,8 @@ export const dynamic = 'force-dynamic';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const site = await getSetting('site');
+  const locale = await getLocale();
+  const { site } = await getLocalizedBundle(locale);
   return {
     metadataBase: new URL(SITE_URL),
     title: { default: site.seo.defaultTitle, template: site.seo.titleTemplate || `%s | ${site.name}` },
@@ -29,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: site.seo.defaultTitle,
       description: site.seo.description,
       images: site.seo.ogImage ? [site.seo.ogImage] : undefined,
-      locale: 'en_AE',
+      locale: localeInfo(locale).htmlLang.replace('-', '_'),
     },
     twitter: { card: 'summary_large_image' },
   };
@@ -43,10 +46,12 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const site = await getSetting('site');
+  const locale = await getLocale();
+  const info = localeInfo(locale);
   const c = site.colors;
   const vars = `:root{--brand-gold:${c.gold};--brand-gold-light:${c.goldLight};--brand-ink:${c.ink};--brand-sand:${c.sand};}`;
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={info.htmlLang} dir={info.dir} suppressHydrationWarning>
       <head>
         <style dangerouslySetInnerHTML={{ __html: vars }} />
       </head>

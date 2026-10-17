@@ -1,5 +1,6 @@
 import { Check, Crown } from 'lucide-react';
 import { Skyline } from '@/components/blocks/Hero';
+import T from '@/components/ui/T';
 
 export default function AuthShell({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   const perks = ['Track your visa application in real time', 'Upload documents securely', 'Chat directly with your consultant', 'Get instant status notifications'];
@@ -14,7 +15,7 @@ export default function AuthShell({ title, subtitle, children }: { title: string
               <Crown className="h-7 w-7" />
             </span>
             <h2 className="mt-8 font-display text-5xl font-semibold leading-tight !text-white">
-              Your <span className="text-gold-gradient italic">Golden Visa</span> journey, in one place.
+              <T>Your Golden Visa journey, in one place.</T>
             </h2>
             <ul className="mt-10 space-y-4">
               {perks.map((p) => (
@@ -22,7 +23,7 @@ export default function AuthShell({ title, subtitle, children }: { title: string
                   <span className="grid h-7 w-7 place-items-center rounded-full bg-gold/20 text-gold">
                     <Check className="h-4 w-4" strokeWidth={3} />
                   </span>
-                  {p}
+                  <T>{p}</T>
                 </li>
               ))}
             </ul>
@@ -30,8 +31,8 @@ export default function AuthShell({ title, subtitle, children }: { title: string
           <Skyline className="absolute bottom-0 left-0 h-40 w-full text-gold/15" />
         </div>
         <div className="mx-auto w-full max-w-md">
-          <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink">{title}</h1>
-          {subtitle && <p className="mt-3 text-ink/60">{subtitle}</p>}
+          <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink"><T>{title}</T></h1>
+          {subtitle && <p className="mt-3 text-ink/60"><T>{subtitle}</T></p>}
           <div className="mt-8">{children}</div>
         </div>
       </div>

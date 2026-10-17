@@ -206,3 +206,25 @@ model Subscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 }
+
+model Translation {
+  id         String   @id @default(cuid())
+  entity     String
+  entityId   String
+  locale     String
+  data       String   @db.LongText
+  status     String   @default("auto")
+  sourceHash String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([entity, entityId, locale])
+  @@index([locale])
+}
+
+model TranslationMemory {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+}

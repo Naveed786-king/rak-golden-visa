@@ -5,8 +5,10 @@ import { Phone, ArrowUp, X } from 'lucide-react';
 import type { SiteSettings } from '@/lib/defaults';
 import { SocialIcon } from '@/components/ui/Icon';
 import { resolveHref } from '@/components/ui/href';
+import { useT } from './SiteProvider';
 
 export default function Floating({ site }: { site: SiteSettings }) {
+  const t = useT();
   const [show, setShow] = useState(false);
   const [bubble, setBubble] = useState(false);
 
@@ -49,10 +51,10 @@ export default function Floating({ site }: { site: SiteSettings }) {
                 <button onClick={closeBubble} className="absolute right-2 top-2 text-ink/40 hover:text-ink" aria-label="Close">
                   <X className="h-4 w-4" />
                 </button>
-                <p className="text-sm font-bold text-ink">Marhaba! 👋</p>
-                <p className="mt-1 text-xs text-ink/60">Questions about your Golden Visa? Our consultants reply on WhatsApp within minutes.</p>
+                <p className="text-sm font-bold text-ink">{t('Marhaba! 👋')}</p>
+                <p className="mt-1 text-xs text-ink/60">{t('Questions about your Golden Visa? Our consultants reply on WhatsApp within minutes.')}</p>
                 <a href={wa} target="_blank" rel="noopener noreferrer" onClick={closeBubble} className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-xs font-bold text-white">
-                  <SocialIcon name="whatsapp" className="h-4 w-4" /> Start chat
+                  <SocialIcon name="whatsapp" className="h-4 w-4" /> {t('Start chat')}
                 </a>
               </motion.div>
             )}
@@ -82,10 +84,10 @@ export default function Floating({ site }: { site: SiteSettings }) {
         <div className="fixed inset-x-0 bottom-0 z-40 md:hidden border-t border-white/10 bg-ink/95 backdrop-blur-xl px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
           <div className="grid grid-cols-2 gap-2">
             <a href={`tel:${site.phone}`} className="btn btn-ghost-light btn-sm">
-              <Phone className="h-4 w-4 text-gold" /> Call now
+              <Phone className="h-4 w-4 text-gold" /> {t('Call now')}
             </a>
             <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-sm bg-[#25D366] text-white">
-              <SocialIcon name="whatsapp" className="h-4 w-4" /> WhatsApp
+              <SocialIcon name="whatsapp" className="h-4 w-4" /> {t('WhatsApp')}
             </a>
           </div>
         </div>
