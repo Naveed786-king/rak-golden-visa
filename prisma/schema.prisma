@@ -231,3 +231,13 @@ model TranslationMemory {
   text      String
   createdAt DateTime @default(now())
 }
+
+// Uploaded files kept inside the database (used on hosts without a permanent disk, e.g. Vercel)
+model StoredFile {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  data      Bytes
+  mime      String?
+  size      Int      @default(0)
+  createdAt DateTime @default(now())
+}

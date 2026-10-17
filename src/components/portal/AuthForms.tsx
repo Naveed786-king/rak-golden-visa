@@ -63,6 +63,43 @@ export function LoginForm({ admin = false }: { admin?: boolean }) {
   );
 }
 
+/** First-run form shown on /admin/login while no admin account exists */
+export function AdminSetupForm() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    const fd = new FormData(e.currentTarget);
+    if (fd.get('password') !== fd.get('password2')) {
+      setError('The two passwords do not match');
+      setLoading(false);
+      return;
+    }
+    try {
+      const d = await post('/api/auth/setup', { name: fd.get('name'), email: fd.get('email'), password: fd.get('password') });
+      window.location.href = d.redirect;
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  }
+  return (
+    <form onSubmit={submit} className="space-y-4">
+      <p className="rounded-xl bg-gold/10 px-4 py-3 text-sm text-ink/70">Welcome! Create your admin account to start managing the website.</p>
+      <input name="name" required placeholder="Your name" className="field" autoComplete="name" />
+      <input name="email" type="email" required placeholder="Admin email address" className="field" autoComplete="email" />
+      <PasswordInput name="password" required minLength={8} placeholder="Choose a password (min 8 characters)" autoComplete="new-password" />
+      <PasswordInput name="password2" required minLength={8} placeholder="Repeat the password" autoComplete="new-password" />
+      {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
+      <button disabled={loading} className="btn btn-gold w-full">
+        {loading && <LoaderCircle className="h-4 w-4 animate-spin" />} Create admin account
+      </button>
+    </form>
+  );
+}
+
 export function RegisterForm() {
   const t = useT();
   const L = useLocalize();

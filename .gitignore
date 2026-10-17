@@ -9,3 +9,4 @@ uploads/*
 npm-debug.log*
 .DS_Store
 ADMIN-LOGIN.txt
+prisma/postgres/

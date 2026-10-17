@@ -2,7 +2,8 @@
 import { getSetting } from './lib/settings';
 import { enqueueAll } from './lib/i18n/jobs';
 
-if (process.env.DISABLE_AUTO_TRANSLATE !== '1') {
+// Not on Vercel: there a daily job (/api/cron/translate) and the admin panel do this instead.
+if (process.env.DISABLE_AUTO_TRANSLATE !== '1' && !process.env.VERCEL) {
   setTimeout(async () => {
     try {
       const cfg = await getSetting('translation');

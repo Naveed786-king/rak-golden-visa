@@ -1,12 +1,14 @@
 import { Suspense } from 'react';
 import { Crown } from 'lucide-react';
-import { LoginForm } from '@/components/portal/AuthForms';
+import { LoginForm, AdminSetupForm } from '@/components/portal/AuthForms';
+import { prisma } from '@/lib/db';
 import { getSetting } from '@/lib/settings';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminLogin() {
   const site = await getSetting('site');
+  const firstRun = (await prisma.user.count({ where: { role: 'ADMIN' } })) === 0;
   return (
     <main className="theme-dark relative grid min-h-screen place-items-center overflow-hidden px-4">
       <div className="absolute inset-0 bg-pattern opacity-[0.06]" />
@@ -15,11 +17,11 @@ export default async function AdminLogin() {
         <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-gold-light to-gold text-ink">
           <Crown className="h-7 w-7" />
         </span>
-        <h1 className="mt-6 font-display text-4xl font-semibold !text-ink">Admin login</h1>
+        <h1 className="mt-6 font-display text-4xl font-semibold !text-ink">{firstRun ? 'Create admin account' : 'Admin login'}</h1>
         <p className="mt-1 text-sm text-ink/55">{site.name} control panel</p>
         <div className="mt-8">
           <Suspense>
-            <LoginForm admin />
+            {firstRun ? <AdminSetupForm /> : <LoginForm admin />}
           </Suspense>
         </div>
       </div>

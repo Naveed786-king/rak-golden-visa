@@ -5,15 +5,16 @@
   "description": "RAK Golden Visa - Next.js website with full admin CMS and customer portal",
   "scripts": {
     "dev": "next dev",
-    "setup": "prisma generate && prisma db push --skip-generate && node prisma/seed.mjs",
-    "build": "prisma generate && next build",
-    "db:prepare": "prisma db push --skip-generate && node prisma/seed.mjs",
+    "setup": "node scripts/db.mjs generate && node scripts/db.mjs prepare",
+    "build": "node scripts/db.mjs generate && next build",
+    "db:prepare": "node scripts/db.mjs prepare",
     "start": "npm run db:prepare && next start",
     "start:cpanel": "node server.js",
     "seed": "node prisma/seed.mjs",
     "seed:reset": "node prisma/seed.mjs --force",
     "create-admin": "node prisma/create-admin.mjs",
-    "i18n:scan": "node scripts/scan-ui-strings.mjs"
+    "i18n:scan": "node scripts/scan-ui-strings.mjs",
+    "vercel-build": "node scripts/db.mjs generate && node scripts/db.mjs prepare && next build"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.2.0",

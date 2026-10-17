@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
+// On Vercel the public address is known automatically
+const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+if (!process.env.NEXT_PUBLIC_SITE_URL && vercelUrl) process.env.NEXT_PUBLIC_SITE_URL = `https://${vercelUrl}`;
+
 const nextConfig = {
+  env: process.env.NEXT_PUBLIC_SITE_URL ? { NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL } : {},
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,

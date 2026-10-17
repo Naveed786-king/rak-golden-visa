@@ -1,4 +1,5 @@
 // Background translation queue (runs inside the website server process).
+import { after } from 'next/server';
 import { getSetting } from '../settings';
 import { TRANSLATED_LOCALES } from './config';
 import { translateEntity, allTranslatableEntities, Entity } from './content';
@@ -41,6 +42,26 @@ export async function enqueue(entity: Entity, id: string, opts: { locales?: stri
     else Q.queue.push(job);
   }
   run();
+  keepAlive();
+}
+
+/** Resolves when the queue is empty (or after maxMs). */
+export async function waitIdle(maxMs: number) {
+  const end = Date.now() + maxMs;
+  while ((Q.running || Q.queue.length) && Date.now() < end) await new Promise((r) => setTimeout(r, 500));
+}
+
+/**
+ * Serverless hosts (Vercel) freeze the process after the response is sent.
+ * after() keeps the function alive so background translations can finish.
+ */
+export function keepAlive(maxMs = 55_000) {
+  if (!process.env.VERCEL || (!Q.running && !Q.queue.length)) return;
+  try {
+    after(() => waitIdle(maxMs));
+  } catch {
+    // called outside a request (e.g. startup) - nothing to keep alive
+  }
 }
 
 /** Called after content is saved in the admin panel */

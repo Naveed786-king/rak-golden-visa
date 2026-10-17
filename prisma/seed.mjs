@@ -18,6 +18,7 @@ if (existsSync(envFile)) {
   }
 }
 
+if (!process.env.DATABASE_URL) process.env.DATABASE_URL = process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || '';
 const prisma = new PrismaClient();
 const force = process.argv.includes('--force');
 const C = await import('./content.mjs');
@@ -26,7 +27,10 @@ const faqs = JSON.parse(readFileSync(path.join(__dirname, 'faqs.json'), 'utf8'))
 async function main() {
   // 1) Admin user
   const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
-  if (adminCount === 0) {
+  if (adminCount === 0 && !process.env.ADMIN_PASSWORD && (process.env.VERCEL || process.env.ADMIN_SETUP === 'web')) {
+    // No default password on public hosting: the first visitor of /admin/login creates the admin account.
+    console.log('ℹ No admin yet - open /admin/login on your website to create the admin account.');
+  } else if (adminCount === 0) {
     const email = (process.env.ADMIN_EMAIL || 'admin@rakgoldenvisa.com').toLowerCase();
     const password = process.env.ADMIN_PASSWORD || 'Admin@12345';
     await prisma.user.upsert({

@@ -6,7 +6,7 @@ const path = require('path');
 
 // Create/update database tables and load the starting content (only if empty)
 try {
-  execSync('npx prisma db push --skip-generate && node prisma/seed.mjs', { cwd: __dirname, stdio: 'inherit' });
+  execSync('node scripts/db.mjs prepare', { cwd: __dirname, stdio: 'inherit' });
 } catch (e) {
   console.error('Database preparation failed:', e.message);
 }

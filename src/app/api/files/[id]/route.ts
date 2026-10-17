@@ -1,8 +1,7 @@
-import { promises as fs } from 'fs';
 import path from 'path';
 import { prisma } from '@/lib/db';
 import { getSession, isStaff } from '@/lib/auth';
-import { resolveStored, MIME } from '@/lib/upload';
+import { resolveStored, readStored, MIME } from '@/lib/upload';
 
 // Private application documents - only the owner or staff can download
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -15,7 +14,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const p = resolveStored(doc.path);
   if (!p) return new Response('Not found', { status: 404 });
   try {
-    const data = await fs.readFile(p);
+    const data = await readStored(doc.path);
+    if (!data) throw new Error('missing');
     return new Response(new Uint8Array(data), {
       headers: {
         'Content-Type': doc.mime || MIME[path.extname(p).toLowerCase()] || 'application/octet-stream',

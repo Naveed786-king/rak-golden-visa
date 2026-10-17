@@ -172,15 +172,27 @@ Your plan must support **Node.js applications** (cPanel → *Setup Node.js App*,
 SQLite (a single file `prisma/data.db`) is fast and needs no setup — fine for this website. If your host requires MySQL:
 
 1. cPanel → *MySQL Databases*: create a database + user, give the user ALL privileges.
-2. Replace the schema: copy `prisma/schema.mysql.prisma` over `prisma/schema.prisma`.
-3. In `.env`: `DATABASE_URL="mysql://DBUSER:DBPASSWORD@localhost:3306/DBNAME"`
-4. Run `npm run build` (it creates the tables and content automatically).
+2. In `.env`: `DATABASE_URL="mysql://DBUSER:DBPASSWORD@localhost:3306/DBNAME"`
+3. Run `npm run build`. The right database type is picked automatically from `DATABASE_URL` (SQLite, MySQL or PostgreSQL).
 
 ---
 
-## 7. Hosting option C — Vercel (only with an external database)
+## 7. Hosting option C — Vercel (free, always on, no server to manage)
 
-Vercel can't keep files, so you must use a hosted MySQL/Postgres database **and** you can't store uploads on the server. Use a VPS or cPanel instead unless you are a developer.
+Everything works on Vercel: the database is a free hosted PostgreSQL, and uploaded images/documents are stored inside that database.
+
+1. Sign in at **vercel.com** with your GitHub account → **Add New… → Project** → import `rak-golden-visa` → **Deploy**.
+   (The first deploy fails because there is no database yet — that's expected.)
+2. In the project: **Storage → Create Database → Neon (Postgres)** (free) → **Connect** to the project.
+   This adds `DATABASE_URL` automatically.
+3. **Deployments → ⋯ → Redeploy**. The build creates all tables and the website content.
+4. Open `https://YOUR-PROJECT.vercel.app/admin/login` → it asks you to **create the admin account** (only the first time).
+5. Open **Admin → Languages** and leave it open for ~15 minutes: it translates the whole website into all languages.
+   After that, everything you save is translated automatically. A daily job also fills any gaps.
+6. Your own domain: project → **Settings → Domains**.
+
+Optional environment variables (project → Settings → Environment Variables): `JWT_SECRET` (any long random text),
+`NEXT_PUBLIC_SITE_URL` (your domain, e.g. `https://rakgoldenvisa.com`). Uploads on Vercel are limited to 4 MB per file.
 
 ---
 

@@ -12,7 +12,9 @@ export const SESSION_COOKIE = 'rgv_session';
 const MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 function secret() {
-  const s = process.env.JWT_SECRET || 'dev-secret-change-me-please-32-characters!!';
+  // Without JWT_SECRET, the (secret) database address is used as key material so sessions stay secure on Vercel.
+  const db = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || '';
+  const s = process.env.JWT_SECRET || (/^(postgres|mysql)/.test(db) ? 'rgv-session:' + db : 'dev-secret-change-me-please-32-characters!!');
   return new TextEncoder().encode(s);
 }
 
@@ -37,7 +39,7 @@ export async function verifySession(token?: string | null): Promise<SessionPaylo
 export const sessionCookieOptions = {
   httpOnly: true,
   sameSite: 'lax' as const,
-  secure: process.env.NODE_ENV === 'production' && (process.env.NEXT_PUBLIC_SITE_URL || '').startsWith('https'),
+  secure: process.env.NODE_ENV === 'production' && (!!process.env.VERCEL || (process.env.NEXT_PUBLIC_SITE_URL || '').startsWith('https')),
   path: '/',
   maxAge: MAX_AGE,
 };

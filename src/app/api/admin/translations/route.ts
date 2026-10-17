@@ -3,7 +3,8 @@ import { ok, fail, refreshSite } from '@/lib/api';
 import { requireStaff } from '@/lib/auth';
 import { LOCALES, TRANSLATED_LOCALES, isLocale } from '@/lib/i18n/config';
 import { allTranslatableEntities, translateEntity, Entity } from '@/lib/i18n/content';
-import { enqueue, enqueueAll, queueStatus } from '@/lib/i18n/jobs';
+import { enqueue, enqueueAll, queueStatus, keepAlive, targetLocales } from '@/lib/i18n/jobs';
+import { getSetting } from '@/lib/settings';
 import { testTranslation } from '@/lib/i18n/translate';
 import { safeJson } from '@/lib/utils';
 
@@ -45,6 +46,17 @@ export async function GET(req: Request) {
       total,
     };
   });
+  // Serverless (Vercel): while the Languages page is open, keep translating whatever is missing
+  if (process.env.VERCEL) {
+    const q = queueStatus();
+    if (!q.running && !q.pending) {
+      const cfg = await getSetting('translation');
+      const enabled = await targetLocales();
+      const missing = stats.some((x) => enabled.includes(x.locale) && x.done < x.total);
+      if (cfg.autoTranslate && cfg.provider !== 'off' && missing) await enqueueAll(false);
+    }
+    keepAlive();
+  }
   return ok({ stats, queue: queueStatus() });
 }
 

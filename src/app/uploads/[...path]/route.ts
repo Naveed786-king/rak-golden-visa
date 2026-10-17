@@ -1,6 +1,5 @@
-import { promises as fs } from 'fs';
 import path from 'path';
-import { UPLOAD_ROOT, MIME } from '@/lib/upload';
+import { UPLOAD_ROOT, MIME, readStored } from '@/lib/upload';
 
 // Serves public media uploaded from the admin panel: /uploads/media/...
 export async function GET(_req: Request, { params }: { params: Promise<{ path: string[] }> }) {
@@ -9,7 +8,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ path: s
   const file = path.resolve(UPLOAD_ROOT, ...parts);
   if (!file.startsWith(path.join(UPLOAD_ROOT, 'media'))) return new Response('Not found', { status: 404 });
   try {
-    const data = await fs.readFile(file);
+    const data = await readStored(parts.join('/'));
+    if (!data) throw new Error('missing');
     const type = MIME[path.extname(file).toLowerCase()] || 'application/octet-stream';
     return new Response(new Uint8Array(data), {
       headers: {
