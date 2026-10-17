@@ -8,8 +8,7 @@
   },
   "containerEnv": {
     "DATABASE_URL": "file:/workspaces/rgv-data/data.db",
-    "UPLOAD_DIR": "/workspaces/rgv-data/uploads",
-    "NODE_ENV": "production"
+    "UPLOAD_DIR": "/workspaces/rgv-data/uploads"
   },
   "postCreateCommand": "mkdir -p /workspaces/rgv-data && npm install --no-audit --no-fund && npm run build",
   "postStartCommand": "bash .devcontainer/start.sh",
