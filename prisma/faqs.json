@@ -1,0 +1,332 @@
+[
+ {
+  "question": "What is the RAK Golden Visa?",
+  "answer": "<p>The RAK Golden Visa is a long-term UAE residence visa that allows eligible investors and other qualified individuals to live, work, and invest in the UAE with renewable residency.</p>",
+  "group": "home",
+  "order": 0
+ },
+ {
+  "question": "What is the minimum property investment required?",
+  "answer": "<p>Property investors generally need to own real estate in Ras Al Khaimah with a total value of AED 2 million or more under single ownership to qualify.</p>",
+  "group": "home",
+  "order": 1
+ },
+ {
+  "question": "Can I combine multiple properties to qualify?",
+  "answer": "<p>Yes. You can combine the value of multiple eligible properties in Ras Al Khaimah, provided the combined value meets the minimum investment requirement and complies with the applicable regulations.</p>",
+  "group": "home",
+  "order": 2
+ },
+ {
+  "question": "Can I apply with a mortgaged property?",
+  "answer": "<p>Yes. Mortgaged properties may qualify, subject to the current ICP requirements and the submission of a bank No Objection Certificate (NOC), where applicable.</p>",
+  "group": "home",
+  "order": 3
+ },
+ {
+  "question": "Can I sponsor my family?",
+  "answer": "<p>Yes. Golden Visa holders can sponsor their spouse, children, eligible parents, and domestic workers in accordance with UAE immigration regulations.</p>",
+  "group": "home",
+  "order": 4
+ },
+ {
+  "question": "How long is the Golden Visa valid?",
+  "answer": "<p>The RAK Golden Visa is generally issued for 10 years and is renewable, provided the eligibility requirements continue to be met.</p>",
+  "group": "home",
+  "order": 5
+ },
+ {
+  "question": "Can I stay outside the UAE for more than six months?",
+  "answer": "<p>Yes. Golden Visa holders can remain outside the UAE for extended periods without automatically losing their residency status.</p>",
+  "group": "home",
+  "order": 6
+ },
+ {
+  "question": "Do I need to be inside the UAE to apply?",
+  "answer": "<p>Yes. Applicants are generally required to be physically present in the UAE when submitting their Golden Visa application.</p>",
+  "group": "home",
+  "order": 7
+ },
+ {
+  "question": "How long does the application process take?",
+  "answer": "<p>Processing times vary depending on the case and documentation. Complete applications are typically processed within a few working days after all requirements have been fulfilled.</p>",
+  "group": "home",
+  "order": 8
+ },
+ {
+  "question": "Can I sponsor my unmarried adult children under the Golden Visa?",
+  "answer": "<p>Yes. UAE Golden Visa holders may sponsor unmarried children, including adult sons and daughters, subject to the applicable UAE immigration regulations and supporting documentation requirements.</p>",
+  "group": "home",
+  "order": 9
+ },
+ {
+  "question": "Can off-plan properties qualify for the RAK Golden Visa?",
+  "answer": "<p>Yes. Eligible off-plan properties may qualify if they meet the minimum investment requirements and the developer issues the required supporting documents.</p>",
+  "group": "home",
+  "order": 10
+ },
+ {
+  "question": "Can I combine multiple properties to reach AED 2 million?",
+  "answer": "<p>Yes. Multiple properties in Ras Al Khaimah under the same owner’s name can be combined, provided their total value meets the eligibility threshold.</p>",
+  "group": "home",
+  "order": 11
+ },
+ {
+  "question": "Do I need to stay in the UAE continuously to keep the Golden Visa valid?",
+  "answer": "<p>No. Golden Visa holders are not required to stay in the UAE continuously. You can reside abroad for extended periods without affecting your visa status.</p>",
+  "group": "home",
+  "order": 12
+ },
+ {
+  "question": "Can I apply if my property is under mortgage?",
+  "answer": "<p>Yes. Mortgaged properties may qualify, subject to meeting the applicable investment criteria and providing the required bank No Objection Certificate (NOC).</p>",
+  "group": "home",
+  "order": 13
+ },
+ {
+  "question": "Do I need health insurance?",
+  "answer": "<p>Yes. Applicants must have valid UAE health insurance from an approved provider before visa issuance.</p>",
+  "group": "home",
+  "order": 14
+ },
+ {
+  "question": "Can I work in the UAE with a RAK Golden Visa?",
+  "answer": "<p>Yes. Golden Visa holders can live, work, and operate businesses in the UAE without requiring a local sponsor, subject to applicable licensing and employment regulations.</p>",
+  "group": "home",
+  "order": 15
+ },
+ {
+  "question": "Can I sponsor my spouse and children?",
+  "answer": "<p>Yes. You can sponsor your spouse and children under your Golden Visa, provided all immigration requirements are met.</p>",
+  "group": "home",
+  "order": 16
+ },
+ {
+  "question": "Can I sponsor my parents?",
+  "answer": "<p>Yes. Eligible Golden Visa holders may sponsor their parents in accordance with the applicable UAE residency regulations.</p>",
+  "group": "home",
+  "order": 17
+ },
+ {
+  "question": "Do I need to cancel my existing UAE visa?",
+  "answer": "<p>If you already hold a valid UAE residence visa, it generally needs to be cancelled before your new Golden Visa can be issued. The timing depends on your individual case.</p>",
+  "group": "home",
+  "order": 18
+ },
+ {
+  "question": "Can I renew my RAK Golden Visa?",
+  "answer": "<p>Yes. The visa is renewable, provided you continue to meet the eligibility requirements at the time of renewal.</p>",
+  "group": "home",
+  "order": 19
+ },
+ {
+  "question": "Can Brightlink handle the entire process?",
+  "answer": "<p>Yes. We provide end-to-end assistance, including eligibility assessment, document verification, application submission, obtaining NOC’s, medical fitness arrangements, Emirates ID processing, and ongoing support until your Golden Visa is issued.</p>",
+  "group": "home",
+  "order": 20
+ },
+ {
+  "question": "Can I get a Golden Visa with an off-plan property in RAK?",
+  "answer": "<p>Yes, off-plan properties are eligible if:</p><ul><li>The total value is AED 2 million or more</li><li>At least 10% of the property value is paid</li><li>A registered SPA and developer NOC are provided</li></ul>",
+  "group": "investor",
+  "order": 0
+ },
+ {
+  "question": "What is the minimum investment for a Property Golden Visa in Ras Al Khaimah?",
+  "answer": "<p>To qualify, you must invest AED 2 million or more in property located in Ras Al Khaimah.</p>",
+  "group": "investor",
+  "order": 1
+ },
+ {
+  "question": "Is joint property ownership allowed for Golden Visa in Ras Al Khaimah?",
+  "answer": "<p>No, Ras Al Khaimah currently requires single ownership only . Joint ownership or partners are not eligible.</p>",
+  "group": "investor",
+  "order": 2
+ },
+ {
+  "question": "Can I combine multiple properties to reach AED 2 million?",
+  "answer": "<p>Yes, you can combine multiple properties, but they must:</p><ul><li>Be under one owner’s name</li><li>Be located within Ras Al Khaimah only</li></ul>",
+  "group": "investor",
+  "order": 3
+ },
+ {
+  "question": "How long is the Ras Al Khaimah Property Golden Visa valid?",
+  "answer": "<p>The visa is issued for 10 years and is renewable as long as eligibility conditions are maintained.</p>",
+  "group": "investor",
+  "order": 4
+ },
+ {
+  "question": "Can I sponsor my family under this visa?",
+  "answer": "<p>Yes, Golden Visa holders can sponsor:</p><ul><li>Spouse</li><li>Children (no age limit)</li><li>Parents</li><li>Domestic workers</li></ul>",
+  "group": "investor",
+  "order": 5
+ },
+ {
+  "question": "How long does it take to process the Golden Visa in RAK?",
+  "answer": "<p>With fast-track processing, it can be completed in as little as 2-3 working days , depending on document readiness.</p>",
+  "group": "investor",
+  "order": 6
+ },
+ {
+  "question": "Do I need to live in the UAE full-time?",
+  "answer": "<p>No, Golden Visa holders can stay outside the UAE for extended periods without losing residency.</p>",
+  "group": "investor",
+  "order": 7
+ },
+ {
+  "question": "Can I rent out my property after getting the Golden Visa?",
+  "answer": "<p>Yes, you are free to lease your property and generate rental income while holding the visa.</p>",
+  "group": "investor",
+  "order": 8
+ },
+ {
+  "question": "What happens if I sell my property?",
+  "answer": "<p>If you sell your property and no longer meet the AED 2 million requirement, your Golden Visa eligibility may be affected .</p>",
+  "group": "investor",
+  "order": 9
+ },
+ {
+  "question": "Is bank financing allowed for Golden Visa property investment?",
+  "answer": "<p>Yes, properties purchased through UAE bank financing are accepted, provided they meet the required value criteria.</p>",
+  "group": "investor",
+  "order": 10
+ },
+ {
+  "question": "Can I apply for the Golden Visa from outside the UAE?",
+  "answer": "<p>You can start the process remotely, but you must be physically present in the UAE for medical tests and biometrics.</p>",
+  "group": "investor",
+  "order": 11
+ },
+ {
+  "question": "Is Ras Al Khaimah a good place for property investment?",
+  "answer": "<p>Yes, Ras Al Khaimah offers affordable prices, high rental yields, and strong growth potential, making it attractive for investors.</p>",
+  "group": "investor",
+  "order": 12
+ },
+ {
+  "question": "Can retirees apply for a property-based visa in RAK?",
+  "answer": "<p>Yes, individuals aged 55+ can apply for a 5-Year Retirement Visa with a ready property worth AED 1 million or more .</p>",
+  "group": "investor",
+  "order": 13
+ },
+ {
+  "question": "What is the Ras Al Khaimah Property Retirement Visa?",
+  "answer": "<p>The Ras Al Khaimah Property Retirement Visa is a renewable 5-year UAE residence visa designed for eligible retirees who meet the government’s retirement criteria through qualifying property ownership, financial savings, or income requirements.</p>",
+  "group": "retirement",
+  "order": 0
+ },
+ {
+  "question": "Who can apply for the Property Retirement Visa?",
+  "answer": "<p>Applicants must generally:</p><ul><li>Be 55 years of age or older .</li><li>Meet one of the applicable retirement eligibility criteria.</li><li>Own qualifying property in Ras Al Khaimah with the required minimum investment.</li><li>Satisfy all immigration and government requirements.</li></ul><p>Final approval is subject to the relevant UAE authorities.</p>",
+  "group": "retirement",
+  "order": 1
+ },
+ {
+  "question": "What is the minimum property value required?",
+  "answer": "<p>Applicants must own qualifying real estate with a minimum value of AED 1 million , subject to the latest government regulations and the requirements of the relevant authority.</p>",
+  "group": "retirement",
+  "order": 2
+ },
+ {
+  "question": "Can I combine multiple properties to meet the investment requirement?",
+  "answer": "<p>Yes. In many cases, multiple qualifying properties may be combined to meet the required investment threshold, provided they comply with the applicable authority’s regulations and eligibility requirements.</p>",
+  "group": "retirement",
+  "order": 3
+ },
+ {
+  "question": "Are off-plan properties eligible?",
+  "answer": "<p>Eligible off-plan properties may qualify, provided the project is approved by the relevant authority and all applicable ownership and payment conditions have been satisfied.</p>",
+  "group": "retirement",
+  "order": 4
+ },
+ {
+  "question": "Can mortgaged properties qualify?",
+  "answer": "<p>Yes. Mortgaged properties may qualify, subject to the applicable government regulations. Additional documentation, such as a bank No Objection Certificate (NOC) or mortgage confirmation, may be required depending on the individual case.</p>",
+  "group": "retirement",
+  "order": 5
+ },
+ {
+  "question": "Is an official property valuation required?",
+  "answer": "<p>In certain cases, the authorities may request an official property valuation or market value certificate to confirm that the property satisfies the minimum investment requirement.</p>",
+  "group": "retirement",
+  "order": 6
+ },
+ {
+  "question": "Can I sponsor my spouse and children?",
+  "answer": "<p>Yes. Retirement Visa holders may sponsor their spouse and eligible dependent children in accordance with the UAE’s family sponsorship regulations and subject to government approval.</p>",
+  "group": "retirement",
+  "order": 7
+ },
+ {
+  "question": "How long is the Retirement Visa valid?",
+  "answer": "<p>The Retirement Residence Visa is generally issued for five years and may be renewed provided the applicant continues to meet the applicable eligibility requirements.</p>",
+  "group": "retirement",
+  "order": 8
+ },
+ {
+  "question": "Do I need to remain the owner of the property?",
+  "answer": "<p>Yes. The qualifying property must generally remain under your ownership throughout the validity of the visa. Selling or transferring the property may affect your residency eligibility.</p>",
+  "group": "retirement",
+  "order": 9
+ },
+ {
+  "question": "Can existing property owners apply?",
+  "answer": "<p>Yes. Existing property owners who already own qualifying real estate in Ras Al Khaimah may apply, provided the property satisfies the current eligibility requirements.</p>",
+  "group": "retirement",
+  "order": 10
+ },
+ {
+  "question": "Is health insurance mandatory?",
+  "answer": "<p>Yes. Valid health insurance is generally required before the issuance or renewal of a UAE residence visa, in accordance with the applicable regulations.</p>",
+  "group": "retirement",
+  "order": 11
+ },
+ {
+  "question": "Do I need to visit the UAE during the application?",
+  "answer": "<p>Yes. Most applicants are required to be physically present in the UAE to complete mandatory procedures such as the medical fitness examination, Emirates ID biometrics, and any additional government requirements.</p>",
+  "group": "retirement",
+  "order": 12
+ },
+ {
+  "question": "How long does the application process take?",
+  "answer": "<p>Processing times vary depending on the completeness of the application, government approvals, and individual circumstances. Once all required documents have been submitted, applications are typically processed within the standard government timeframe.</p>",
+  "group": "retirement",
+  "order": 13
+ },
+ {
+  "question": "Can I work in the UAE with a Retirement Visa?",
+  "answer": "<p>The Retirement Visa is intended for individuals retiring in the UAE. If you intend to undertake employment or business activities, you should ensure compliance with the applicable UAE labour and immigration regulations.</p>",
+  "group": "retirement",
+  "order": 14
+ },
+ {
+  "question": "What documents are generally required?",
+  "answer": "<p>Typical documents include:</p><ul><li>Valid passport</li><li>Passport-sized photograph</li><li>Property Title Deed or Oqood (where applicable)</li><li>Proof of property ownership</li><li>Health insurance</li><li>Medical fitness certificate</li><li>Emirates ID (if applicable)</li><li>Additional supporting documents requested by the authorities</li></ul>",
+  "group": "retirement",
+  "order": 15
+ },
+ {
+  "question": "What could delay my application?",
+  "answer": "<p>Common reasons for delays include:</p><ul><li>Incomplete documentation</li><li>Property ownership discrepancies</li><li>Missing government approvals</li><li>Expired passport or identification documents</li><li>Mortgage-related documentation pending</li><li>Additional verification requested by the authorities</li></ul>",
+  "group": "retirement",
+  "order": 16
+ },
+ {
+  "question": "Is approval guaranteed if I meet the requirements?",
+  "answer": "<p>No. Meeting the eligibility criteria does not guarantee approval. Every application is reviewed individually, and the final decision rests solely with the relevant UAE government authorities.</p>",
+  "group": "retirement",
+  "order": 17
+ },
+ {
+  "question": "Why should I apply through Brightlink Consulting?",
+  "answer": "<p>Brightlink Consulting provides comprehensive end-to-end assistance, including:</p><ul><li>Eligibility assessment</li><li>Property document verification</li><li>Application preparation</li><li>Government submission</li><li>Follow-up with authorities</li><li>Medical and Emirates ID coordination</li><li>Family sponsorship support</li><li>Dedicated case management from start to finish</li></ul>",
+  "group": "retirement",
+  "order": 18
+ },
+ {
+  "question": "Can overseas applicants apply?",
+  "answer": "<p>Yes. Overseas applicants may begin preparing their application before travelling to the UAE. However, they will generally need to visit the UAE to complete the mandatory medical examination, biometric enrolment, and any other in-person government procedures required before the residence visa can be issued.</p>",
+  "group": "retirement",
+  "order": 19
+ }
+]
