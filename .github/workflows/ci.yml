@@ -25,7 +25,13 @@ jobs:
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Build
-        run: npm run build
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee build.log || {
+            msg=$(grep -v '^\s*$' build.log | tail -n 60 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=Build failed::$msg"
+            exit 1
+          }
       - name: Start server
         run: |
           npm start > server.log 2>&1 &
@@ -33,6 +39,7 @@ jobs:
       - name: Smoke test
         run: |
           set -e
+          trap 'echo "::error title=Smoke test failed::see step output (last command: $BASH_COMMAND)"' ERR
           check() { code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000$1"); echo "$1 -> $code"; [ "$code" = "$2" ]; }
           check / 200
           check /about-us 200
@@ -74,4 +81,9 @@ jobs:
           echo "All smoke tests passed"
       - name: Server log
         if: always()
-        run: tail -n 120 server.log || true
+        run: |
+          tail -n 120 server.log || true
+          if [ "${{ job.status }}" != "success" ] && [ -f server.log ]; then
+            msg=$(grep -v '^\s*$' server.log | tail -n 40 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::warning title=Server log::$msg"
+          fi
