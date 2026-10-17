@@ -4,6 +4,15 @@ A complete, production-ready website for **RAK Golden Visa / Brightlink**, rebui
 
 ---
 
+## ▶ Run it free on GitHub (Codespaces)
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Naveed786-king/rak-golden-visa?quickstart=1)
+
+Click the button → **Create codespace**. Wait ~3 minutes. The file **ADMIN-LOGIN.txt** opens with your website link, admin link and password.
+Free (GitHub gives 60 hours/month). The site sleeps when the codespace is idle — reopen it from github.com/codespaces to wake it.
+
+---
+
 ## 1. What is included
 
 ### Public website

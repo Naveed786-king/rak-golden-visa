@@ -13,5 +13,17 @@ export NEXT_PUBLIC_SITE_URL="https://${CODESPACE_NAME}-3000.${GITHUB_CODESPACES_
 pkill -f "next start" 2>/dev/null || true
 nohup npm start > /workspaces/rgv-data/server.log 2>&1 &
 gh codespace ports visibility 3000:public -c "$CODESPACE_NAME" >/dev/null 2>&1 || true
-echo "Website: $NEXT_PUBLIC_SITE_URL"
-echo "Admin:   $NEXT_PUBLIC_SITE_URL/admin  (login in /workspaces/rgv-data/.env)"
+cat > ADMIN-LOGIN.txt <<TXT
+YOUR WEBSITE IS RUNNING
+=======================
+Website (front):   $NEXT_PUBLIC_SITE_URL
+Admin dashboard:   $NEXT_PUBLIC_SITE_URL/admin
+Client login:      $NEXT_PUBLIC_SITE_URL/login
+
+Admin email:       $ADMIN_EMAIL
+Admin password:    $ADMIN_PASSWORD
+(change it after login: Admin -> My profile)
+
+The first start takes about 1 minute. If the link shows an error, wait and refresh.
+TXT
+cat ADMIN-LOGIN.txt
