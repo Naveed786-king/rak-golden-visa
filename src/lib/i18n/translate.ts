@@ -1,7 +1,8 @@
 // Machine translation engine. Providers:
-//   google  - free Google Translate web endpoint (no key, default)
-//   claude  - Anthropic Claude API (best quality, needs API key)
-//   deepl   - DeepL API (needs API key; falls back to Google for unsupported languages)
+//   claude  - Anthropic Claude AI (best quality, needs API key) - default
+//   deepl   - DeepL API (needs API key; no Hindi)
+//   google  - free Google Translate web endpoint (no key, lower quality)
+// A provider that fails NEVER silently falls back to another one.
 import crypto from 'crypto';
 import { prisma } from '../db';
 import { getSetting } from '../settings';
@@ -12,8 +13,11 @@ const hash = (s: string) => crypto.createHash('sha1').update(s).digest('hex');
 const hasLetters = (s: string) => /\p{L}/u.test(s);
 
 /* ------------------------------------------------------------------ memory */
+let memProvider = 'google';
+const memKey = (locale: string, text: string) => (memProvider === 'google' ? `${locale}:${hash(text)}` : `${memProvider}:${locale}:${hash(text)}`);
+
 async function memGet(locale: string, texts: string[]) {
-  const keys = texts.map((t) => `${locale}:${hash(t)}`);
+  const keys = texts.map((t) => memKey(locale, t));
   try {
     const rows = await prisma.translationMemory.findMany({ where: { key: { in: keys } } });
     const map = new Map(rows.map((r) => [r.key, r.text]));
@@ -25,7 +29,7 @@ async function memGet(locale: string, texts: string[]) {
 async function memSet(locale: string, pairs: [string, string][]) {
   for (const [src, out] of pairs) {
     if (!out || out === src) continue;
-    const key = `${locale}:${hash(src)}`;
+    const key = memKey(locale, src);
     await prisma.translationMemory.upsert({ where: { key }, update: { text: out }, create: { key, text: out } }).catch(() => {});
   }
 }
@@ -91,18 +95,23 @@ async function googleMany(texts: string[], target: string): Promise<string[]> {
 }
 
 /* ------------------------------------------------------------------ claude */
-async function claudeCall(apiKey: string, model: string, system: string, content: string) {
+async function claudeCall(apiKey: string, model: string, system: string, content: string, attempt = 0): Promise<string> {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({ model, max_tokens: 16000, system, messages: [{ role: 'user', content }] }),
   });
+  if ((res.status === 429 || res.status === 529 || res.status >= 500) && attempt < 5) {
+    await sleep(Math.min(60_000, 4000 * 2 ** attempt));
+    return claudeCall(apiKey, model, system, content, attempt + 1);
+  }
+  if (res.status === 401) throw new Error('Claude API key is not valid - check it in Admin → Languages');
   if (!res.ok) throw new Error(`Claude API HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const d: any = await res.json();
   return (d.content || []).map((c: any) => c.text || '').join('');
 }
 const SYS = (lang: string) =>
-  `You are a professional translator for a UAE Golden Visa consultancy website. Translate from English to ${lang}. Keep brand names (RAK Golden Visa, Brightlink, ICP, Emirates ID, Oqood, AED amounts, phone numbers, emails, URLs) unchanged. Use natural, formal, persuasive language.`;
+  `You are a professional translator for a UAE Golden Visa consultancy website. Translate from English to ${lang}. Keep brand names (RAK Golden Visa, Brightlink, ICP, Emirates ID, Oqood, AED amounts, phone numbers, emails, URLs) unchanged. Use natural, formal, persuasive language as a native speaker would write it - never word-for-word. Use the standard script and conventions of the language (e.g. Modern Standard Arabic, Simplified Chinese, Devanagari Hindi with Romanian diacritics ș ț).`;
 
 async function claudeMany(texts: string[], locale: string, apiKey: string, model: string) {
   const lang = localeInfo(locale).name;
@@ -131,6 +140,8 @@ async function deeplMany(texts: string[], locale: string, apiKey: string, html =
     body.set('target_lang', target);
     if (html) body.set('tag_handling', 'html');
     const res = await fetch(`${host}/v2/translate`, { method: 'POST', headers: { Authorization: `DeepL-Auth-Key ${apiKey}` }, body });
+    if (res.status === 403) throw new Error('DeepL API key is not valid - check it in Admin → Languages');
+    if (res.status === 456) throw new Error('DeepL monthly limit reached');
     if (!res.ok) throw new Error(`DeepL HTTP ${res.status}`);
     const d: any = await res.json();
     out.push(...d.translations.map((t: any) => t.text));
@@ -140,7 +151,24 @@ async function deeplMany(texts: string[], locale: string, apiKey: string, html =
 
 /* ------------------------------------------------------------------ public */
 export async function translationConfig() {
-  return getSetting('translation');
+  const cfg = await getSetting('translation');
+  memProvider = cfg.provider === 'claude' ? `claude-${cfg.model || DEFAULT_MODEL}` : cfg.provider;
+  return cfg;
+}
+
+export const DEFAULT_MODEL = 'claude-sonnet-5-5';
+
+/** Short id of the engine in use - stored with every translation so a new engine re-translates old text. */
+export async function engineTag() {
+  const cfg = await translationConfig();
+  return cfg.provider === 'claude' ? `claude-${cfg.model || DEFAULT_MODEL}` : cfg.provider;
+}
+
+/** Why translation cannot run right now ('' = ready) */
+export function notReadyReason(cfg: { provider: string; apiKey?: string }) {
+  if (cfg.provider === 'off') return 'Translation is turned off';
+  if ((cfg.provider === 'claude' || cfg.provider === 'deepl') && !cfg.apiKey) return `Add your ${cfg.provider === 'claude' ? 'Claude (Anthropic)' : 'DeepL'} API key in Admin → Languages to start translating`;
+  return '';
 }
 
 /** Translate plain strings (multi-line strings are translated line by line). Returns same-length array. */
@@ -176,15 +204,11 @@ async function translateLines(texts: string[], locale: string): Promise<string[]
 
   if (todo.length) {
     let translated: string[];
-    const target = localeInfo(locale).google;
-    try {
-      if (cfg.provider === 'claude' && cfg.apiKey) translated = await claudeMany(todo, locale, cfg.apiKey, cfg.model || 'claude-haiku-5-5');
-      else if (cfg.provider === 'deepl' && cfg.apiKey) translated = await deeplMany(todo, locale, cfg.apiKey);
-      else translated = await googleMany(todo, target);
-    } catch (e) {
-      console.error('[translate] provider failed, using Google:', (e as Error).message);
-      translated = await googleMany(todo, target);
-    }
+    const why = notReadyReason(cfg);
+    if (why) throw new Error(why);
+    if (cfg.provider === 'claude') translated = await claudeMany(todo, locale, cfg.apiKey, cfg.model || DEFAULT_MODEL);
+    else if (cfg.provider === 'deepl') translated = await deeplMany(todo, locale, cfg.apiKey);
+    else translated = await googleMany(todo, localeInfo(locale).google);
     todo.forEach((t, k) => translated[k] && map.set(t, translated[k]));
     await memSet(locale, todo.map((t, k) => [t, translated[k]] as [string, string]));
   }
@@ -203,20 +227,18 @@ export async function translateHtml(html: string, locale: string): Promise<strin
   const [cachedWhole] = await memGet(locale, [html]);
   if (cachedWhole) return cachedWhole;
 
-  if ((cfg.provider === 'claude' || cfg.provider === 'deepl') && cfg.apiKey) {
-    try {
-      let out: string;
-      if (cfg.provider === 'claude') {
-        out = await claudeCall(cfg.apiKey, cfg.model || 'claude-haiku-5-5', SYS(localeInfo(locale).name), `Translate the text inside this HTML. Keep every HTML tag and attribute exactly as it is. Reply with ONLY the translated HTML.\n\n${html}`);
-        out = out.replace(/^```(?:html)?\s*|\s*```$/g, '').trim();
-      } else {
-        out = (await deeplMany([html], locale, cfg.apiKey, true))[0];
-      }
-      await memSet(locale, [[html, out]]);
-      return out;
-    } catch (e) {
-      console.error('[translate] html provider failed, using Google:', (e as Error).message);
+  const why = notReadyReason(cfg);
+  if (why) throw new Error(why);
+  if (cfg.provider === 'claude' || cfg.provider === 'deepl') {
+    let out: string;
+    if (cfg.provider === 'claude') {
+      out = await claudeCall(cfg.apiKey, cfg.model || DEFAULT_MODEL, SYS(localeInfo(locale).name), `Translate the text inside this HTML. Keep every HTML tag and attribute exactly as it is. Reply with ONLY the translated HTML.\n\n${html}`);
+      out = out.replace(/^```(?:html)?\s*|\s*```$/g, '').trim();
+    } else {
+      out = (await deeplMany([html], locale, cfg.apiKey, true))[0];
     }
+    await memSet(locale, [[html, out]]);
+    return out;
   }
 
   // Google: split into "runs" of text + inline tags between block-level tags

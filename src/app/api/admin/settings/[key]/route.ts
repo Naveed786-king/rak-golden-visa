@@ -41,6 +41,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ key: str
   }
   await saveSetting(key as Key, value);
   refreshSite();
+  // New engine/key: translate everything again with it (hand-edited translations are kept)
+  if (key === 'translation' && value.autoTranslate) {
+    try {
+      await (await import('@/lib/i18n/jobs')).enqueueAll(false);
+    } catch {}
+  }
   if (key === 'header' || key === 'footer' || key === 'site') import('@/lib/i18n/jobs').then((m) => m.onContentSaved('settings', key)).catch(() => {});
   return ok();
 }

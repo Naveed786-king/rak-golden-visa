@@ -69,6 +69,12 @@ jobs:
           curl -s http://localhost:3000/ar | grep -q 'dir="rtl"' && echo "Arabic page is right-to-left"
           curl -s http://localhost:3000/ar | grep -q 'hreflang' && echo "hreflang tags present"
           curl -sf -b cookies.txt http://localhost:3000/api/admin/translations | grep -q '"locale":"ar"'
+          # default engine is Claude: without an API key translation is paused (never falls back to Google)
+          curl -sf -b cookies.txt http://localhost:3000/api/admin/translations | grep -q 'API key'
+          echo "Paused without Claude key: OK"
+          # CI has no Claude key, so test the translation machinery with the Google engine
+          curl -sf -b cookies.txt -X PUT http://localhost:3000/api/admin/settings/translation -H 'Content-Type: application/json' -d '{"value":{"provider":"google","apiKey":"","model":"","autoTranslate":false,"enabled":["en","ar","ru","tr","zh","fr","de","es","ro","hi"],"showSwitcher":true}}'
+          echo
           RES=$(curl -s -b cookies.txt -X POST http://localhost:3000/api/admin/translations -H 'Content-Type: application/json' -d '{"action":"test","locale":"ar"}')
           echo "Translation test: $RES"
           echo "$RES" | grep -q '"result"'
@@ -148,7 +154,7 @@ jobs:
           URL=$(curl -sf -b cookies.txt -F "files=@test.png;type=image/png" http://localhost:3000/api/admin/upload | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).items[0].url))")
           echo "Uploaded: $URL"
           check "$URL" 200
-          curl -sf -b cookies.txt -X POST http://localhost:3000/api/admin/translations -H 'Content-Type: application/json' -d '{"action":"test","locale":"de"}' | grep -q '"result"'
+          code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt -X POST http://localhost:3000/api/admin/translations -H 'Content-Type: application/json' -d '{"action":"test","locale":"de"}'); echo "test without key -> $code"; [ "$code" != "200" ]
           echo "All Postgres smoke tests passed"
       - name: Server log
         if: always()

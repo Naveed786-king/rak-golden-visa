@@ -5,7 +5,7 @@ import { LOCALES, TRANSLATED_LOCALES, isLocale } from '@/lib/i18n/config';
 import { allTranslatableEntities, translateEntity, Entity } from '@/lib/i18n/content';
 import { enqueue, enqueueAll, queueStatus, keepAlive, targetLocales } from '@/lib/i18n/jobs';
 import { getSetting } from '@/lib/settings';
-import { testTranslation } from '@/lib/i18n/translate';
+import { testTranslation, engineTag, notReadyReason } from '@/lib/i18n/translate';
 import { safeJson } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
@@ -32,7 +32,9 @@ export async function GET(req: Request) {
   const all = await allTranslatableEntities();
   const total = all.length;
   const keys = new Set(all.map((e) => `${e.entity}:${e.id}`));
-  const rows = await prisma.translation.findMany({ select: { entity: true, entityId: true, locale: true, status: true } });
+  const rows = await prisma.translation.findMany({ select: { entity: true, entityId: true, locale: true, status: true, sourceHash: true } });
+  const tag = await engineTag();
+  const current = (r: { status: string; sourceHash: string | null }) => r.status === 'edited' || (r.sourceHash || '').endsWith(':' + tag);
   const stats = TRANSLATED_LOCALES.map((l) => {
     const mine = rows.filter((r) => r.locale === l && keys.has(`${r.entity}:${r.entityId}`));
     return {
@@ -40,7 +42,8 @@ export async function GET(req: Request) {
       name: LOCALES.find((x) => x.code === l)!.name,
       native: LOCALES.find((x) => x.code === l)!.native,
       flag: LOCALES.find((x) => x.code === l)!.flag,
-      done: mine.length,
+      done: mine.filter(current).length,
+      oldEngine: mine.filter((r) => !current(r)).length,
       edited: mine.filter((r) => r.status === 'edited').length,
       outdated: mine.filter((r) => r.status === 'outdated').length,
       total,
@@ -57,7 +60,8 @@ export async function GET(req: Request) {
     }
     keepAlive();
   }
-  return ok({ stats, queue: queueStatus() });
+  const cfgNow = await getSetting('translation');
+  return ok({ stats, queue: queueStatus(), paused: notReadyReason(cfgNow), engine: tag });
 }
 
 /** POST: { action: 'all' | 'entity' | 'test', entity, id, locale, force } */

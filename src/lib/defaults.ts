@@ -212,9 +212,9 @@ export type TranslationSettings = {
 };
 
 export const defaultTranslation: TranslationSettings = {
-  provider: 'google',
+  provider: 'claude',
   apiKey: '',
-  model: 'claude-haiku-5-5',
+  model: 'claude-sonnet-5-5',
   autoTranslate: true,
   enabled: ['en', 'ar', 'ru', 'tr', 'zh', 'fr', 'de', 'es', 'ro', 'hi'],
   showSwitcher: true,

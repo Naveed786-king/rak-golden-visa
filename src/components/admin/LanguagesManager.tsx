@@ -5,7 +5,7 @@ import { LOCALES } from '@/lib/i18n/config';
 import { Btn, Card, PageTitle, Spinner, Toggle, api, toast } from './ui';
 import { cn } from '@/lib/utils';
 
-type Stat = { locale: string; name: string; native: string; flag: string; done: number; edited: number; outdated: number; total: number };
+type Stat = { locale: string; name: string; native: string; flag: string; done: number; oldEngine: number; edited: number; outdated: number; total: number };
 
 export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
   const [cfg, setCfg] = useState<any>(null);
@@ -14,11 +14,13 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState('');
   const [test, setTest] = useState('');
+  const [paused, setPaused] = useState('');
 
   const load = useCallback(async () => {
-    const d = await api<{ stats: Stat[]; queue: any }>('/api/admin/translations');
+    const d = await api<{ stats: Stat[]; queue: any; paused: string }>('/api/admin/translations');
     setStats(d.stats);
     setQueue(d.queue);
+    setPaused(d.paused || '');
   }, []);
 
   useEffect(() => {
@@ -32,7 +34,8 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
     setSaving(true);
     try {
       await api('/api/admin/settings/translation', 'PUT', { value: cfg });
-      toast('Language settings saved');
+      toast('Language settings saved — translating with the selected engine');
+      load();
     } catch (e: any) {
       toast(e.message, 'error');
     } finally {
@@ -87,6 +90,13 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
         }
       />
 
+      {paused && (
+        <div className="rounded-2xl bg-amber-50 p-5 text-sm text-amber-800 ring-1 ring-amber-200">
+          <p className="font-bold">Translation is paused</p>
+          <p className="mt-1">{paused}. Your website keeps showing English (or the earlier translation) until then.</p>
+        </div>
+      )}
+
       <Card title="Progress" actions={queue && <span className="text-xs text-gray-500">{queue.running ? `Working: ${queue.current} · ${queue.pending} waiting` : queue.pending ? `${queue.pending} waiting` : 'Idle — all up to date'}</span>}>
         <div className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3">
           {!stats.length && <Spinner />}
@@ -109,6 +119,7 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
                 <p className="mt-2 flex items-center gap-1 text-xs text-gray-500">
                   {pct === 100 && <CircleCheck className="h-3.5 w-3.5 text-emerald-500" />}
                   {s.done}/{s.total} items · {pct}%{s.edited ? ` · ${s.edited} edited by hand` : ''}
+                  {s.oldEngine ? <span className="text-amber-600"> · {s.oldEngine} from old engine</span> : ''}
                   {s.outdated ? <span className="text-amber-600"> · {s.outdated} need update</span> : ''}
                 </p>
               </div>
@@ -128,9 +139,9 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
                 <div>
                   <label className="admin-label">Translation engine</label>
                   <select className="admin-input" value={cfg.provider} onChange={(e) => setCfg({ ...cfg, provider: e.target.value })}>
-                    <option value="google">Google Translate — free, no key needed</option>
-                    <option value="claude">Claude AI — best quality (needs Anthropic API key)</option>
-                    <option value="deepl">DeepL — very good (needs DeepL API key)</option>
+                    <option value="claude">Claude AI — best, human-like quality (recommended)</option>
+                    <option value="deepl">DeepL — good quality (no Hindi)</option>
+                    <option value="google">Google Translate — free, basic quality</option>
                     <option value="off">Off — I will translate by hand</option>
                   </select>
                 </div>
@@ -138,12 +149,20 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
                   <>
                     <div>
                       <label className="admin-label">API key</label>
-                      <input className="admin-input font-mono" value={cfg.apiKey || ''} onChange={(e) => setCfg({ ...cfg, apiKey: e.target.value })} placeholder={cfg.provider === 'claude' ? 'sk-ant-…' : 'xxxxxxxx-…:fx'} />
+                      <input type="password" className="admin-input font-mono" value={cfg.apiKey || ''} onChange={(e) => setCfg({ ...cfg, apiKey: e.target.value })} placeholder={cfg.provider === 'claude' ? 'sk-ant-…' : 'xxxxxxxx-…:fx'} autoComplete="off" />
+                      <p className="mt-1.5 text-xs text-gray-500">
+                        {cfg.provider === 'claude' ? (
+                          <>Get a key at <a className="font-bold text-gold-deep underline" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer">console.anthropic.com</a> (add a few dollars of credit — translating the whole website costs very little).</>
+                        ) : (
+                          <>Get a free key at <a className="font-bold text-gold-deep underline" href="https://www.deepl.com/pro-api" target="_blank" rel="noopener noreferrer">deepl.com/pro-api</a> (500,000 characters per month free).</>
+                        )}
+                      </p>
                     </div>
                     {cfg.provider === 'claude' && (
                       <div>
                         <label className="admin-label">Claude model</label>
-                        <input className="admin-input font-mono" value={cfg.model || ''} onChange={(e) => setCfg({ ...cfg, model: e.target.value })} />
+                        <input className="admin-input font-mono" value={cfg.model || ''} onChange={(e) => setCfg({ ...cfg, model: e.target.value })} placeholder="claude-sonnet-5-5" />
+                        <p className="mt-1.5 text-xs text-gray-500">claude-sonnet-5-5 = best quality · claude-haiku-5-5 = cheaper and faster</p>
                       </div>
                     )}
                   </>

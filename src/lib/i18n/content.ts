@@ -5,7 +5,7 @@ import { getSetting } from '../settings';
 import { safeJson } from '../utils';
 import { BLOCK_MAP } from '@/components/blocks/schema';
 import type { Field } from '@/components/blocks/types';
-import { translateTexts, translateHtml } from './translate';
+import { translateTexts, translateHtml, engineTag } from './translate';
 import { UI_STRINGS } from './ui-strings';
 
 export type Entity = 'page' | 'post' | 'faq' | 'service' | 'testimonial' | 'settings' | 'ui';
@@ -142,10 +142,14 @@ export function hashItems(items: Item[]) {
 export async function translateEntity(entity: Entity, id: string, locale: string, force = false): Promise<'done' | 'skipped' | 'missing' | 'outdated'> {
   const src = await source(entity, id);
   if (!src) return 'missing';
-  const sourceHash = hashItems(src.items);
+  // "<content hash>:<engine>" - a new engine re-translates automatic translations
+  const contentHash = hashItems(src.items);
+  const sourceHash = `${contentHash}:${await engineTag()}`;
   const existing = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
   if (existing && !force) {
     if (existing.sourceHash === sourceHash) return 'skipped';
+    const sameContent = (existing.sourceHash || '').split(':')[0] === contentHash;
+    if (existing.status === 'edited' && sameContent) return 'skipped'; // keep hand-made translations
     if (existing.status === 'edited' || existing.status === 'outdated') {
       if (existing.status !== 'outdated') await prisma.translation.update({ where: { id: existing.id }, data: { status: 'outdated' } });
       return 'outdated';

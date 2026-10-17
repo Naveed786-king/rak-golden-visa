@@ -3,6 +3,7 @@ import { after } from 'next/server';
 import { getSetting } from '../settings';
 import { TRANSLATED_LOCALES } from './config';
 import { translateEntity, allTranslatableEntities, Entity } from './content';
+import { notReadyReason } from './translate';
 
 type Job = { entity: Entity; id: string; locale: string; force: boolean };
 
@@ -10,6 +11,7 @@ type QueueState = {
   queue: Job[];
   keys: Set<string>;
   running: boolean;
+  workers: number;
   done: number;
   failed: number;
   lastError: string;
@@ -17,7 +19,7 @@ type QueueState = {
 };
 
 const g = globalThis as unknown as { __rgvQueue?: QueueState };
-const Q: QueueState = (g.__rgvQueue ??= { queue: [], keys: new Set(), running: false, done: 0, failed: 0, lastError: '', current: '' });
+const Q: QueueState = (g.__rgvQueue ??= { queue: [], keys: new Set(), running: false, workers: 0, done: 0, failed: 0, lastError: '', current: '' });
 
 export async function targetLocales() {
   const cfg = await getSetting('translation');
@@ -31,7 +33,7 @@ export function queueStatus() {
 /** Add translation jobs. locales defaults to all enabled languages. */
 export async function enqueue(entity: Entity, id: string, opts: { locales?: string[]; force?: boolean; priority?: boolean } = {}) {
   const cfg = await getSetting('translation');
-  if (cfg.provider === 'off') return;
+  if (notReadyReason(cfg)) return; // e.g. API key missing - nothing is queued
   const locales = opts.locales || (await targetLocales());
   for (const locale of locales) {
     const key = `${entity}:${id}:${locale}`;
@@ -41,7 +43,7 @@ export async function enqueue(entity: Entity, id: string, opts: { locales?: stri
     if (opts.priority) Q.queue.unshift(job);
     else Q.queue.push(job);
   }
-  run();
+  run(cfg.provider === 'google' ? 1 : 4);
   keepAlive();
 }
 
@@ -79,26 +81,42 @@ export async function enqueueAll(force = false) {
   for (const locale of locales) for (const e of list) await enqueue(e.entity, e.id, { locales: [locale], force });
 }
 
-async function run() {
-  if (Q.running) return;
-  Q.running = true;
-  try {
-    while (Q.queue.length) {
-      const job = Q.queue.shift()!;
-      Q.keys.delete(`${job.entity}:${job.id}:${job.locale}`);
-      Q.current = `${job.entity} → ${job.locale}`;
-      try {
-        await translateEntity(job.entity, job.id, job.locale, job.force);
-        Q.done++;
-      } catch (e) {
-        Q.failed++;
-        Q.lastError = `${job.entity} ${job.locale}: ${(e as Error).message}`;
-        console.error('[translate]', Q.lastError);
-        await new Promise((r) => setTimeout(r, 3000));
+/** Starts up to `parallel` workers that empty the queue (paid APIs can work in parallel). */
+function run(parallel = 1) {
+  if (!Q.workers) Q.workers = 0;
+  while (Q.workers < parallel && Q.queue.length > Q.workers) {
+    Q.workers++;
+    Q.running = true;
+    worker().finally(() => {
+      Q.workers--;
+      if (!Q.workers) {
+        Q.running = false;
+        Q.current = '';
       }
+    });
+  }
+}
+
+async function worker() {
+  while (Q.queue.length) {
+    const job = Q.queue.shift()!;
+    Q.keys.delete(`${job.entity}:${job.id}:${job.locale}`);
+    Q.current = `${job.entity} → ${job.locale}`;
+    try {
+      await translateEntity(job.entity, job.id, job.locale, job.force);
+      Q.done++;
+      Q.lastError = '';
+    } catch (e) {
+      Q.failed++;
+      Q.lastError = `${job.entity} ${job.locale}: ${(e as Error).message}`;
+      console.error('[translate]', Q.lastError);
+      // a wrong/missing key would fail every job - stop instead of retrying everything
+      if (/API key|limit reached|turned off/i.test((e as Error).message)) {
+        Q.queue.length = 0;
+        Q.keys.clear();
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 3000));
     }
-  } finally {
-    Q.running = false;
-    Q.current = '';
   }
 }
