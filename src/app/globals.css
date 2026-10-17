@@ -6,6 +6,10 @@
   --brand-gold-light: #e9d5a6;
   --brand-ink: #0a1222;
   --brand-sand: #f7f2e9;
+  /* Fonts are bundled with the site (no Google download needed) */
+  --font-cormorant: 'Cormorant Garamond';
+  --font-manrope: 'Manrope Variable';
+  --font-kufi: 'Noto Kufi Arabic';
 }
 
 @theme inline {

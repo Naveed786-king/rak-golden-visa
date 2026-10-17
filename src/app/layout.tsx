@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Manrope, Noto_Kufi_Arabic } from 'next/font/google';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/600.css';
+import '@fontsource/cormorant-garamond/700.css';
+import '@fontsource/cormorant-garamond/600-italic.css';
+import '@fontsource-variable/manrope';
+import '@fontsource/noto-kufi-arabic/400.css';
+import '@fontsource/noto-kufi-arabic/600.css';
 import './globals.css';
 import { getSetting } from '@/lib/settings';
-
-const display = Cormorant_Garamond({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-cormorant', display: 'swap' });
-const sans = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
-const kufi = Noto_Kufi_Arabic({ subsets: ['arabic'], weight: ['400', '600'], variable: '--font-kufi', display: 'swap' });
 
 // Always render with live data from the database (admin changes appear instantly)
 export const dynamic = 'force-dynamic';
@@ -44,7 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const c = site.colors;
   const vars = `:root{--brand-gold:${c.gold};--brand-gold-light:${c.goldLight};--brand-ink:${c.ink};--brand-sand:${c.sand};}`;
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} ${kufi.variable}`} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <style dangerouslySetInnerHTML={{ __html: vars }} />
       </head>

@@ -15,6 +15,9 @@
     "create-admin": "node prisma/create-admin.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "^5.2.0",
+    "@fontsource/cormorant-garamond": "^5.2.0",
+    "@fontsource/noto-kufi-arabic": "^5.2.0",
     "@prisma/client": "^6.16.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
