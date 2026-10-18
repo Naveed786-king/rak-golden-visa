@@ -81,7 +81,7 @@ jobs:
           check /ru/ras-al-khaimah-property-golden-visa 200
           check /zh/latest-news-blogs 200
           curl -s http://localhost:3000/ar | grep -q 'dir="rtl"' || { echo "::error title=Check failed::Arabic page is right-to-left"; exit 1; }; echo "Arabic page is right-to-left"
-          curl -s http://localhost:3000/ar | grep -q 'hreflang' || { echo "::error title=Check failed::hreflang tags present"; exit 1; }; echo "hreflang tags present"
+          curl -s http://localhost:3000/ar | grep -qi 'hreflang' || { echo "::error title=Check failed::hreflang tags present"; exit 1; }; echo "hreflang tags present"
           curl -sf -b cookies.txt http://localhost:3000/api/admin/translations | grep -q '"locale":"ar"'
           # default engine is Claude: without an API key translation is paused (never falls back to Google)
           curl -sf -b cookies.txt http://localhost:3000/api/admin/translations | grep -q 'API key'
