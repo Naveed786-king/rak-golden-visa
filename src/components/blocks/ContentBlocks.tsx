@@ -240,7 +240,7 @@ export function Visit({ data, site }: P) {
           </div>
         </Reveal>
         <Reveal delay={0.15}>
-          <div className={cn('rounded-[2rem] p-2', data.theme === 'dark' || !data.theme ? 'glass' : 'bg-white shadow-xl ring-1 ring-ink/5')}>
+          <div className={cn('box rounded-[2rem] p-2', data.theme === 'dark' || !data.theme ? 'glass' : 'bg-white shadow-xl ring-1 ring-ink/5')}>
             {data.showMap && site.mapEmbed && (
               <iframe src={site.mapEmbed} className="h-64 w-full rounded-[1.6rem] grayscale-[40%]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Office location" />
             )}
@@ -306,7 +306,7 @@ export function About({ data }: P) {
             {stats.length > 0 && (
               <div className="mt-10 grid grid-cols-2 gap-4">
                 {stats.map((s, i) => (
-                  <div key={i} className={cn('rounded-2xl p-5', data.theme === 'dark' ? 'glass' : 'bg-sand')}>
+                  <div key={i} className={cn('box rounded-2xl p-5', data.theme === 'dark' ? 'glass' : 'bg-sand')}>
                     <Counter value={s.value} className="block font-display text-4xl font-bold text-gold-deep" />
                     <p className="mt-1 text-xs font-bold uppercase tracking-wider opacity-60">{s.label}</p>
                   </div>
@@ -337,7 +337,7 @@ export function Checklist({ data }: P) {
           <Stagger className={cn('grid gap-3', data.image ? 'sm:grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-2 max-w-5xl mx-auto')}>
             {items.map((b, i) => (
               <StaggerItem key={i}>
-                <div className={cn('group flex items-center gap-4 rounded-2xl px-5 py-4 transition-colors', dark ? 'glass hover:bg-white/10' : 'bg-white ring-1 ring-ink/5 hover:ring-gold/40')}>
+                <div className={cn('box group flex items-center gap-4 rounded-2xl px-5 py-4 transition-colors', dark ? 'glass hover:bg-white/10' : 'bg-white ring-1 ring-ink/5 hover:ring-gold/40')}>
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold text-ink transition-transform group-hover:scale-110">
                     <Check className="h-4 w-4" strokeWidth={3} />
                   </span>
@@ -372,7 +372,7 @@ export function Table({ data }: P) {
     <Section theme={data.theme} anchor={data.anchor}>
       <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
       <Reveal className="mx-auto max-w-5xl">
-        <div className={cn('overflow-hidden rounded-3xl', dark ? 'glass' : 'bg-white ring-1 ring-ink/10 shadow-[0_30px_60px_-40px_rgba(10,18,34,0.4)]')}>
+        <div className={cn('box overflow-hidden rounded-3xl', dark ? 'glass' : 'bg-white ring-1 ring-ink/10 shadow-[0_30px_60px_-40px_rgba(10,18,34,0.4)]')}>
           <div className="overflow-x-auto thin-scroll">
             <table className="w-full min-w-[560px] text-left text-sm">
               {headers.length > 0 && (
@@ -447,7 +447,7 @@ export function Offer({ data }: P) {
           <div className="grid gap-5">
             {lists.map((l, i) => (
               <Reveal key={i} delay={0.1 * i}>
-                <div className="rounded-3xl glass p-7">
+                <div className="box rounded-3xl glass p-7">
                   <h3 className="flex items-center gap-2 font-display text-2xl font-semibold">
                     <Star className="h-5 w-5 text-gold" fill="currentColor" /> {l.title}
                   </h3>
@@ -580,7 +580,7 @@ export function Stats({ data }: P) {
       <div className={cn('grid gap-6 grid-cols-2', items.length >= 4 && 'lg:grid-cols-4')}>
         {items.map((s, i) => (
           <Reveal key={i} delay={i * 0.08} className="text-center">
-            <div className={cn('rounded-3xl p-8', data.theme === 'dark' ? 'glass' : 'bg-white ring-1 ring-ink/5')}>
+            <div className={cn('box rounded-3xl p-8', data.theme === 'dark' ? 'glass' : 'bg-white ring-1 ring-ink/5')}>
               <Counter value={s.value} className="block font-display text-5xl md:text-6xl font-bold text-gold-gradient" />
               <p className="mt-2 text-xs md:text-sm font-bold uppercase tracking-[0.2em] opacity-60">{s.label}</p>
             </div>

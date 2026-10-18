@@ -5,8 +5,9 @@ import type { Field } from '@/components/blocks/types';
 import { FieldGroup } from './FieldInput';
 import { Btn, Card, PageTitle, Spinner, api, toast } from './ui';
 import { cn } from '@/lib/utils';
+import { PartDesignCard } from './DesignEditors';
 
-function useSetting<T = any>(key: string) {
+export function useSetting<T = any>(key: string) {
   const [value, setValue] = useState<T | null>(null);
   const [saving, setSaving] = useState(false);
   useEffect(() => {
@@ -88,6 +89,7 @@ export function HeaderEditor() {
             />
           </div>
         </Card>
+        <PartDesignCard part="header" />
         <Card title="Top announcement bar" className="p-0">
           <div className="p-5">
             <FieldGroup
@@ -167,6 +169,7 @@ export function FooterEditor() {
             />
           </div>
         </Card>
+        <PartDesignCard part="footer" />
         <Card title="Bottom bar" className="p-0">
           <div className="p-5">
             <FieldGroup

@@ -2,7 +2,7 @@ import { ok, fail, refreshSite } from '@/lib/api';
 import { requireStaff } from '@/lib/auth';
 import { getSetting, saveSetting } from '@/lib/settings';
 
-const KEYS = ['site', 'header', 'footer', 'smtp', 'translation'] as const;
+const KEYS = ['site', 'header', 'footer', 'smtp', 'translation', 'design', 'estimate'] as const;
 type Key = (typeof KEYS)[number];
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +24,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ key: str
   if (!s) return fail('Unauthorized', 401);
   const { key } = await params;
   if (!KEYS.includes(key as Key)) return fail('Unknown setting', 404);
-  if ((key === 'smtp' || key === 'site' || key === 'translation') && s.role !== 'ADMIN') return fail('Only admins can change these settings', 403);
+  if ((key === 'smtp' || key === 'site' || key === 'translation' || key === 'design') && s.role !== 'ADMIN') return fail('Only admins can change these settings', 403);
   const { value } = await req.json().catch(() => ({}));
   if (!value || typeof value !== 'object') return fail('Invalid data');
   if (key === 'smtp') {
@@ -47,6 +47,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ key: str
       await (await import('@/lib/i18n/jobs')).enqueueAll(false);
     } catch {}
   }
-  if (key === 'header' || key === 'footer' || key === 'site') import('@/lib/i18n/jobs').then((m) => m.onContentSaved('settings', key)).catch(() => {});
+  if (key === 'header' || key === 'footer' || key === 'site' || key === 'estimate') {
+    try {
+      await (await import('@/lib/i18n/jobs')).onContentSaved('settings', key);
+    } catch {}
+  }
   return ok();
 }

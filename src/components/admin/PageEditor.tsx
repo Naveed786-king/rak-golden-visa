@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ChevronDown, ChevronUp, Copy, Eye, EyeOff, Plus, Save, Trash2, ExternalLink, Monitor, Smartphone, PanelRightClose, PanelRightOpen, Layers, Search } from 'lucide-react';
-import { BLOCKS, BLOCK_MAP, COMMON_FIELDS } from '@/components/blocks/schema';
+import { BLOCKS, BLOCK_MAP, COMMON_FIELDS, STYLE_FIELDS } from '@/components/blocks/schema';
 import type { Block } from '@/components/blocks/types';
 import { FieldGroup } from './FieldInput';
 import { ImageInput } from './MediaPicker';
@@ -16,7 +16,7 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 export default function PageEditor({ initial }: { initial: PageData }) {
   const [page, setPage] = useState<PageData>(initial);
   const [open, setOpen] = useState<string | null>(null);
-  const [tab, setTab] = useState<'content' | 'settings'>('content');
+  const [tab, setTab] = useState<'content' | 'design' | 'settings'>('content');
   const [lib, setLib] = useState<{ open: boolean; at: number }>({ open: false, at: 0 });
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -253,22 +253,51 @@ export default function PageEditor({ initial }: { initial: PageData }) {
                   {isOpen && schema && (
                     <div className="border-t border-gray-100">
                       <div className="flex gap-1 border-b border-gray-100 px-4">
-                        {(['content', 'settings'] as const).map((t) => (
+                        {(['content', 'design', 'settings'] as const).map((t) => (
                           <button key={t} onClick={() => setTab(t)} className={cn('border-b-2 px-3 py-2.5 text-xs font-bold capitalize', tab === t ? 'border-gold text-gray-900' : 'border-transparent text-gray-500')}>
-                            {t === 'content' ? 'Content' : 'Section settings'}
+                            {t === 'content' ? 'Content' : t === 'design' ? '🎨 Design' : 'Section settings'}
                           </button>
                         ))}
                       </div>
                       <div className="p-5">
-                        <FieldGroup
-                          fields={tab === 'content' ? schema.fields : COMMON_FIELDS}
-                          data={b.data}
-                          onChange={(d) => {
-                            const copy = [...page.blocks];
-                            copy[i] = { ...b, data: d };
-                            setBlocks(copy);
-                          }}
-                        />
+                        {tab === 'design' ? (
+                          <>
+                            <div className="mb-4 flex items-center justify-between gap-3 rounded-xl bg-gold/10 px-4 py-3 text-xs text-gray-600">
+                              <span>Style this section: colours, fonts, spacing, glass boxes and animation. Empty = website default (Admin → Design).</span>
+                              <button
+                                type="button"
+                                className="shrink-0 font-bold text-red-600 hover:underline"
+                                onClick={() => {
+                                  if (!confirm('Reset all design settings of this section?')) return;
+                                  const copy = [...page.blocks];
+                                  copy[i] = { ...b, data: { ...b.data, style: {} } };
+                                  setBlocks(copy);
+                                }}
+                              >
+                                Reset
+                              </button>
+                            </div>
+                            <FieldGroup
+                              fields={STYLE_FIELDS}
+                              data={b.data?.style || {}}
+                              onChange={(st) => {
+                                const copy = [...page.blocks];
+                                copy[i] = { ...b, data: { ...b.data, style: st } };
+                                setBlocks(copy);
+                              }}
+                            />
+                          </>
+                        ) : (
+                          <FieldGroup
+                            fields={tab === 'content' ? schema.fields : COMMON_FIELDS}
+                            data={b.data}
+                            onChange={(d) => {
+                              const copy = [...page.blocks];
+                              copy[i] = { ...b, data: d };
+                              setBlocks(copy);
+                            }}
+                          />
+                        )}
                         <p className="mt-5 text-xs text-gray-400">Link tips: use <code>/page-slug</code>, a full URL, or the words <code>whatsapp</code>, <code>phone</code> or <code>email</code> to use your contact details from Settings.</p>
                       </div>
                     </div>

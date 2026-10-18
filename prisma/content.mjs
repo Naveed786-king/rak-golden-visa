@@ -52,6 +52,19 @@ const COMPARE_ROWS = (retirementOffPlan) =>
     'Best For | Investors seeking long-term residency & flexibility | Retirees seeking stable living in the UAE',
   ].join('\n');
 
+/* Cost calculator section (prices: Admin → Cost calculator) */
+export const estimateBlock = () =>
+  b('estimate', {
+    theme: 'dark',
+    layout: 'split',
+    anchor: 'calculator',
+    eyebrow: 'Instant cost estimate',
+    title: 'How much does the RAK Golden Visa cost?',
+    subtitle: 'Answer three quick questions and see every government fee for you and your family — no hidden charges, no surprises.',
+    bullets: 'Official government fees, kept up to date by our team\nCovers your spouse, children and medical tests\nSend your estimate to WhatsApp in one tap',
+    style: { boxStyle: 'glass', animation: 'fade-up' },
+  });
+
 /* ============================== HOME ============================== */
 export const home = {
   slug: 'home',
@@ -763,6 +776,7 @@ export const terms = {
   ],
 };
 
+home.blocks.splice(1, 0, estimateBlock());
 export const allPages = [home, about, services, investor, retirement, contact, blog, privacy, terms];
 
 /* ============================== SERVICES (records) ============================== */

@@ -21,6 +21,71 @@ export const COMMON_FIELDS: Field[] = [
   { name: 'hidden', label: 'Hide this section', type: 'boolean' },
 ];
 
+const opt = (...pairs: [string, string][]) => pairs.map(([value, label]) => ({ value, label }));
+
+/** Design options every section has (Admin → page → section → "Design" tab). Stored in block.data.style */
+export const STYLE_FIELDS: Field[] = [
+  { name: '_h1', label: 'Background', type: 'heading' },
+  { name: 'bgType', label: 'Background type', type: 'select', options: opt(['color', 'Solid colour'], ['gradient', 'Gradient'], ['image', 'Image / photo']) },
+  { name: 'bgColor', label: 'Colour 1', type: 'color', half: true },
+  { name: 'bgColor2', label: 'Colour 2 (gradient)', type: 'color', half: true },
+  { name: 'bgAngle', label: 'Gradient angle', type: 'range', min: 0, max: 360, step: 5, unit: '°' },
+  { name: 'bgImage', label: 'Background image', type: 'image' },
+  { name: 'overlayColor', label: 'Image overlay colour', type: 'color', half: true },
+  { name: 'overlay', label: 'Overlay strength', type: 'range', min: 0, max: 95, step: 5, unit: '%', half: true },
+  { name: 'parallax', label: 'Parallax (image stays still while scrolling)', type: 'boolean' },
+
+  { name: '_h2', label: 'Text & typography', type: 'heading' },
+  { name: 'headingColor', label: 'Heading colour', type: 'color', half: true },
+  { name: 'textColor', label: 'Text colour', type: 'color', half: true },
+  { name: 'accentColor', label: 'Accent colour (gold)', type: 'color', half: true },
+  { name: 'align', label: 'Text alignment', type: 'select', options: opt(['left', 'Left'], ['center', 'Centre'], ['right', 'Right']), half: true },
+  { name: 'headingFont', label: 'Heading font', type: 'font', half: true },
+  { name: 'bodyFont', label: 'Text font', type: 'font', half: true },
+  { name: 'headingSize', label: 'Heading size', type: 'range', min: 20, max: 110, step: 1, unit: 'px', half: true },
+  { name: 'textSize', label: 'Text size', type: 'range', min: 11, max: 26, step: 1, unit: 'px', half: true },
+
+  { name: '_h3', label: 'Spacing', type: 'heading' },
+  { name: 'paddingTop', label: 'Padding top', type: 'range', min: 0, max: 320, step: 4, unit: 'px', half: true },
+  { name: 'paddingBottom', label: 'Padding bottom', type: 'range', min: 0, max: 320, step: 4, unit: 'px', half: true },
+  { name: 'marginTop', label: 'Margin top', type: 'range', min: -200, max: 300, step: 4, unit: 'px', half: true },
+  { name: 'marginBottom', label: 'Margin bottom', type: 'range', min: -200, max: 300, step: 4, unit: 'px', half: true },
+  { name: 'maxWidth', label: 'Content width', type: 'range', min: 480, max: 1800, step: 20, unit: 'px' },
+
+  { name: '_h4', label: 'Boxes & cards', type: 'heading' },
+  {
+    name: 'boxStyle',
+    label: 'Box style',
+    type: 'select',
+    options: opt(['glass', 'Glass (frosted)'], ['glass-dark', 'Dark glass'], ['solid', 'Solid'], ['outline', 'Outline'], ['elevated', 'Elevated shadow'], ['gradient-border', 'Gold gradient border'], ['flat', 'Flat (no box)']),
+  },
+  { name: 'boxBg', label: 'Box background', type: 'color', half: true },
+  { name: 'boxBorder', label: 'Box border', type: 'color', half: true },
+  { name: 'boxRadius', label: 'Box corner radius', type: 'range', min: 0, max: 60, step: 1, unit: 'px', half: true },
+  { name: 'glassBlur', label: 'Glass blur', type: 'range', min: 0, max: 40, step: 1, unit: 'px', half: true },
+  { name: 'hover', label: 'Box hover effect', type: 'select', options: opt(['lift', 'Lift up'], ['glow', 'Gold glow'], ['scale', 'Zoom'], ['tilt', '3D tilt'], ['none', 'None']) },
+
+  { name: '_h5', label: 'Section frame', type: 'heading' },
+  { name: 'panel', label: 'Content panel', type: 'select', options: opt(['glass', 'Glass panel'], ['card', 'White card']) },
+  { name: 'sectionRadius', label: 'Rounded section corners', type: 'range', min: 0, max: 80, step: 2, unit: 'px', half: true },
+  { name: 'goldLine', label: 'Thin gold line on top', type: 'boolean', half: true },
+
+  { name: '_h6', label: 'Animation', type: 'heading' },
+  {
+    name: 'animation',
+    label: 'Entrance animation',
+    type: 'select',
+    options: opt(['none', 'None'], ['fade-up', 'Fade up'], ['fade', 'Fade in'], ['zoom', 'Zoom in'], ['slide-left', 'Slide from right'], ['slide-right', 'Slide from left'], ['flip', '3D flip'], ['blur', 'Blur in'], ['bounce', 'Bounce']),
+  },
+  { name: 'animDuration', label: 'Animation speed', type: 'range', min: 100, max: 3000, step: 50, unit: 'ms', half: true },
+  { name: 'animDelay', label: 'Animation delay', type: 'range', min: 0, max: 2000, step: 50, unit: 'ms', half: true },
+
+  { name: '_h7', label: 'Visibility & advanced', type: 'heading' },
+  { name: 'hideMobile', label: 'Hide on mobile', type: 'boolean', half: true },
+  { name: 'hideDesktop', label: 'Hide on desktop', type: 'boolean', half: true },
+  { name: 'customCss', label: 'Custom CSS', type: 'textarea', help: 'use & for this section, e.g. & h2 { letter-spacing: 2px }' },
+];
+
 export const BLOCKS: BlockSchema[] = [
   {
     type: 'hero',
@@ -386,6 +451,27 @@ export const BLOCKS: BlockSchema[] = [
     group: 'Forms',
     fields: [eyebrow, title, subtitle],
     defaults: { theme: 'dark', eyebrow: 'Free instant check', title: 'Which UAE visa do you qualify for?' },
+  },
+  {
+    type: 'estimate',
+    label: 'Cost calculator (Golden Visa estimate)',
+    description: 'Step-by-step price calculator. Prices & questions: Admin → Cost calculator',
+    group: 'Forms',
+    fields: [
+      eyebrow,
+      title,
+      subtitle,
+      { name: 'bullets', label: 'Points next to the calculator (one per line)', type: 'lines' },
+      { name: 'layout', label: 'Layout', type: 'select', options: [{ value: 'split', label: 'Text left, calculator right' }, { value: 'center', label: 'Calculator in the centre' }] },
+    ],
+    defaults: {
+      theme: 'dark',
+      layout: 'split',
+      eyebrow: 'Instant cost estimate',
+      title: 'How much does the RAK Golden Visa cost?',
+      subtitle: 'Answer three quick questions and see every government fee for you and your family — no surprises.',
+      bullets: 'Official government fees, updated by our team\nIncludes family members and medical tests\nSend the estimate to WhatsApp in one tap',
+    },
   },
   {
     type: 'contact',

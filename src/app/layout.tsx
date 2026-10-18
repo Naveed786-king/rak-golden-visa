@@ -10,6 +10,7 @@ import './globals.css';
 import { getSetting, getLocalizedBundle } from '@/lib/settings';
 import { getLocale } from '@/lib/i18n/server';
 import { localeInfo } from '@/lib/i18n/config';
+import { NextIntlClientProvider } from 'next-intl';
 
 // Always render with live data from the database (admin changes appear instantly)
 export const dynamic = 'force-dynamic';
@@ -55,7 +56,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <style dangerouslySetInnerHTML={{ __html: vars }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      </body>
     </html>
   );
 }

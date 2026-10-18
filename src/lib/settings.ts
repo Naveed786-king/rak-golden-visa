@@ -11,9 +11,11 @@ import {
   FooterSettings,
   SmtpSettings,
 } from './defaults';
+import { defaultDesign, DesignSettings } from './design';
+import { defaultEstimate, EstimateSettings } from './estimate';
 
-type Map = { site: SiteSettings; header: HeaderSettings; footer: FooterSettings; smtp: SmtpSettings; translation: TranslationSettings };
-const DEFAULTS: Map = { site: defaultSite, header: defaultHeader, footer: defaultFooter, smtp: defaultSmtp, translation: defaultTranslation };
+type Map = { site: SiteSettings; header: HeaderSettings; footer: FooterSettings; smtp: SmtpSettings; translation: TranslationSettings; design: DesignSettings; estimate: EstimateSettings };
+const DEFAULTS: Map = { site: defaultSite, header: defaultHeader, footer: defaultFooter, smtp: defaultSmtp, translation: defaultTranslation, design: defaultDesign, estimate: defaultEstimate };
 
 function deepMerge<T>(base: T, over: any): T {
   if (Array.isArray(base)) return (Array.isArray(over) ? over : base) as T;
@@ -82,4 +84,26 @@ function mergeLinks(orig: any[], tr: any[]): any[] {
     description: tr?.[i]?.description || l.description,
     children: l.children ? mergeLinks(l.children, tr?.[i]?.children || []) : l.children,
   }));
+}
+
+/** Cost calculator settings in the visitor's language (prices stay the same) */
+export async function getLocalizedEstimate(locale: string): Promise<EstimateSettings> {
+  const base = await getSetting('estimate');
+  if (locale === 'en') return base;
+  const { getTranslation } = await import('./i18n/server');
+  const tr = await getTranslation<any>('settings', 'estimate', locale);
+  if (!tr) return base;
+  const opts = (src: any[], t: any[] = []) =>
+    src.map((o, i) => ({
+      ...o,
+      label: t[i]?.label || o.label,
+      description: t[i]?.description || o.description,
+      fees: (o.fees || []).map((f: any, j: number) => ({ ...f, label: t[i]?.fees?.[j]?.label || f.label, note: t[i]?.fees?.[j]?.note || f.note })),
+    }));
+  const out: any = { ...base };
+  for (const k of Object.keys(tr)) if (typeof tr[k] === 'string' && tr[k]) out[k] = tr[k];
+  out.categories = opts(base.categories, tr.categories);
+  out.types = opts(base.types, tr.types);
+  out.fees = base.fees.map((f, j) => ({ ...f, label: tr.fees?.[j]?.label || f.label, note: tr.fees?.[j]?.note || f.note }));
+  return out;
 }

@@ -19,7 +19,9 @@ import {
   RichText,
   Html,
 } from './ContentBlocks';
-import { Tabs, Rejections, Accordion, Faq, Testimonials, Partners, Services, Blog, CalculatorBlock, Contact, LeadFormBlock } from './DynamicBlocks';
+import { Tabs, Rejections, Accordion, Faq, Testimonials, Partners, Services, Blog, CalculatorBlock, Contact, LeadFormBlock, EstimateBlock } from './DynamicBlocks';
+import { blockCss, blockFonts, googleFontsUrl } from '@/lib/design';
+import { getSetting } from '@/lib/settings';
 
 const MAP: Record<string, (p: { data: any; site: SiteSettings }) => any> = {
   pageHeader: PageHeader,
@@ -46,21 +48,33 @@ const MAP: Record<string, (p: { data: any; site: SiteSettings }) => any> = {
   imageText: ImageText,
   richtext: RichText,
   calculator: CalculatorBlock,
+  estimate: EstimateBlock,
   contact: Contact,
   leadForm: LeadFormBlock,
   html: Html,
 };
 
-export default function BlockRenderer({ blocks, site }: { blocks: Block[]; site: SiteSettings }) {
+export default async function BlockRenderer({ blocks, site }: { blocks: Block[]; site: SiteSettings }) {
+  const design = await getSetting('design');
+  const defaultAnim = design.animation.enabled && design.animation.style && design.animation.style !== 'none' ? design.animation.style : undefined;
+  const fonts = googleFontsUrl(blockFonts(blocks));
   return (
     <>
+      {fonts && <link rel="stylesheet" href={fonts} precedence="default" />}
       {blocks
         .filter((b) => b && !b.data?.hidden)
         .map((b) => {
-          if (b.type === 'hero') return <Hero key={b.id} data={b.data} />;
-          const C = MAP[b.type];
-          if (!C) return null;
-          return <C key={b.id} data={b.data || {}} site={site} />;
+          const C = b.type === 'hero' ? null : MAP[b.type];
+          if (b.type !== 'hero' && !C) return null;
+          const style = b.data?.style || {};
+          const css = blockCss(b.id, style);
+          const anim = style.animation ? (style.animation === 'none' ? undefined : style.animation) : b.type === 'hero' ? undefined : defaultAnim;
+          return (
+            <div key={b.id} id={`b-${b.id}`} className="blk" data-anim={anim} data-type={b.type}>
+              {b.type === 'hero' ? <Hero data={b.data} /> : C ? <C data={b.data || {}} site={site} /> : null}
+              {css && <style dangerouslySetInnerHTML={{ __html: css }} />}
+            </div>
+          );
         })}
     </>
   );

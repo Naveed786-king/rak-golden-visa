@@ -11,9 +11,8 @@ export default function AuthShell({ title, subtitle, children }: { title: string
           <div className="absolute inset-0 bg-pattern opacity-[0.07]" />
           <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-gold/25 blur-3xl" />
           <div className="relative">
-            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-gold-light to-gold text-ink">
-              <Crown className="h-7 w-7" />
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/emblem-192.png" alt="" className="h-16 w-16 object-contain drop-shadow-[0_10px_24px_rgba(200,162,85,0.45)]" />
             <h2 className="mt-8 font-display text-5xl font-semibold leading-tight !text-white">
               <T>Your Golden Visa journey, in one place.</T>
             </h2>

@@ -1,6 +1,7 @@
 import { prisma } from './db';
 import { safeJson } from './utils';
-import type { Block } from '@/components/blocks/types';
+import type { Block, Field } from '@/components/blocks/types';
+import { BLOCK_MAP } from '@/components/blocks/schema';
 import { getLocale, getTranslation, getTranslationsFor } from './i18n/server';
 import { DEFAULT_LOCALE } from './i18n/config';
 
@@ -33,7 +34,7 @@ export async function getPage(slug: string, locale?: string) {
       title: t.title || base.title,
       metaTitle: t.metaTitle || base.metaTitle,
       metaDescription: t.metaDescription || base.metaDescription,
-      blocks: Array.isArray(t.blocks) && t.blocks.length === base.blocks.length ? t.blocks : base.blocks,
+      blocks: mergeBlocks(base.blocks, Array.isArray(t.blocks) ? t.blocks : []),
     };
   } catch {
     return null;
@@ -111,4 +112,34 @@ export async function getPartners() {
   } catch {
     return [];
   }
+}
+
+/* Translated text is laid over the CURRENT English blocks, so design, images,
+   prices and other non-text changes made later show up in every language at once. */
+function mergeFields(base: any, tr: any, fields: Field[]): any {
+  if (!base || typeof base !== 'object' || !tr || typeof tr !== 'object') return base;
+  const out: any = { ...base };
+  for (const f of fields) {
+    const b = base[f.name];
+    const t = tr[f.name];
+    if (t === undefined || t === null) continue;
+    if (['text', 'textarea', 'lines', 'richtext'].includes(f.type)) {
+      if (typeof t === 'string' && t && typeof b === 'string' && b) out[f.name] = t;
+    } else if (f.type === 'link') {
+      if (b && typeof t?.label === 'string' && t.label) out[f.name] = { ...b, label: t.label };
+    } else if (f.type === 'list' && Array.isArray(b) && Array.isArray(t)) {
+      out[f.name] = b.map((item, i) => mergeFields(item, t[i], f.fields || []));
+    }
+  }
+  return out;
+}
+
+export function mergeBlocks(base: Block[], tr: Block[]): Block[] {
+  const byId = new Map(tr.map((b) => [b?.id, b]));
+  return base.map((b, i) => {
+    const t = byId.get(b.id) || (tr[i]?.type === b.type ? tr[i] : null);
+    const schema = BLOCK_MAP[b.type];
+    if (!t || !schema) return b;
+    return { ...b, data: mergeFields(b.data, t.data, schema.fields) };
+  });
 }

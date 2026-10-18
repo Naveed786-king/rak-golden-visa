@@ -71,7 +71,7 @@ export function PageTitle({ title, subtitle, actions }: { title: string; subtitl
   );
 }
 
-export function Card({ children, className, title, actions }: { children: React.ReactNode; className?: string; title?: string; actions?: React.ReactNode }) {
+export function Card({ children, className, title, actions }: { children: React.ReactNode; className?: string; title?: React.ReactNode; actions?: React.ReactNode }) {
   return (
     <div className={cn('rounded-2xl bg-white ring-1 ring-gray-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)]', className)}>
       {(title || actions) && (

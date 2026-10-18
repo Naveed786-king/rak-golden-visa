@@ -41,6 +41,9 @@ async function main() {
     console.log(`✔ Admin user created: ${email} / ${password}  (change it after first login!)`);
   }
 
+  // 1b) One-time upgrades for websites created with an older version
+  await upgrades();
+
   // 2) Content
   const pageCount = await prisma.page.count();
   if (pageCount > 0 && !force) {
@@ -80,6 +83,25 @@ async function main() {
   if ((await prisma.testimonial.count()) === 0) {
     for (const t of C.testimonialPlaceholders) await prisma.testimonial.create({ data: t });
     console.log('✔ 3 sample testimonials (hidden — replace with real reviews)');
+  }
+}
+
+async function upgrades() {
+  const done = async (key) => !!(await prisma.setting.findUnique({ where: { key: 'upgrade:' + key } }));
+  const mark = (key) => prisma.setting.upsert({ where: { key: 'upgrade:' + key }, update: { value: '1' }, create: { key: 'upgrade:' + key, value: '1' } });
+  // v2: add the cost calculator section to the home page (right after the hero)
+  if (!(await done('estimate-v1'))) {
+    const home = await prisma.page.findUnique({ where: { slug: 'home' } });
+    if (home) {
+      let blocks = [];
+      try { blocks = JSON.parse(home.blocks || '[]'); } catch {}
+      if (!blocks.some((x) => x.type === 'estimate')) {
+        blocks.splice(Math.min(1, blocks.length), 0, C.estimateBlock());
+        await prisma.page.update({ where: { id: home.id }, data: { blocks: JSON.stringify(blocks) } });
+        console.log('✔ Added the cost calculator to the home page');
+      }
+    }
+    await mark('estimate-v1');
   }
 }
 

@@ -17,7 +17,11 @@ export type FieldType =
   | 'boolean'
   | 'link'
   | 'icon'
-  | 'list';
+  | 'list'
+  | 'color'
+  | 'range'
+  | 'font'
+  | 'heading';
 
 export type Field = {
   name: string;
@@ -28,6 +32,11 @@ export type Field = {
   fields?: Field[]; // for "list"
   itemLabel?: string; // for "list"
   placeholder?: string;
+  min?: number; // for "range"
+  max?: number;
+  step?: number;
+  unit?: string;
+  half?: boolean; // show in a 2-column grid
 };
 
 export type BlockSchema = {

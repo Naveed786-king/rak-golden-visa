@@ -15,7 +15,7 @@ export default function Reveal({ children, className, delay = 0, y = 28, x = 0, 
   const M: any = (motion as any)[as];
   return (
     <M
-      className={className}
+      className={className ? `reveal ${className}` : 'reveal'}
       initial={{ opacity: 0, y, x }}
       whileInView={{ opacity: 1, y: 0, x: 0 }}
       viewport={{ once, margin: '-60px' }}
@@ -45,7 +45,7 @@ export function Stagger({ children, className }: { children: React.ReactNode; cl
 
 export function StaggerItem({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <motion.div className={className} variants={item}>
+    <motion.div className={className ? `reveal ${className}` : 'reveal'} variants={item}>
       {children}
     </motion.div>
   );

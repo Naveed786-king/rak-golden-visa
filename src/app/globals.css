@@ -229,3 +229,161 @@ input[type='range'].appearance-none::-moz-range-thumb { width: 18px; height: 18p
 [dir='rtl'] table { text-align: right; }
 /* Languages whose letters are not in the decorative fonts */
 :lang(zh) .font-display, :lang(zh-CN) .font-display, :lang(hi) .font-display { font-family: var(--font-sans); letter-spacing: -0.02em; }
+
+/* =====================================================================
+   DESIGN SYSTEM (values come from Admin → Design as CSS variables)
+   ===================================================================== */
+@layer components {
+  .btn { border-radius: var(--radius-btn, 999px); }
+
+  /* Header */
+  .site-topbar { background: var(--top-bg, #070d19); color: var(--top-text, #c9cfda); }
+  .site-header {
+    position: sticky; top: 0; z-index: 40; color: var(--hdr-text, #fff);
+    background: var(--hdr-bg, rgba(10,18,34,.72));
+    backdrop-filter: blur(var(--hdr-blur, 20px)) saturate(170%);
+    -webkit-backdrop-filter: blur(var(--hdr-blur, 20px)) saturate(170%);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    transition: background .5s ease, box-shadow .5s ease, margin .3s;
+  }
+  .site-header[data-scrolled] { box-shadow: 0 18px 50px -24px rgba(0,0,0,.7); }
+  /* at the very top the header sits on a solid colour; once you scroll it turns into frosted glass */
+  .site-header::before {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, var(--hdr-bg-solid, #0a1222), color-mix(in oklab, var(--hdr-bg-solid, #0a1222) 92%, var(--brand-gold)));
+    transition: opacity .5s ease;
+  }
+  .site-header[data-scrolled]::before { opacity: 0; }
+  .site-header .hdr-row { height: var(--hdr-h, 86px); transition: height .45s cubic-bezier(.2,.8,.2,1); }
+  .site-header[data-scrolled] .hdr-row { height: calc(var(--hdr-h, 86px) - 14px); }
+  .site-header .site-logo img { height: var(--logo-h, 52px); }
+  .site-header[data-scrolled] .site-logo img { height: calc(var(--logo-h, 52px) - 8px); }
+  @media (max-width: 767px) {
+    .site-header .hdr-row { height: min(var(--hdr-h, 86px), 72px); }
+    .site-header .site-logo img, .site-header[data-scrolled] .site-logo img { height: min(var(--logo-h, 52px), 40px); }
+  }
+  .site-nav { font-size: var(--menu-size, 15px); background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
+  .glass-menu {
+    background: color-mix(in oklab, var(--brand-ink) 82%, transparent);
+    backdrop-filter: blur(22px) saturate(170%); -webkit-backdrop-filter: blur(22px) saturate(170%);
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .glass-drawer {
+    background: linear-gradient(160deg, color-mix(in oklab, var(--brand-ink) 92%, var(--brand-gold)) 0%, var(--brand-ink) 60%);
+    box-shadow: -30px 0 80px -20px rgba(0,0,0,.6);
+  }
+
+  /* Footer */
+  .site-footer { background: var(--ftr-img, none) center / cover no-repeat, var(--ftr-bg, var(--brand-ink)); color: var(--ftr-text); }
+  .site-footer .ftr-muted { color: var(--ftr-text, rgba(255,255,255,.62)); }
+  .site-footer .ftr-head { color: var(--ftr-head, var(--brand-gold)); }
+  .site-footer .ftr-strong { color: #fff; }
+  .site-footer .site-logo img { height: var(--ftr-logo-h, 60px); }
+  .ftr-watermark { display: none; }
+  .ftr-mark .ftr-watermark {
+    display: block; position: absolute; right: -6rem; bottom: -6rem; width: 30rem; max-width: 70vw;
+    opacity: .05; pointer-events: none; filter: grayscale(.2); transform: rotate(-12deg);
+  }
+
+  /* Cost calculator card */
+  .estimate-card {
+    background: #fff; color: var(--brand-ink); border-radius: 28px;
+    border: 1px solid color-mix(in oklab, var(--brand-gold) 22%, #ecdcd8);
+    box-shadow: 0 40px 80px -40px rgba(10,18,34,.6), 0 0 0 8px rgba(255,255,255,.06);
+  }
+  .theme-light .estimate-card, .theme-sand .estimate-card { box-shadow: 0 40px 80px -40px rgba(10,18,34,.45), 0 0 0 8px rgba(255,255,255,.6); }
+  .theme-dark .estimate-note { color: #fff; }
+  .estimate-card h3 { font-family: var(--font-sans); }
+  .estimate-card .field { background: #fff; border-color: #e6e0d2; color: #111827; }
+  .estimate-card .field::placeholder { color: #9aa1ad; }
+  .animate-pop { animation: pop .7s cubic-bezier(.2,.8,.2,1) both; }
+}
+@keyframes pop { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* Header styles chosen in Admin → Design */
+.hdr-solid .site-header { background: var(--hdr-bg-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.hdr-transparent .site-header { margin-bottom: calc(-1 * var(--hdr-h, 86px)); }
+.hdr-transparent .site-header::before, .hdr-solid .site-header::before { display: none; }
+.hdr-transparent .site-header:not([data-scrolled]) { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; border-color: transparent; }
+.hdr-transparent .site-header:not([data-scrolled]) .site-nav { background: transparent; box-shadow: none; }
+.hdr-static .site-header { position: relative; }
+.hdr-noshrink .site-header[data-scrolled] .hdr-row { height: var(--hdr-h, 86px); }
+.hdr-noshrink .site-header[data-scrolled] .site-logo img { height: var(--logo-h, 52px); }
+.hdr-glow .site-header::after {
+  content: ''; position: absolute; inset-inline: 0; bottom: -1px; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--brand-gold), transparent); opacity: .55;
+}
+
+/* Footer styles */
+.ftr-glass .site-footer .ftr-main {
+  margin-block: 3rem; border-radius: var(--radius-card, 28px); padding-inline: clamp(1.25rem, 3vw, 3rem);
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  backdrop-filter: blur(var(--glass-blur, 18px)); -webkit-backdrop-filter: blur(var(--glass-blur, 18px));
+}
+.ftr-light .site-footer { --ftr-text: rgba(10,18,34,.68); --ftr-bg: var(--brand-sand); color: var(--brand-ink); }
+.ftr-light .site-footer .ftr-strong, .ftr-light .site-footer a.ftr-muted:hover { color: var(--brand-ink); }
+.ftr-light .site-footer .bg-pattern { opacity: .03; }
+.ftr-light .site-footer [class*='border-white'] { border-color: rgba(10,18,34,.12); }
+
+/* Button styles */
+.bs-solid .btn-gold { background: var(--brand-gold); }
+.bs-outline .btn-gold { background: transparent; color: var(--brand-gold); box-shadow: inset 0 0 0 1.5px var(--brand-gold); }
+.bs-outline .btn-gold:hover { background: var(--brand-gold); color: var(--brand-ink); }
+.bs-glass .btn-gold {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--brand-gold) 55%, transparent), color-mix(in oklab, var(--brand-gold) 30%, transparent));
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand-gold-light) 70%, transparent), 0 10px 30px -12px var(--brand-gold);
+}
+.theme-light.bs-glass .btn-gold, .bs-glass .theme-light .btn-gold, .bs-glass .theme-sand .btn-gold { color: var(--brand-ink); }
+
+/* Glass UI (Admin → Design → Glass effect) */
+.glass-ui .card-lift { border-radius: var(--radius-card, 28px); }
+.glass-ui .glass, .glass-ui .theme-dark :is(.box, .card-lift) {
+  background: linear-gradient(135deg, rgba(255,255,255,calc(var(--glass-o, .1) + .03)), rgba(255,255,255,calc(var(--glass-o, .1) * .4)));
+  border: 1px solid rgba(255,255,255,var(--glass-b, .18));
+  backdrop-filter: blur(var(--glass-blur, 18px)) saturate(170%);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 18px)) saturate(170%);
+  box-shadow: 0 24px 60px -30px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.14);
+}
+.glass-ui :is(.theme-light, .theme-sand) .card-lift {
+  background: linear-gradient(135deg, rgba(255,255,255,.82), rgba(255,255,255,.55));
+  border: 1px solid rgba(255,255,255,.9);
+  backdrop-filter: blur(var(--glass-blur, 18px)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 18px)) saturate(160%);
+  box-shadow: 0 24px 60px -36px rgba(10,18,34,.45), inset 0 1px 0 #fff;
+}
+.glass-ui :is(.theme-light, .theme-sand) .card-lift.bg-ink { background: var(--brand-ink); border-color: transparent; }
+/* soft gold light behind glass cards so the frosted effect is visible */
+.glass-orbs :is(.theme-light, .theme-sand).section::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(38rem 24rem at 8% 12%, color-mix(in oklab, var(--brand-gold) 16%, transparent), transparent 70%),
+    radial-gradient(34rem 26rem at 92% 88%, color-mix(in oklab, var(--brand-gold) 12%, transparent), transparent 70%);
+}
+.glass-orbs .theme-dark.section::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(40rem 30rem at 50% 120%, color-mix(in oklab, var(--brand-gold) 14%, transparent), transparent 70%);
+}
+
+/* Global animation switch */
+.anim-off .reveal { opacity: 1 !important; transform: none !important; }
+.anim-off .animate-pop { animation: none; }
+
+/* Section entrance animations (Admin → page → section → Design → Animation) */
+.blk { position: relative; }
+.blk[data-anim] > :first-child {
+  transition: opacity var(--anim-dur, 800ms) ease var(--anim-delay, 0ms), transform var(--anim-dur, 800ms) cubic-bezier(.2,.8,.2,1) var(--anim-delay, 0ms), filter var(--anim-dur, 800ms) ease var(--anim-delay, 0ms);
+}
+html[data-anim-ready] .blk[data-anim]:not(.in) > :first-child { opacity: 0; }
+html[data-anim-ready] .blk[data-anim='fade-up']:not(.in) > :first-child { transform: translateY(70px); }
+html[data-anim-ready] .blk[data-anim='zoom']:not(.in) > :first-child { transform: scale(.92); }
+html[data-anim-ready] .blk[data-anim='slide-left']:not(.in) > :first-child { transform: translateX(90px); }
+html[data-anim-ready] .blk[data-anim='slide-right']:not(.in) > :first-child { transform: translateX(-90px); }
+html[data-anim-ready] .blk[data-anim='flip']:not(.in) > :first-child { transform: perspective(1400px) rotateX(16deg) translateY(40px); transform-origin: top; }
+html[data-anim-ready] .blk[data-anim='blur']:not(.in) > :first-child { filter: blur(16px); transform: scale(1.02); }
+.blk[data-anim='bounce'].in > :first-child { animation: bounce-in var(--anim-dur, 900ms) cubic-bezier(.2,.8,.2,1) var(--anim-delay, 0ms) both; }
+@keyframes bounce-in { 0% { opacity: 0; transform: translateY(60px) scale(.96); } 60% { opacity: 1; transform: translateY(-10px) scale(1.01); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  html[data-anim-ready] .blk[data-anim]:not(.in) > :first-child { opacity: 1; transform: none; filter: none; }
+}

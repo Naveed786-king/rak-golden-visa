@@ -110,6 +110,32 @@ async function source(entity: Entity, id: string): Promise<{ obj: any; items: It
       navItems(f.bottomLinks, items);
       return { obj: f, items };
     }
+    if (id === 'estimate') {
+      const { ESTIMATE_TEXT_KEYS } = await import('../estimate');
+      const e: any = JSON.parse(JSON.stringify(await getSetting('estimate')));
+      const obj: any = {};
+      for (const k of ESTIMATE_TEXT_KEYS) obj[k] = e[k];
+      ESTIMATE_TEXT_KEYS.forEach((k) => plain(obj, k, items));
+      const fees = (list: any[]) =>
+        (list || []).map((f) => {
+          const o = { label: f.label, note: f.note };
+          plain(o, 'label', items);
+          plain(o, 'note', items);
+          return o;
+        });
+      const opts = (list: any[]) =>
+        (list || []).map((c) => {
+          const o: any = { label: c.label, description: c.description };
+          plain(o, 'label', items);
+          plain(o, 'description', items);
+          o.fees = fees(c.fees);
+          return o;
+        });
+      obj.categories = opts(e.categories);
+      obj.types = opts(e.types);
+      obj.fees = fees(e.fees);
+      return { obj, items };
+    }
     if (id === 'site') {
       const s: any = JSON.parse(JSON.stringify(await getSetting('site')));
       const obj: any = { tagline: s.tagline, hours: s.hours, hoursClosed: s.hoursClosed, whatsappMessage: s.whatsappMessage, address: s.address, seo: { defaultTitle: s.seo.defaultTitle, description: s.seo.description } };
@@ -186,6 +212,7 @@ export async function allTranslatableEntities(): Promise<{ entity: Entity; id: s
     { entity: 'settings', id: 'header' },
     { entity: 'settings', id: 'footer' },
     { entity: 'settings', id: 'site' },
+    { entity: 'settings', id: 'estimate' },
     ...pages.map((p) => ({ entity: 'page' as Entity, id: p.id })),
     ...services.map((p) => ({ entity: 'service' as Entity, id: p.id })),
     ...faqs.map((p) => ({ entity: 'faq' as Entity, id: p.id })),

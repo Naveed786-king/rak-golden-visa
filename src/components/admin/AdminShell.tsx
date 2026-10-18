@@ -28,6 +28,8 @@ import {
   X,
   Crown,
   Languages,
+  Calculator,
+  Palette,
 } from 'lucide-react';
 import { Toaster, toast } from './ui';
 import { cn, formatDateTime } from '@/lib/utils';
@@ -51,6 +53,7 @@ const NAV = [
       { href: '/admin/pages', label: 'Pages', icon: FileText },
       { href: '/admin/posts', label: 'Blog posts', icon: Newspaper },
       { href: '/admin/services', label: 'Services & prices', icon: BadgeCheck },
+      { href: '/admin/calculator', label: 'Cost calculator', icon: Calculator },
       { href: '/admin/faqs', label: 'FAQs', icon: CircleHelp },
       { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquareQuote },
       { href: '/admin/partners', label: 'Partner logos', icon: Building },
@@ -60,6 +63,7 @@ const NAV = [
   {
     group: 'Appearance',
     items: [
+      { href: '/admin/design', label: 'Design & style', icon: Palette, adminOnly: true },
       { href: '/admin/header', label: 'Header & menu', icon: PanelTop },
       { href: '/admin/footer', label: 'Footer', icon: PanelBottom },
       { href: '/admin/languages', label: 'Languages', icon: Languages },
@@ -158,9 +162,8 @@ export default function AdminShell({ user, siteName, children }: { user: { name:
   const sidebar = (
     <div className="flex h-full flex-col bg-ink text-white">
       <div className="flex items-center gap-3 px-5 py-5">
-        <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-gold-light to-gold text-ink">
-          <Crown className="h-5 w-5" />
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/emblem-64.png" alt="" className="h-11 w-11 shrink-0 object-contain drop-shadow-[0_6px_14px_rgba(200,162,85,0.35)]" />
         <div className="min-w-0">
           <p className="truncate text-sm font-extrabold">{siteName}</p>
           <p className="text-[0.65rem] uppercase tracking-[0.2em] text-gold">Admin panel</p>

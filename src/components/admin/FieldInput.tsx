@@ -7,6 +7,7 @@ import RichEditor from './RichEditor';
 import { ImageInput } from './MediaPicker';
 import { Toggle } from './ui';
 import { cn } from '@/lib/utils';
+import { FONTS } from '@/lib/design';
 
 export function FieldInput({ field, value, onChange }: { field: Field; value: any; onChange: (v: any) => void }) {
   const label = (
@@ -89,6 +90,69 @@ export function FieldInput({ field, value, onChange }: { field: Field; value: an
             <input className="admin-input" placeholder="Button text" value={value?.label ?? ''} onChange={(e) => onChange({ ...(value || {}), label: e.target.value })} />
             <input className="admin-input" placeholder="/page, https://…, whatsapp, phone" value={value?.href ?? ''} onChange={(e) => onChange({ ...(value || {}), href: e.target.value })} />
           </div>
+        </div>
+      );
+    case 'heading':
+      return <p className="col-span-full -mb-2 mt-2 border-b border-gray-100 pb-1.5 text-[0.7rem] font-extrabold uppercase tracking-[0.16em] text-gold-deep">{field.label}</p>;
+    case 'color':
+      return (
+        <div>
+          {label}
+          <div className="flex items-center gap-2">
+            <input
+              type="color"
+              className="h-10 w-12 shrink-0 cursor-pointer rounded-lg border border-gray-200 bg-white p-1"
+              value={/^#[0-9a-f]{6}$/i.test(value || '') ? value : '#c8a255'}
+              onChange={(e) => onChange(e.target.value)}
+            />
+            <input className="admin-input font-mono" value={value ?? ''} placeholder="Default" onChange={(e) => onChange(e.target.value)} />
+            {value ? (
+              <button type="button" onClick={() => onChange('')} className="shrink-0 rounded-lg px-2 py-1 text-xs font-bold text-gray-400 hover:bg-gray-100" title="Reset">
+                ✕
+              </button>
+            ) : null}
+          </div>
+        </div>
+      );
+    case 'range': {
+      const has = value !== '' && value !== undefined && value !== null;
+      return (
+        <div>
+          <label className="admin-label flex items-center justify-between">
+            <span>{field.label}</span>
+            <span className="flex items-center gap-1 font-mono font-normal text-gray-500">
+              {has ? `${value}${field.unit || ''}` : 'Default'}
+              {has && (
+                <button type="button" onClick={() => onChange('')} className="ml-1 rounded px-1 text-gray-400 hover:bg-gray-100" title="Reset">
+                  ✕
+                </button>
+              )}
+            </span>
+          </label>
+          <input
+            type="range"
+            className={cn('w-full accent-[#C8A255]', !has && 'opacity-40')}
+            min={field.min ?? 0}
+            max={field.max ?? 100}
+            step={field.step ?? 1}
+            value={has ? value : field.min ?? 0}
+            onChange={(e) => onChange(Number(e.target.value))}
+          />
+        </div>
+      );
+    }
+    case 'font':
+      return (
+        <div>
+          {label}
+          <select className="admin-input" value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
+            <option value="">— Default —</option>
+            {FONTS.map((f) => (
+              <option key={f.family} value={f.family}>
+                {f.name}
+              </option>
+            ))}
+          </select>
         </div>
       );
     case 'list':
@@ -230,9 +294,11 @@ function ListInput({ field, value, onChange }: { field: Field; value: any[]; onC
 
 export function FieldGroup({ fields, data, onChange }: { fields: Field[]; data: Record<string, any>; onChange: (d: Record<string, any>) => void }) {
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-5 sm:grid-cols-2">
       {fields.map((f) => (
-        <FieldInput key={f.name} field={f} value={data?.[f.name]} onChange={(v) => onChange({ ...data, [f.name]: v })} />
+        <div key={f.name} className={f.half ? '' : 'sm:col-span-2'}>
+          <FieldInput field={f} value={data?.[f.name]} onChange={(v) => onChange({ ...data, [f.name]: v })} />
+        </div>
       ))}
     </div>
   );

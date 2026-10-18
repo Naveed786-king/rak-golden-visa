@@ -55,7 +55,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
   return (
     <>
       {header.topbar.enabled && (
-        <div className="relative z-50 bg-ink text-white/80 text-[0.78rem] border-b border-white/10">
+        <div className="site-topbar relative z-50 text-[0.78rem] border-b border-white/10">
           <div className="container-x flex h-10 items-center justify-between gap-4">
             <div className="hidden md:flex items-center gap-5">
               <a href={`mailto:${site.emailVisa}`} className="flex items-center gap-1.5 hover:text-gold transition-colors">
@@ -86,28 +86,23 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
         </div>
       )}
 
-      <header
-        className={cn(
-          'sticky top-0 z-40 transition-all duration-500',
-          scrolled ? 'bg-ink/85 backdrop-blur-xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.6)] border-b border-white/10' : 'bg-ink border-b border-white/5'
-        )}
-      >
-        <div className={cn('container-x flex items-center justify-between transition-all duration-500', scrolled ? 'h-[70px]' : 'h-[86px]')}>
+      <header className="site-header" data-scrolled={scrolled ? '' : undefined}>
+        <div className="hdr-row container-x flex items-center justify-between gap-4">
           <Logo src={site.logoLight || site.logo} name={site.name} />
 
-          <nav className="hidden lg:flex items-center gap-1" onMouseLeave={() => setDrop(null)}>
+          <nav className="site-nav hidden lg:flex items-center gap-0.5 rounded-full px-1.5 py-1" onMouseLeave={() => setDrop(null)}>
             {header.menu.map((item, i) => (
               <div key={i} className="relative" onMouseEnter={() => setDrop(item.children?.length ? i : null)}>
                 <SmartLink
                   href={item.href}
                   className={cn(
-                    'relative flex items-center gap-1 px-4 py-2.5 text-[0.9rem] font-semibold transition-colors',
-                    isActive(item.href) ? 'text-gold' : 'text-white/80 hover:text-white'
+                    'relative flex items-center gap-1 rounded-full px-3.5 xl:px-4 py-2 font-semibold transition-colors',
+                    isActive(item.href) ? 'text-gold' : 'opacity-80 hover:opacity-100 hover:bg-white/[0.06]'
                   )}
                 >
                   {item.label}
                   {!!item.children?.length && <ChevronDown className={cn('h-4 w-4 transition-transform', drop === i && 'rotate-180')} />}
-                  {isActive(item.href) && <motion.span layoutId="nav-underline" className="absolute left-4 right-4 -bottom-0.5 h-[2px] rounded-full bg-gold" />}
+                  {isActive(item.href) && <motion.span layoutId="nav-underline" className="absolute inset-0 -z-10 rounded-full bg-white/[0.07] ring-1 ring-gold/30" />}
                 </SmartLink>
                 <AnimatePresence>
                   {drop === i && item.children?.length ? (
@@ -118,15 +113,15 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                       transition={{ duration: 0.22 }}
                       className="absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[340px]"
                     >
-                      <div className="rounded-2xl bg-white p-2 shadow-[0_30px_80px_-20px_rgba(10,18,34,0.45)] ring-1 ring-black/5">
+                      <div className="glass-menu rounded-2xl p-2">
                         {item.children.map((c, j) => (
-                          <SmartLink key={j} href={c.href} className="group flex items-start gap-3 rounded-xl p-3 hover:bg-sand transition-colors">
+                          <SmartLink key={j} href={c.href} className="group flex items-start gap-3 rounded-xl p-3 hover:bg-white/[0.08] transition-colors">
                             <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-gold-light to-gold text-ink">
                               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:rotate-45" />
                             </span>
                             <span>
-                              <span className="block text-[0.92rem] font-bold text-ink">{c.label}</span>
-                              {c.description && <span className="block text-xs text-ink/55 mt-0.5">{c.description}</span>}
+                              <span className="block text-[0.92rem] font-bold text-white">{c.label}</span>
+                              {c.description && <span className="block text-xs text-white/55 mt-0.5">{c.description}</span>}
                             </span>
                           </SmartLink>
                         ))}
@@ -139,12 +134,12 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <a href={`tel:${site.phone}`} className="hidden xl:flex items-center gap-2.5 pr-2 text-white group">
+            <a href={`tel:${site.phone}`} className="hidden 2xl:flex items-center gap-2.5 pr-2 group">
               <span className="grid h-10 w-10 place-items-center rounded-full border border-white/15 group-hover:border-gold transition-colors">
                 <Phone className="h-4 w-4 text-gold" />
               </span>
               <span className="leading-tight">
-                <span className="block text-[0.65rem] uppercase tracking-widest text-white/50">{t('Free consultation')}</span>
+                <span className="block text-[0.65rem] uppercase tracking-widest opacity-50">{t('Free consultation')}</span>
                 <span className="block text-sm font-bold">{site.phoneDisplay}</span>
               </span>
             </a>
@@ -152,7 +147,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
               <LanguageSwitcher />
             </div>
             {header.showLogin && (
-              <Link href={accountHref} className="hidden md:grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white hover:border-gold hover:text-gold transition-colors" aria-label={me ? t('My account') : t('Client login')} title={me ? me.name : t('Client login')}>
+              <Link href={accountHref} className="hidden md:grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/[0.04] hover:border-gold hover:text-gold transition-colors" aria-label={me ? t('My account') : t('Client login')} title={me ? me.name : t('Client login')}>
                 <User className="h-4 w-4" />
               </Link>
             )}
@@ -161,7 +156,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 {header.cta.label}
               </SmartLink>
             )}
-            <button onClick={() => setOpen(true)} className="lg:hidden grid h-11 w-11 place-items-center rounded-full border border-white/15 text-white" aria-label={t('Menu')}>
+            <button onClick={() => setOpen(true)} className="lg:hidden grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/[0.05]" aria-label={t('Menu')}>
               <Menu className="h-5 w-5" />
             </button>
           </div>
@@ -177,7 +172,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 260 }}
-              className="absolute right-0 top-0 h-full w-[88%] max-w-sm bg-ink text-white flex flex-col overflow-y-auto"
+              className="glass-drawer absolute right-0 top-0 h-full w-[88%] max-w-sm text-white flex flex-col overflow-y-auto"
             >
               <div className="absolute inset-0 bg-pattern opacity-[0.05] pointer-events-none" />
               <div className="relative flex items-center justify-between p-5 border-b border-white/10">

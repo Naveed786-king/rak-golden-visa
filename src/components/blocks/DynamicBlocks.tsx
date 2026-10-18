@@ -11,6 +11,9 @@ import LeadForm from './LeadForm';
 import LoadMorePosts from './LoadMorePosts';
 import PostCard from './PostCard';
 import T from '@/components/ui/T';
+import EstimateCalculator from './EstimateCalculator';
+import { getLocalizedEstimate } from '@/lib/settings';
+import { getLocale } from '@/lib/i18n/server';
 
 type P = { data: any; site: SiteSettings };
 
@@ -59,7 +62,7 @@ export async function Faq({ data }: P) {
       <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="lg:sticky lg:top-28 self-start">
           <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} align="left" className="!mb-8" />
-          <Reveal className={cn('rounded-3xl p-7', data.theme === 'dark' ? 'glass' : 'bg-ink text-white')}>
+          <Reveal className={cn('box rounded-3xl p-7', data.theme === 'dark' ? 'glass' : 'bg-ink text-white')}>
             <h3 className="font-display text-2xl font-semibold !text-white"><T>Still have questions?</T></h3>
             <p className="mt-2 text-sm text-white/65"><T>Our Golden Visa specialists are one message away.</T></p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -241,7 +244,7 @@ export function Contact({ data, site }: P) {
                     <ContactCardInner {...c} />
                   </SmartLink>
                 ) : (
-                  <div className={cn('flex h-full gap-4 rounded-2xl p-5', dark ? 'glass' : 'bg-sand')}>
+                  <div className={cn('box flex h-full gap-4 rounded-2xl p-5', dark ? 'glass' : 'bg-sand')}>
                     <ContactCardInner {...c} />
                   </div>
                 )}
@@ -291,6 +294,46 @@ export function LeadFormBlock({ data }: P) {
           <div className={cn('rounded-[2.5rem] p-7 md:p-10', dark ? 'glass' : 'bg-white ring-1 ring-ink/10 shadow-2xl')}>
             <LeadForm defaultService={data.service} dark={dark} />
           </div>
+        </Reveal>
+      </div>
+    </Section>
+  );
+}
+
+/* ---------------- Cost estimate calculator ---------------- */
+export async function EstimateBlock({ data }: P) {
+  const cfg = await getLocalizedEstimate(await getLocale());
+  const bullets = String(data.bullets || '')
+    .split('\n')
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+  const split = data.layout !== 'center';
+  return (
+    <Section theme={data.theme || 'dark'} anchor={data.anchor || 'calculator'}>
+      <div className={cn('grid items-center gap-10 lg:gap-16', split ? 'lg:grid-cols-[1fr_35rem]' : 'mx-auto max-w-2xl')}>
+        {split ? (
+          <Reveal>
+            {data.eyebrow && <span className="eyebrow">{data.eyebrow}</span>}
+            {data.title && <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.08] text-ink md:text-5xl lg:text-[3.4rem]">{data.title}</h2>}
+            {data.subtitle && <p className="mt-5 max-w-xl text-base leading-relaxed opacity-75 md:text-lg">{data.subtitle}</p>}
+            {bullets.length > 0 && (
+              <ul className="mt-8 grid gap-3">
+                {bullets.map((b: string, i: number) => (
+                  <li key={i} className="flex items-center gap-3 text-[15px] font-semibold">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold text-ink">
+                      <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
+                    </span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Reveal>
+        ) : (
+          <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} className="!mb-2" />
+        )}
+        <Reveal delay={0.15} className="animate-pop">
+          <EstimateCalculator cfg={cfg} />
         </Reveal>
       </div>
     </Section>

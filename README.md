@@ -212,6 +212,15 @@ Optional environment variables (project → Settings → Environment Variables):
 
 ---
 
+## 8b. Design, glass style & cost calculator
+
+- **Admin → Design & style** — brand colours, fonts (incl. Arabic), glass effect, button style, corner radius, animations, header (glass / solid / transparent, height, logo size, colours) and footer (dark / glass / light, colours, background image). A live preview is shown next to the settings.
+- **Every page section has a 🎨 Design tab** (Admin → Pages → open a section): background colour / gradient / photo with overlay, heading & text colours, fonts and sizes, padding & margin, content width, box style (glass, dark glass, outline, gold border…), hover effects, entrance animation, hide on mobile/desktop and custom CSS.
+- **Admin → Cost calculator** — the 3-step Golden Visa estimate (who is applying → new or renewal → family members, ages, inside/outside UAE, medical Normal/VIP). Every question, choice and price is editable; results can be sent to WhatsApp or saved as a lead. Add it to any page with the section **“Cost calculator”**.
+- **Languages** use [next-intl](https://next-intl.dev) for the interface texts and formatting; your content is translated automatically (Admin → Languages).
+
+---
+
 ## 9. Everyday use
 
 - **Edit a page:** Admin → Pages → *Edit* → click a section → change text → **Save** (Ctrl+S). Live in seconds.

@@ -61,6 +61,20 @@ jobs:
           curl -sf -b cookies.txt http://localhost:3000/api/admin/leads | grep -q "CI Test"
           curl -sf -b cookies.txt http://localhost:3000/api/admin/pages | grep -q "about-us"
           code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://localhost:3000/admin); echo "/admin -> $code"; [ "$code" = "200" ]
+          # --- design system & cost calculator ---
+          curl -s http://localhost:3000/ | grep -q 'estimate-card' && echo "Cost calculator on home page"
+          curl -s http://localhost:3000/ | grep -q '/brand/logo-sm.webp' && echo "Brand logo in header"
+          curl -s http://localhost:3000/ | grep -q 'glass-ui' && echo "Glass design active"
+          for pth in /admin/design /admin/calculator; do code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://localhost:3000$pth); echo "$pth -> $code"; [ "$code" = "200" ]; done
+          curl -sf -b cookies.txt http://localhost:3000/api/admin/settings/estimate | grep -q 'medicalVip'
+          curl -sf -b cookies.txt http://localhost:3000/api/admin/settings/design | grep -q 'glass'
+          # save a section style and check the scoped CSS is rendered
+          node -e "
+            const j=(u,o={})=>fetch('http://localhost:3000'+u,{...o,headers:{'Content-Type':'application/json',cookie:require('fs').readFileSync('cookies.txt','utf8').split('\n').filter(l=>l.includes('rgv_session')).map(l=>'rgv_session='+l.split('\t').pop()).join('')}}).then(r=>r.json());
+            (async()=>{const list=await j('/api/admin/pages');const home=list.items.find(p=>p.slug==='home');const full=await j('/api/admin/pages/'+home.id);const page=full.item||full;
+            let blocks=typeof page.blocks==='string'?JSON.parse(page.blocks):page.blocks; blocks[1].data.style={bgType:'color',bgColor:'#123456',paddingTop:40};
+            const r=await j('/api/admin/pages/'+home.id,{method:'PUT',body:JSON.stringify({...page,blocks})}); if(r.error){console.log(r);process.exit(1)}})()"
+          curl -s http://localhost:3000/ | grep -q 'background:#123456' && echo "Section design CSS rendered"
           # --- languages ---
           check /ar 200
           check /ar/about-us 200

@@ -32,7 +32,7 @@ export function TabsView({ items, dark, cta }: { items: any[]; dark?: boolean; c
           </button>
         ))}
       </div>
-      <div className={cn('relative min-h-[320px] overflow-hidden rounded-[2rem] p-8 md:p-12', dark ? 'glass' : 'bg-white ring-1 ring-ink/5 shadow-[0_30px_60px_-40px_rgba(10,18,34,0.45)]')}>
+      <div className={cn('box relative min-h-[320px] overflow-hidden rounded-[2rem] p-8 md:p-12', dark ? 'glass' : 'bg-white ring-1 ring-ink/5 shadow-[0_30px_60px_-40px_rgba(10,18,34,0.45)]')}>
         <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gold/15 blur-3xl" />
         <AnimatePresence mode="wait">
           {cur && (
@@ -109,7 +109,7 @@ export function AccordionView({ items, dark, html = false }: { items: { title: s
       {items.map((it, i) => {
         const isOpen = open === i;
         return (
-          <div key={i} className={cn('overflow-hidden rounded-2xl transition-all', dark ? 'glass' : 'bg-white ring-1', !dark && (isOpen ? 'ring-gold/50 shadow-[0_20px_50px_-30px_rgba(10,18,34,0.35)]' : 'ring-ink/8'))}>
+          <div key={i} className={cn('box overflow-hidden rounded-2xl transition-all', dark ? 'glass' : 'bg-white ring-1', !dark && (isOpen ? 'ring-gold/50 shadow-[0_20px_50px_-30px_rgba(10,18,34,0.35)]' : 'ring-ink/8'))}>
             <button onClick={() => setOpen(isOpen ? null : i)} className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left" aria-expanded={isOpen}>
               <span className={cn('font-bold text-[1.02rem]', isOpen && 'text-gold-deep')}>{it.title}</span>
               <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-full transition-all', isOpen ? 'bg-gold text-ink rotate-180' : 'bg-gold/15 text-gold-deep')}>
