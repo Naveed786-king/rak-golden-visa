@@ -329,7 +329,7 @@ export default function PageEditor({ initial }: { initial: PageData }) {
                 <button onClick={() => setDevice('mobile')} className={cn('rounded-md p-1.5', device === 'mobile' ? 'bg-ink text-white' : 'text-gray-500')} aria-label="Mobile"><Smartphone className="h-4 w-4" /></button>
               </div>
             </div>
-            <div className={cn('mx-auto overflow-hidden rounded-2xl bg-white ring-1 ring-gray-200 shadow-xl', device === 'mobile' ? 'w-[390px]' : 'w-full')}>
+            <div className={cn('mx-auto overflow-hidden rounded-2xl bg-white ring-1 ring-gray-200 shadow-xl', device === 'mobile' ? 'w-[390px] max-w-full' : 'w-full')}>
               <iframe key={stamp} src={`${url}${url.includes('?') ? '&' : '?'}_preview=${stamp}`} className="h-[calc(100vh-110px)] w-full" title="Preview" />
             </div>
           </div>

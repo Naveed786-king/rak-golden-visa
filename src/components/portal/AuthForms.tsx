@@ -123,7 +123,7 @@ export function RegisterForm() {
     <form onSubmit={submit} className="space-y-4">
       <input name="name" required placeholder={t('Full name')} className="field" autoComplete="name" />
       <input name="email" type="email" required placeholder={t('Email address')} className="field" autoComplete="email" />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <input name="phone" placeholder={t('Phone / WhatsApp')} className="field" autoComplete="tel" />
         <input name="nationality" placeholder={t('Nationality')} className="field" />
       </div>
