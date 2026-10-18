@@ -238,7 +238,7 @@ export default function AdminShell({ user, siteName, children }: { user: { name:
             </button>
             <AnimatePresence>
               {bell && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} className="absolute right-0 mt-2 w-[340px] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200">
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} className="absolute right-0 mt-2 w-[min(340px,calc(100vw-1.5rem))] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200">
                   <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                     <p className="text-sm font-bold">Notifications</p>
                     <button onClick={() => setBell(false)} className="text-gray-400 hover:text-gray-700">

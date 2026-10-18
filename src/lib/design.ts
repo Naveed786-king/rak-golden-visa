@@ -62,8 +62,8 @@ export const defaultDesign: DesignSettings = {
   header: {
     style: 'glass',
     bg: '#0A1222',
-    opacity: 72,
-    blur: 20,
+    opacity: 90,
+    blur: 22,
     text: '#FFFFFF',
     height: 76,
     logoHeight: 46,
@@ -125,6 +125,8 @@ export function designCss(d: DesignSettings) {
   root.push(`--glass-blur:${num(d.glass.blur, 0, 40) ?? 18}px`, `--glass-o:${(num(d.glass.opacity, 0, 60) ?? 10) / 100}`, `--glass-b:${(num(d.glass.border, 0, 60) ?? 18) / 100}`);
   root.push(`--anim-dur:${num(d.animation.duration, 150, 3000) ?? 800}ms`);
   root.push(`--hdr-bg:${h.style === 'solid' ? col(h.bg) || '#0A1222' : alpha(h.bg || '#0A1222', num(h.opacity, 0, 100) ?? 72)}`);
+  // Glass header: frosted but never see-through, whatever opacity is saved (floor 86%)
+  root.push(`--hdr-glass:${h.style === 'solid' ? col(h.bg) || '#0A1222' : alpha(h.bg || '#0A1222', Math.max(86, num(h.opacity, 0, 100) ?? 90))}`);
   root.push(`--hdr-bg-solid:${col(h.bg) || '#0A1222'}`, `--hdr-blur:${num(h.blur, 0, 40) ?? 20}px`, `--hdr-text:${col(h.text) || '#fff'}`);
   root.push(`--hdr-h:${num(h.height, 56, 140) ?? 76}px`, `--logo-h:${num(h.logoHeight, 24, 120) ?? 46}px`);
   root.push(`--top-bg:${col(h.topbarBg) || '#070D19'}`, `--top-text:${col(h.topbarText) || '#C9CFDA'}`, `--menu-size:${num(h.menuSize, 11, 22) ?? 15}px`);

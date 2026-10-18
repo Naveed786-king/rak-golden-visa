@@ -26,10 +26,22 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
   const [me, setMe] = useState<Me>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        setScrolled(y > 24);
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        document.documentElement.style.setProperty('--hdr-progress', String(max > 0 ? Math.min(1, y / max) : 0));
+      });
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -47,6 +59,13 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
   }, [open]);
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname?.startsWith(href));
@@ -89,6 +108,8 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
       <header className="site-header" data-scrolled={scrolled ? '' : undefined}>
         <div className="container-x">
         <div className="hdr-island flex items-center justify-between gap-4">
+          <span className="hdr-sheen" aria-hidden />
+          <span className="hdr-progress" aria-hidden />
           <Logo src={site.logoLight || site.logo} name={site.name} />
 
           <nav className="site-nav hidden lg:flex items-center gap-1" onMouseLeave={() => setDrop(null)}>
@@ -154,7 +175,10 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 {header.cta.label} <ArrowUpRight className="h-4 w-4" />
               </SmartLink>
             )}
-            <button onClick={() => setOpen(true)} className="hdr-icon lg:!hidden" aria-label={t('Menu')}>
+            <a href={`tel:${site.phone}`} className="hdr-icon sm:!hidden" aria-label={t('Call now')}>
+              <Phone className="h-4 w-4 text-gold" />
+            </a>
+            <button onClick={() => setOpen(true)} className="hdr-icon hdr-menu-btn lg:!hidden" aria-label={t('Menu')} aria-expanded={open}>
               <Menu className="h-5 w-5" />
             </button>
           </div>

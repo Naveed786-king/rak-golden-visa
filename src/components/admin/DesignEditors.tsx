@@ -13,7 +13,7 @@ export const HEADER_DESIGN_FIELDS: Field[] = [
   { name: 'style', label: 'Header style', type: 'select', options: o(['glass', 'Glass (frosted, see-through)'], ['solid', 'Solid colour'], ['transparent', 'Glass floating over the hero image']) },
   { name: 'bg', label: 'Background colour', type: 'color', half: true },
   { name: 'text', label: 'Text colour', type: 'color', half: true },
-  { name: 'opacity', label: 'Background strength (glass)', type: 'range', min: 0, max: 100, step: 1, unit: '%', half: true },
+  { name: 'opacity', label: 'Background strength (glass, never see-through)', type: 'range', min: 86, max: 100, step: 1, unit: '%', half: true },
   { name: 'blur', label: 'Glass blur', type: 'range', min: 0, max: 40, step: 1, unit: 'px', half: true },
   { name: 'height', label: 'Header height', type: 'range', min: 56, max: 140, step: 2, unit: 'px', half: true },
   { name: 'logoHeight', label: 'Logo height', type: 'range', min: 24, max: 120, step: 1, unit: 'px', half: true },

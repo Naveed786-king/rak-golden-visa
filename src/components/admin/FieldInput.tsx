@@ -86,7 +86,7 @@ export function FieldInput({ field, value, onChange }: { field: Field; value: an
       return (
         <div>
           {label}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <input className="admin-input" placeholder="Button text" value={value?.label ?? ''} onChange={(e) => onChange({ ...(value || {}), label: e.target.value })} />
             <input className="admin-input" placeholder="/page, https://…, whatsapp, phone" value={value?.href ?? ''} onChange={(e) => onChange({ ...(value || {}), href: e.target.value })} />
           </div>
