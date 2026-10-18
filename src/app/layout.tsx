@@ -11,6 +11,7 @@ import { getSetting, getLocalizedBundle } from '@/lib/settings';
 import { getLocale } from '@/lib/i18n/server';
 import { localeInfo } from '@/lib/i18n/config';
 import { NextIntlClientProvider } from 'next-intl';
+import { BACKDROP_CSS } from '@/lib/backdrop-css';
 
 // Always render with live data from the database (admin changes appear instantly)
 export const dynamic = 'force-dynamic';
@@ -54,7 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={info.htmlLang} dir={info.dir} suppressHydrationWarning>
       <head>
-        <style dangerouslySetInnerHTML={{ __html: vars }} />
+        <style dangerouslySetInnerHTML={{ __html: vars + BACKDROP_CSS }} />
       </head>
       <body>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>

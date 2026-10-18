@@ -65,6 +65,7 @@ jobs:
           curl -s http://localhost:3000/ | grep -q 'estimate-card' || { echo "::error title=Check failed::Cost calculator on home page"; exit 1; }; echo "Cost calculator on home page"
           curl -s http://localhost:3000/ | grep -q '/brand/logo-sm.webp' || { echo "::error title=Check failed::Brand logo in header"; exit 1; }; echo "Brand logo in header"
           curl -s http://localhost:3000/ | grep -q 'glass-ui' || { echo "::error title=Check failed::Glass design active"; exit 1; }; echo "Glass design active"
+          curl -s http://localhost:3000/ | grep -q 'hdr-island{backdrop-filter:blur' || { echo "::error title=Check failed::Standard backdrop-filter (glass blur) in page"; exit 1; }; echo "Glass blur rules present"
           for pth in /admin/design /admin/calculator; do code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://localhost:3000$pth); echo "$pth -> $code"; [ "$code" = "200" ]; done
           curl -sf -b cookies.txt http://localhost:3000/api/admin/settings/estimate | grep -q 'medicalVip'
           curl -sf -b cookies.txt http://localhost:3000/api/admin/settings/design | grep -q 'glass'
