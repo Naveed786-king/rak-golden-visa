@@ -47,7 +47,7 @@ export default function LanguageSwitcher({ variant = 'header' }: { variant?: 'he
 
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen(!open)} className="flex h-10 items-center gap-1.5 rounded-full border border-white/15 px-3 text-sm font-semibold text-white hover:border-gold transition-colors" aria-label="Change language">
+      <button onClick={() => setOpen(!open)} className="flex h-[42px] items-center gap-1.5 rounded-[14px] bg-white/[0.05] px-3 text-sm font-semibold ring-1 ring-inset ring-white/10 transition hover:ring-gold/60" aria-label="Change language">
         <Globe className="h-4 w-4 text-gold" />
         <span className="uppercase">{current.code}</span>
         <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
@@ -59,13 +59,13 @@ export default function LanguageSwitcher({ variant = 'header' }: { variant?: 'he
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.18 }}
-            className="absolute end-0 top-full mt-3 w-56 rounded-2xl bg-white p-1.5 shadow-[0_30px_80px_-20px_rgba(10,18,34,0.45)] ring-1 ring-black/5 z-50"
+            className="glass-menu absolute end-0 top-full mt-4 w-60 rounded-2xl p-1.5 z-50"
           >
             {langs.map((l) => (
-              <button key={l.code} onClick={() => go(l.code)} className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start text-sm transition-colors', l.code === locale ? 'bg-sand font-bold text-ink' : 'text-ink/75 hover:bg-sand')}>
+              <button key={l.code} onClick={() => go(l.code)} className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start text-sm transition-colors', l.code === locale ? 'bg-gold/15 font-bold text-gold-light ring-1 ring-inset ring-gold/30' : 'text-white/80 hover:bg-white/[0.08] hover:text-white')}>
                 <span className="text-lg leading-none">{l.flag}</span>
                 <span className="flex-1">{l.native}</span>
-                {l.code === locale && <Check className="h-4 w-4 text-gold-deep" />}
+                {l.code === locale && <Check className="h-4 w-4 text-gold" />}
               </button>
             ))}
           </motion.div>

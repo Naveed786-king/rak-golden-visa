@@ -10,7 +10,7 @@ import { ESTIMATE_FIELDS } from '@/lib/estimate';
 const o = (...pairs: [string, string][]) => pairs.map(([value, label]) => ({ value, label }));
 
 export const HEADER_DESIGN_FIELDS: Field[] = [
-  { name: 'style', label: 'Header style', type: 'select', options: o(['glass', 'Glass (frosted, see-through)'], ['solid', 'Solid colour'], ['transparent', 'Transparent over the hero, glass when scrolling']) },
+  { name: 'style', label: 'Header style', type: 'select', options: o(['glass', 'Glass (frosted, see-through)'], ['solid', 'Solid colour'], ['transparent', 'Glass floating over the hero image']) },
   { name: 'bg', label: 'Background colour', type: 'color', half: true },
   { name: 'text', label: 'Text colour', type: 'color', half: true },
   { name: 'opacity', label: 'Background strength (glass)', type: 'range', min: 0, max: 100, step: 1, unit: '%', half: true },

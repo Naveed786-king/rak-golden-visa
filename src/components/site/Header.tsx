@@ -87,22 +87,20 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
       )}
 
       <header className="site-header" data-scrolled={scrolled ? '' : undefined}>
-        <div className="hdr-row container-x flex items-center justify-between gap-4">
+        <div className="container-x">
+        <div className="hdr-island flex items-center justify-between gap-4">
           <Logo src={site.logoLight || site.logo} name={site.name} />
 
-          <nav className="site-nav hidden lg:flex items-center gap-0.5 rounded-full px-1.5 py-1" onMouseLeave={() => setDrop(null)}>
+          <nav className="site-nav hidden lg:flex items-center gap-1" onMouseLeave={() => setDrop(null)}>
             {header.menu.map((item, i) => (
               <div key={i} className="relative" onMouseEnter={() => setDrop(item.children?.length ? i : null)}>
                 <SmartLink
                   href={item.href}
-                  className={cn(
-                    'relative flex items-center gap-1 rounded-full px-3.5 xl:px-4 py-2 font-semibold transition-colors',
-                    isActive(item.href) ? 'text-gold' : 'opacity-80 hover:opacity-100 hover:bg-white/[0.06]'
-                  )}
+                  className="nav-link flex items-center gap-1 px-3 xl:px-4 py-2.5 font-semibold"
+                  data-active={isActive(item.href) ? '' : undefined}
                 >
                   {item.label}
-                  {!!item.children?.length && <ChevronDown className={cn('h-4 w-4 transition-transform', drop === i && 'rotate-180')} />}
-                  {isActive(item.href) && <motion.span layoutId="nav-underline" className="absolute inset-0 -z-10 rounded-full bg-white/[0.07] ring-1 ring-gold/30" />}
+                  {!!item.children?.length && <ChevronDown className={cn('h-3.5 w-3.5 opacity-70 transition-transform', drop === i && 'rotate-180')} />}
                 </SmartLink>
                 <AnimatePresence>
                   {drop === i && item.children?.length ? (
@@ -111,7 +109,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.98 }}
                       transition={{ duration: 0.22 }}
-                      className="absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[340px]"
+                      className="absolute left-1/2 -translate-x-1/2 top-full pt-4 w-[360px]"
                     >
                       <div className="glass-menu rounded-2xl p-2">
                         {item.children.map((c, j) => (
@@ -133,9 +131,9 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
             ))}
           </nav>
 
-          <div className="flex items-center gap-2.5">
-            <a href={`tel:${site.phone}`} className="hidden 2xl:flex items-center gap-2.5 pr-2 group">
-              <span className="grid h-10 w-10 place-items-center rounded-full border border-white/15 group-hover:border-gold transition-colors">
+          <div className="flex items-center gap-2">
+            <a href={`tel:${site.phone}`} className="hdr-phone hidden 2xl:flex group">
+              <span className="hdr-icon">
                 <Phone className="h-4 w-4 text-gold" />
               </span>
               <span className="leading-tight">
@@ -147,19 +145,20 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
               <LanguageSwitcher />
             </div>
             {header.showLogin && (
-              <Link href={accountHref} className="hidden md:grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/[0.04] hover:border-gold hover:text-gold transition-colors" aria-label={me ? t('My account') : t('Client login')} title={me ? me.name : t('Client login')}>
+              <Link href={accountHref} className="hdr-icon !hidden md:!grid" aria-label={me ? t('My account') : t('Client login')} title={me ? me.name : t('Client login')}>
                 <User className="h-4 w-4" />
               </Link>
             )}
             {header.cta.label && (
-              <SmartLink href={header.cta.href} className="btn btn-gold btn-sm hidden sm:inline-flex">
-                {header.cta.label}
+              <SmartLink href={header.cta.href} className="btn btn-gold btn-sm hdr-cta hidden sm:inline-flex">
+                {header.cta.label} <ArrowUpRight className="h-4 w-4" />
               </SmartLink>
             )}
-            <button onClick={() => setOpen(true)} className="lg:hidden grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/[0.05]" aria-label={t('Menu')}>
+            <button onClick={() => setOpen(true)} className="hdr-icon lg:!hidden" aria-label={t('Menu')}>
               <Menu className="h-5 w-5" />
             </button>
           </div>
+        </div>
         </div>
       </header>
 

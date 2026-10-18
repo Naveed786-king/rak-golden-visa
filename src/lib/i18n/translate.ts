@@ -16,12 +16,16 @@ const hasLetters = (s: string) => /\p{L}/u.test(s);
 let memProvider = 'google';
 const memKey = (locale: string, text: string) => (memProvider === 'google' ? `${locale}:${hash(text)}` : `${memProvider}:${locale}:${hash(text)}`);
 
+/** Built-in professional translations shipped with the website (prisma/translations/*.json) */
+const packKey = (locale: string, text: string) => `pack:${locale}:${hash(text)}`;
+
 async function memGet(locale: string, texts: string[]) {
   const keys = texts.map((t) => memKey(locale, t));
+  const pkeys = texts.map((t) => packKey(locale, t));
   try {
-    const rows = await prisma.translationMemory.findMany({ where: { key: { in: keys } } });
+    const rows = await prisma.translationMemory.findMany({ where: { key: { in: [...keys, ...pkeys] } } });
     const map = new Map(rows.map((r) => [r.key, r.text]));
-    return keys.map((k) => map.get(k));
+    return keys.map((k, i) => map.get(k) || map.get(pkeys[i]));
   } catch {
     return keys.map(() => undefined);
   }
@@ -161,6 +165,7 @@ export const DEFAULT_MODEL = 'claude-sonnet-5-5';
 /** Short id of the engine in use - stored with every translation so a new engine re-translates old text. */
 export async function engineTag() {
   const cfg = await translationConfig();
+  if (notReadyReason(cfg)) return 'pack'; // no API key: only the built-in translations are used
   return cfg.provider === 'claude' ? `claude-${cfg.model || DEFAULT_MODEL}` : cfg.provider;
 }
 
@@ -204,8 +209,11 @@ async function translateLines(texts: string[], locale: string): Promise<string[]
 
   if (todo.length) {
     let translated: string[];
-    const why = notReadyReason(cfg);
-    if (why) throw new Error(why);
+    if (notReadyReason(cfg)) {
+      // No API key yet: texts without a built-in translation stay in English for now
+      idx.forEach((i) => (result[i] = map.get(texts[i]) || texts[i]));
+      return result;
+    }
     if (cfg.provider === 'claude') translated = await claudeMany(todo, locale, cfg.apiKey, cfg.model || DEFAULT_MODEL);
     else if (cfg.provider === 'deepl') translated = await deeplMany(todo, locale, cfg.apiKey);
     else translated = await googleMany(todo, localeInfo(locale).google);
@@ -227,8 +235,7 @@ export async function translateHtml(html: string, locale: string): Promise<strin
   const [cachedWhole] = await memGet(locale, [html]);
   if (cachedWhole) return cachedWhole;
 
-  const why = notReadyReason(cfg);
-  if (why) throw new Error(why);
+  if (notReadyReason(cfg)) return html; // no API key and no built-in translation for this text
   if (cfg.provider === 'claude' || cfg.provider === 'deepl') {
     let out: string;
     if (cfg.provider === 'claude') {
@@ -284,6 +291,8 @@ export async function translateHtml(html: string, locale: string): Promise<strin
 
 /** Quick self-test used by the admin panel */
 export async function testTranslation(locale = 'ar') {
+  const why = notReadyReason(await translationConfig());
+  if (why) throw new Error(why);
   const [out] = await translateTexts(['Apply for your Golden Visa today'], locale);
   return out;
 }

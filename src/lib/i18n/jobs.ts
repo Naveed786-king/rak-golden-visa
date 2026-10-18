@@ -33,7 +33,7 @@ export function queueStatus() {
 /** Add translation jobs. locales defaults to all enabled languages. */
 export async function enqueue(entity: Entity, id: string, opts: { locales?: string[]; force?: boolean; priority?: boolean } = {}) {
   const cfg = await getSetting('translation');
-  if (notReadyReason(cfg)) return; // e.g. API key missing - nothing is queued
+  if (cfg.provider === 'off') return;
   const locales = opts.locales || (await targetLocales());
   for (const locale of locales) {
     const key = `${entity}:${id}:${locale}`;
@@ -43,7 +43,7 @@ export async function enqueue(entity: Entity, id: string, opts: { locales?: stri
     if (opts.priority) Q.queue.unshift(job);
     else Q.queue.push(job);
   }
-  run(cfg.provider === 'google' ? 1 : 4);
+  run(cfg.provider === 'google' || notReadyReason(cfg) ? 1 : 4);
   keepAlive();
 }
 

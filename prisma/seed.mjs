@@ -3,6 +3,8 @@
 //   node prisma/seed.mjs --force  -> re-creates all pages/posts/services/FAQs (keeps users, leads & applications)
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import { readdirSync } from 'fs';
 import { readFileSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -43,6 +45,8 @@ async function main() {
 
   // 1b) One-time upgrades for websites created with an older version
   await upgrades();
+  // 1c) Built-in professional translations of the original website texts
+  await loadTranslationPacks();
 
   // 2) Content
   const pageCount = await prisma.page.count();
@@ -83,6 +87,33 @@ async function main() {
   if ((await prisma.testimonial.count()) === 0) {
     for (const t of C.testimonialPlaceholders) await prisma.testimonial.create({ data: t });
     console.log('✔ 3 sample testimonials (hidden — replace with real reviews)');
+  }
+}
+
+/* prisma/translations/<lang>.json = { "plain": { english: translation }, "html": { englishHtml: translationHtml } }
+   Loaded into the translation memory once per file version. */
+async function loadTranslationPacks() {
+  const dir = path.join(__dirname, 'translations');
+  if (!existsSync(dir)) return;
+  const sha1 = (s) => crypto.createHash('sha1').update(s).digest('hex');
+  for (const file of readdirSync(dir).filter((f) => f.endsWith('.json'))) {
+    const locale = file.replace('.json', '');
+    const raw = readFileSync(path.join(dir, file), 'utf8');
+    const version = sha1(raw);
+    const flag = await prisma.setting.findUnique({ where: { key: 'pack:' + locale } });
+    if (flag?.value === version) continue;
+    let pack;
+    try { pack = JSON.parse(raw); } catch (e) { console.error('Bad translation file', file, e.message); continue; }
+    const rows = [];
+    for (const part of ['plain', 'html']) {
+      for (const [en, tr] of Object.entries(pack[part] || {})) if (en && typeof tr === 'string' && tr.trim()) rows.push({ key: `pack:${locale}:${sha1(en)}`, text: tr });
+    }
+    await prisma.translationMemory.deleteMany({ where: { key: { startsWith: `pack:${locale}:` } } });
+    const seen = new Set();
+    const unique = rows.filter((r) => (seen.has(r.key) ? false : seen.add(r.key)));
+    for (let i = 0; i < unique.length; i += 400) await prisma.translationMemory.createMany({ data: unique.slice(i, i + 400) });
+    await prisma.setting.upsert({ where: { key: 'pack:' + locale }, update: { value: version }, create: { key: 'pack:' + locale, value: version } });
+    console.log(`✔ Built-in ${locale.toUpperCase()} translations: ${unique.length} texts`);
   }
 }
 

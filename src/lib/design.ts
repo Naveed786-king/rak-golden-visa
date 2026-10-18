@@ -65,8 +65,8 @@ export const defaultDesign: DesignSettings = {
     opacity: 72,
     blur: 20,
     text: '#FFFFFF',
-    height: 86,
-    logoHeight: 52,
+    height: 76,
+    logoHeight: 46,
     sticky: true,
     shrink: true,
     glow: true,
@@ -126,7 +126,7 @@ export function designCss(d: DesignSettings) {
   root.push(`--anim-dur:${num(d.animation.duration, 150, 3000) ?? 800}ms`);
   root.push(`--hdr-bg:${h.style === 'solid' ? col(h.bg) || '#0A1222' : alpha(h.bg || '#0A1222', num(h.opacity, 0, 100) ?? 72)}`);
   root.push(`--hdr-bg-solid:${col(h.bg) || '#0A1222'}`, `--hdr-blur:${num(h.blur, 0, 40) ?? 20}px`, `--hdr-text:${col(h.text) || '#fff'}`);
-  root.push(`--hdr-h:${num(h.height, 56, 140) ?? 86}px`, `--logo-h:${num(h.logoHeight, 24, 120) ?? 52}px`);
+  root.push(`--hdr-h:${num(h.height, 56, 140) ?? 76}px`, `--logo-h:${num(h.logoHeight, 24, 120) ?? 46}px`);
   root.push(`--top-bg:${col(h.topbarBg) || '#070D19'}`, `--top-text:${col(h.topbarText) || '#C9CFDA'}`, `--menu-size:${num(h.menuSize, 11, 22) ?? 15}px`);
   root.push(`--ftr-bg:${col(f.bg) || '#0A1222'}`, `--ftr-text:${col(f.text) || 'rgba(255,255,255,.62)'}`, `--ftr-head:${col(f.heading) || 'var(--brand-gold)'}`, `--ftr-logo-h:${num(f.logoHeight, 24, 140) ?? 64}px`);
   if (f.bgImage) root.push(`--ftr-img:url("${url(f.bgImage)}")`);

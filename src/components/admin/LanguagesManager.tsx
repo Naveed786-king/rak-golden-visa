@@ -92,8 +92,11 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
 
       {paused && (
         <div className="rounded-2xl bg-amber-50 p-5 text-sm text-amber-800 ring-1 ring-amber-200">
-          <p className="font-bold">Translation is paused</p>
-          <p className="mt-1">{paused}. Your website keeps showing English (or the earlier translation) until then.</p>
+          <p className="font-bold">Built-in translations active — automatic translation of new texts is off</p>
+          <p className="mt-1">
+            All the original website texts (pages, blog posts, FAQs, services, menu, footer, calculator) are already professionally translated into every language.
+            New blog posts and text you change later stay in English until you add an API key: {paused}.
+          </p>
         </div>
       )}
 
