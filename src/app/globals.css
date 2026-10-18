@@ -258,7 +258,16 @@ input[type='range'].appearance-none::-moz-range-thumb { width: 18px; height: 18p
     transition: opacity .45s ease;
   }
   .site-header[data-scrolled] { padding-block: 8px; }
-  .site-header[data-scrolled]::before { opacity: 0; }
+  /* once scrolled, the full-width bar becomes frosted glass too (blurred, tinted, never clear) */
+  .site-header[data-scrolled]::before {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)),
+      radial-gradient(60rem 10rem at 15% 0%, color-mix(in oklab, var(--brand-gold) 14%, transparent), transparent 70%),
+      color-mix(in oklab, var(--hdr-bg-solid, #0a1222) 84%, transparent);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    box-shadow: 0 12px 30px -18px rgba(0,0,0,.7), inset 0 -1px 0 color-mix(in oklab, var(--brand-gold) 30%, rgba(255,255,255,.08));
+  }
   .hdr-island {
     position: relative; isolation: isolate; height: var(--hdr-h, 76px); padding-inline: 14px 10px; border-radius: 22px;
     /* frosted glass: rich and readable, never see-through (opacity has a floor of 86%) */
@@ -382,7 +391,7 @@ input[type='range'].appearance-none::-moz-range-thumb { width: 18px; height: 18p
 .hdr-solid .site-header .hdr-island, .hdr-solid .site-header[data-scrolled] .hdr-island { --hdr-glass: var(--hdr-bg-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
 .hdr-solid .site-header::before { opacity: 1 !important; }
 .hdr-transparent .site-header { margin-bottom: calc(-1 * (var(--hdr-h, 76px) + 20px)); }
-.hdr-transparent .site-header::before { display: none; }
+.hdr-transparent .site-header:not([data-scrolled])::before { opacity: 0; }
 .hdr-static .site-header { position: relative; }
 .hdr-noshrink .site-header[data-scrolled] .hdr-island { height: var(--hdr-h, 76px); }
 .hdr-noshrink .site-header[data-scrolled] .site-logo img { height: var(--logo-h, 46px); }

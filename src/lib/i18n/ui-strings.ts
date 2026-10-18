@@ -164,6 +164,8 @@ export const UI_STRINGS: string[] = [
   "Set a new password",
   "Set new password",
   "Share:",
+  "Show fewer reviews",
+  "Show more reviews",
   "Sign in",
   "Sign in first",
   "Sign in to track your Golden Visa application.",

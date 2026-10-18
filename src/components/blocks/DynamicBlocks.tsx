@@ -90,7 +90,7 @@ export async function Testimonials({ data }: P) {
   return (
     <Section theme={data.theme} anchor={data.anchor}>
       <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
-      <TestimonialsView items={JSON.parse(JSON.stringify(items))} dark={data.theme === 'dark'} />
+      <TestimonialsView items={JSON.parse(JSON.stringify(items))} dark={data.theme === 'dark'} limit={Number(data.limit) > 0 ? Number(data.limit) : 5} />
     </Section>
   );
 }

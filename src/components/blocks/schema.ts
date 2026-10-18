@@ -332,7 +332,7 @@ export const BLOCKS: BlockSchema[] = [
     label: 'Testimonials',
     description: 'Client reviews (manage in Admin → Testimonials)',
     group: 'Dynamic',
-    fields: [eyebrow, title, subtitle],
+    fields: [eyebrow, title, subtitle, { name: 'limit', label: 'Reviews shown before "Show more" (default 5)', type: 'number' }],
     defaults: { theme: 'sand', title: 'See What Our Happy Customers Are Saying' },
   },
   {

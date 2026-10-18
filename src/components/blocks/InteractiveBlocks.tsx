@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Minus, TriangleAlert, CircleCheck, Quote, Star, ArrowRight, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Minus, TriangleAlert, CircleCheck, Quote, Star, ArrowRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Icon } from '@/components/ui/Icon';
 import SmartLink from '@/components/ui/SmartLink';
 import { cn } from '@/lib/utils';
@@ -135,56 +135,82 @@ export function AccordionView({ items, dark, html = false }: { items: { title: s
 }
 
 /* ---------------- Testimonials ---------------- */
-export function TestimonialsView({ items, dark }: { items: any[]; dark?: boolean }) {
+/* Shows the first few reviews; "Show more" reveals the next batch, "Show fewer" folds them back. */
+export function TestimonialsView({ items, dark, limit = 5 }: { items: any[]; dark?: boolean; limit?: number }) {
   const t = useT();
-  const [i, setI] = useState(0);
-  const per = 3;
-  const pages = Math.max(1, Math.ceil(items.length / per));
-  const page = Math.floor(i / per);
-  const visible = items.slice(page * per, page * per + per);
+  const step = Math.max(1, Number(limit) || 5);
+  const [shown, setShown] = useState(step);
   if (!items.length) return <p className="text-center opacity-60">{t('No testimonials yet.')}</p>;
+  const visible = items.slice(0, shown);
+  const more = items.length - shown;
+  // Large screens: each group of 5 = two wide cards, then three narrow ones; a partial last group still fills its rows
+  const span = (k: number) => {
+    const g = Math.min(5, visible.length - Math.floor(k / 5) * 5);
+    const j = k % 5;
+    if (g === 1) return 'lg:col-span-6';
+    if (g === 2 || g === 4) return 'lg:col-span-3';
+    if (g === 3) return 'lg:col-span-2';
+    return j < 2 ? 'lg:col-span-3' : 'lg:col-span-2';
+  };
+  const less = () => {
+    setShown(step);
+    document.getElementById('reviews-top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   return (
-    <div>
-      <AnimatePresence mode="wait">
-        <motion.div key={page} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.45 }} className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {visible.map((t) => (
-            <figure key={t.id} className={cn('card-lift relative flex h-full flex-col rounded-[2rem] p-8', dark ? 'glass' : 'bg-white ring-1 ring-ink/5 shadow-[0_25px_50px_-35px_rgba(10,18,34,0.35)]')}>
+    <div id="reviews-top" className="scroll-mt-28">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6">
+        <AnimatePresence initial={false}>
+          {visible.map((r, k) => (
+            <motion.figure
+              key={r.id ?? k}
+              layout
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.4, delay: k >= shown - step ? (k % step) * 0.06 : 0 }}
+              className={cn(
+                'card-lift relative flex h-full flex-col rounded-[2rem] p-8',
+                span(k),
+                visible.length % 2 === 1 && k === visible.length - 1 && 'md:col-span-2',
+                dark ? 'glass' : 'bg-white ring-1 ring-ink/5 shadow-[0_25px_50px_-35px_rgba(10,18,34,0.35)]',
+              )}
+            >
               <Quote className="absolute right-7 top-7 h-10 w-10 text-gold/25" />
               <div className="flex gap-1 text-gold">
-                {Array.from({ length: 5 }).map((_, k) => (
-                  <Star key={k} className="h-4 w-4" fill={k < (t.rating || 5) ? 'currentColor' : 'none'} />
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <Star key={j} className="h-4 w-4" fill={j < (r.rating || 5) ? 'currentColor' : 'none'} />
                 ))}
               </div>
-              <blockquote className="mt-5 flex-1 text-[0.97rem] leading-relaxed opacity-80">“{t.text}”</blockquote>
+              <blockquote className="mt-5 flex-1 text-[0.97rem] leading-relaxed opacity-80">“{r.text}”</blockquote>
               <figcaption className="mt-7 flex items-center gap-3 border-t border-current/10 pt-5">
-                {t.avatar ? (
+                {r.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={t.avatar} alt={t.name} className="h-12 w-12 rounded-full object-cover ring-2 ring-gold/40" />
+                  <img src={r.avatar} alt={r.name} className="h-12 w-12 rounded-full object-cover ring-2 ring-gold/40" />
                 ) : (
-                  <span className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold font-display text-xl font-bold text-ink">{(t.name || '?').charAt(0)}</span>
+                  <span className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold font-display text-xl font-bold text-ink">{(r.name || '?').charAt(0)}</span>
                 )}
                 <span>
-                  <span className="block font-bold">{t.name}</span>
-                  <span className="block text-xs opacity-60">{[t.role, t.country].filter(Boolean).join(' · ')}</span>
+                  <span className="block font-bold">{r.name}</span>
+                  <span className="block text-xs opacity-60">{[r.role, r.country].filter(Boolean).join(' · ')}</span>
                 </span>
               </figcaption>
-            </figure>
+            </motion.figure>
           ))}
-        </motion.div>
-      </AnimatePresence>
-      {pages > 1 && (
-        <div className="mt-10 flex items-center justify-center gap-4">
-          <button onClick={() => setI(((page - 1 + pages) % pages) * per)} className="grid h-11 w-11 place-items-center rounded-full ring-1 ring-current/20 hover:bg-gold hover:text-ink transition" aria-label="Previous">
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="flex gap-2">
-            {Array.from({ length: pages }).map((_, p) => (
-              <button key={p} onClick={() => setI(p * per)} className={cn('h-2 rounded-full transition-all', p === page ? 'w-8 bg-gold' : 'w-2 bg-current/25')} aria-label={`Page ${p + 1}`} />
-            ))}
-          </div>
-          <button onClick={() => setI(((page + 1) % pages) * per)} className="grid h-11 w-11 place-items-center rounded-full ring-1 ring-current/20 hover:bg-gold hover:text-ink transition" aria-label="Next">
-            <ChevronRight className="h-5 w-5" />
-          </button>
+        </AnimatePresence>
+      </div>
+      {(more > 0 || shown > step) && (
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          {more > 0 && (
+            <button onClick={() => setShown((n) => n + step)} className="btn btn-gold">
+              {t('Show more reviews')} <span className="opacity-70">(+{Math.min(more, step)})</span>
+              <ChevronDown className="h-4 w-4" />
+            </button>
+          )}
+          {shown > step && (
+            <button onClick={less} className={cn('btn', dark ? 'btn-ghost-light' : 'btn-outline')}>
+              {t('Show fewer reviews')} <ChevronUp className="h-4 w-4" />
+            </button>
+          )}
         </div>
       )}
     </div>
