@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db';
 import { ok, fail, refreshSite } from '@/lib/api';
 import { requireStaff } from '@/lib/auth';
-import { LOCALES, TRANSLATED_LOCALES, isLocale } from '@/lib/i18n/config';
+import { LOCALES, TRANSLATED_LOCALES, isLocale, localizePath } from '@/lib/i18n/config';
 import { allTranslatableEntities, translateEntity, Entity } from '@/lib/i18n/content';
 import { enqueue, enqueueAll, queueStatus, keepAlive, targetLocales } from '@/lib/i18n/jobs';
 import { getSetting } from '@/lib/settings';
@@ -11,7 +11,7 @@ import { safeJson } from '@/lib/utils';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
-const ENTITIES: Entity[] = ['page', 'post', 'faq', 'service', 'testimonial', 'settings', 'ui'];
+const ENTITIES: Entity[] = ['page', 'post', 'faq', 'service', 'testimonial', 'partner', 'settings', 'ui'];
 
 /** GET: status per language, or one translation (?entity=post&id=..&locale=ar) */
 export async function GET(req: Request) {
@@ -80,10 +80,19 @@ export async function POST(req: Request) {
     }
     if (b.action === 'entity' && ENTITIES.includes(b.entity) && b.id) {
       if (b.locale && isLocale(b.locale)) {
-        // translate right now (used by "Re-translate" in the editor)
-        const r = await translateEntity(b.entity, b.id, b.locale, true);
+        // translate right now (used by "Publish" and "Re-translate" in the editor)
+        const cfg = await getSetting('translation');
+        const why = notReadyReason(cfg);
+        if (why && b.requireEngine) return fail(why, 400);
+        const r = await translateEntity(b.entity, b.id, b.locale, b.force !== false);
         refreshSite();
-        return ok({ result: r });
+        if (b.entity === 'post' && r === 'done') {
+          try {
+            const post = await prisma.post.findUnique({ where: { id: b.id }, select: { slug: true, status: true } });
+            if (post?.status === 'published') (await import('@/lib/indexnow')).pingIndexNow([localizePath('/' + post.slug, b.locale)]);
+          } catch {}
+        }
+        return ok({ result: r, engine: await engineTag() });
       }
       await enqueue(b.entity, b.id, { force: !!b.force, priority: true });
       return ok({ queue: queueStatus() });

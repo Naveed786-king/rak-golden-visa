@@ -16,6 +16,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ key: st
   const value: any = await getSetting(key as Key);
   if (key === 'smtp' && value.pass) value.pass = '••••••••';
   if (key === 'translation' && value.apiKey) value.apiKey = '••••••••';
+  if (key === 'translation' && value.geminiKey) value.geminiKey = '••••••••';
   return ok({ value });
 }
 
@@ -34,6 +35,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ key: str
   if (key === 'translation') {
     const current: any = await getSetting('translation');
     if (value.apiKey === '••••••••') value.apiKey = current.apiKey;
+    if (value.geminiKey === '••••••••') value.geminiKey = current.geminiKey;
+    if (typeof value.geminiKey === 'string') value.geminiKey = value.geminiKey.trim();
     if (!Array.isArray(value.enabled) || !value.enabled.includes('en')) value.enabled = ['en', ...(value.enabled || [])];
   }
   if (key === 'site' && value.colors) {

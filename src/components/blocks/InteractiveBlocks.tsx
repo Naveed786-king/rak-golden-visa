@@ -102,34 +102,63 @@ export function RejectionsView({ items, dark }: { items: any[]; dark?: boolean }
 }
 
 /* ---------------- Accordion ---------------- */
-export function AccordionView({ items, dark, html = false }: { items: { title: string; content: string }[]; dark?: boolean; html?: boolean }) {
+export function AccordionView({ items, dark, html = false, limit = 0 }: { items: { title: string; content: string }[]; dark?: boolean; html?: boolean; limit?: number }) {
+  const t = useT();
   const [open, setOpen] = useState<number | null>(0);
+  // limit > 0: show the first `limit` questions, "Load more" reveals the next batch
+  const step = limit > 0 ? limit : items.length;
+  const [shown, setShown] = useState(step);
+  const visible = items.slice(0, Math.max(shown, step));
+  const left = items.length - visible.length;
   return (
-    <div className="space-y-3">
-      {items.map((it, i) => {
-        const isOpen = open === i;
-        return (
-          <div key={i} className={cn('box overflow-hidden rounded-2xl transition-all', dark ? 'glass' : 'bg-white ring-1', !dark && (isOpen ? 'ring-gold/50 shadow-[0_20px_50px_-30px_rgba(10,18,34,0.35)]' : 'ring-ink/8'))}>
-            <button onClick={() => setOpen(isOpen ? null : i)} className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left" aria-expanded={isOpen}>
-              <span className={cn('font-bold text-[1.02rem]', isOpen && 'text-gold-deep')}>{it.title}</span>
-              <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-full transition-all', isOpen ? 'bg-gold text-ink rotate-180' : 'bg-gold/15 text-gold-deep')}>
-                {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-              </span>
-            </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-                  {html ? (
-                    <div className="rte px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: it.content }} />
-                  ) : (
-                    <div className="rte px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: it.content.includes('<') ? it.content : it.content.replace(/\n/g, '<br/>') }} />
+    <div>
+      <div className="space-y-3">
+        <AnimatePresence initial={false}>
+          {visible.map((it, i) => {
+            const isOpen = open === i;
+            return (
+              <motion.div
+                key={i}
+                initial={i >= step ? { opacity: 0, y: 16 } : false}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: i >= step ? ((i - step) % step) * 0.05 : 0 }}
+                className={cn('box overflow-hidden rounded-2xl transition-all', dark ? 'glass' : 'bg-white ring-1', !dark && (isOpen ? 'ring-gold/50 shadow-[0_20px_50px_-30px_rgba(10,18,34,0.35)]' : 'ring-ink/8'))}
+              >
+                <button onClick={() => setOpen(isOpen ? null : i)} className="flex w-full items-center justify-between gap-4 px-5 sm:px-6 py-5 text-start" aria-expanded={isOpen}>
+                  <span className={cn('font-bold text-[1.02rem]', isOpen && 'text-gold-deep')}>{it.title}</span>
+                  <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-full transition-all', isOpen ? 'bg-gold text-ink rotate-180' : 'bg-gold/15 text-gold-deep')}>
+                    {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                  </span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
+                      {html ? (
+                        <div className="rte px-5 sm:px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: it.content }} />
+                      ) : (
+                        <div className="rte px-5 sm:px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: it.content.includes('<') ? it.content : it.content.replace(/\n/g, '<br/>') }} />
+                      )}
+                    </motion.div>
                   )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        );
-      })}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+      {items.length > step && (
+        <div className="mt-6 flex justify-center">
+          {left > 0 ? (
+            <button type="button" onClick={() => setShown(visible.length + step)} className={cn('btn btn-sm', dark ? 'btn-ghost-light' : 'btn-dark')}>
+              {t('Load more questions')} <span className="opacity-60">({left})</span> <ChevronDown className="h-4 w-4" />
+            </button>
+          ) : (
+            <button type="button" onClick={() => { setShown(step); setOpen((o) => (o !== null && o >= step ? null : o)); }} className={cn('btn btn-sm', dark ? 'btn-ghost-light' : 'btn-dark')}>
+              {t('Show fewer questions')} <ChevronUp className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

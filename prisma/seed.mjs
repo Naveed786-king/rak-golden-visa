@@ -112,6 +112,9 @@ async function loadTranslationPacks() {
     const seen = new Set();
     const unique = rows.filter((r) => (seen.has(r.key) ? false : seen.add(r.key)));
     for (let i = 0; i < unique.length; i += 400) await prisma.translationMemory.createMany({ data: unique.slice(i, i + 400) });
+    // New built-in translations: website texts (not blog posts, not hand-edited ones) are rebuilt
+    // instantly on their next visit, so the new professional translations show up everywhere
+    await prisma.translation.deleteMany({ where: { locale, status: 'auto', entity: { not: 'post' } } }).catch(() => {});
     await prisma.setting.upsert({ where: { key: 'pack:' + locale }, update: { value: version }, create: { key: 'pack:' + locale, value: version } });
     console.log(`✔ Built-in ${locale.toUpperCase()} translations: ${unique.length} texts`);
   }

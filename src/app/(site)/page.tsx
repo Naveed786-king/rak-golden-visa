@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import { getPage } from '@/lib/data';
 import { getLocalizedBundle } from '@/lib/settings';
 import { getLocale } from '@/lib/i18n/server';
-import { seoAlternates } from '@/lib/i18n/config';
+import { localizePath } from '@/lib/i18n/config';
+import { alternatesFor, enabledLocales, absUrl, ogLocale } from '@/lib/seo';
 import BlockRenderer from '@/components/blocks/BlockRenderer';
 
 export const dynamic = 'force-dynamic';
@@ -15,8 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { absolute: page?.metaTitle || site.seo.defaultTitle },
     description: page?.metaDescription || site.seo.description,
-    alternates: seoAlternates('/', locale),
-    openGraph: page?.ogImage ? { images: [page.ogImage] } : undefined,
+    alternates: alternatesFor('/', locale, await enabledLocales()),
+    openGraph: { type: 'website', url: absUrl(localizePath('/', locale)), locale: ogLocale(locale), images: page?.ogImage ? [absUrl(page.ogImage)!] : undefined },
   };
 }
 

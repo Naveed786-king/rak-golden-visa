@@ -37,6 +37,9 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: localeInfo(locale).htmlLang.replace('-', '_'),
     },
     twitter: { card: 'summary_large_image' },
+    alternates: { types: { 'application/rss+xml': [{ url: '/feed.xml', title: site.name }] } },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 } },
+    verification: site.seo.googleVerification || site.seo.bingVerification ? { google: site.seo.googleVerification || undefined, other: site.seo.bingVerification ? { 'msvalidate.01': site.seo.bingVerification } : undefined } : undefined,
   };
 }
 

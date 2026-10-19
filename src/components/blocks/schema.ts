@@ -348,7 +348,7 @@ export const BLOCKS: BlockSchema[] = [
     label: 'FAQ',
     description: 'Accordion of FAQs (manage in Admin → FAQs)',
     group: 'Dynamic',
-    fields: [eyebrow, title, subtitle, { name: 'group', label: 'FAQ group', type: 'text', help: 'Matches the "group" of FAQs in Admin → FAQs (e.g. home, investor, retirement)' }],
+    fields: [eyebrow, title, subtitle, { name: 'group', label: 'FAQ group', type: 'text', help: 'Matches the "group" of FAQs in Admin → FAQs (e.g. home, investor, retirement)' }, { name: 'limit', label: 'Questions shown before "Load more" (default 5, 0 = all)', type: 'number' }],
     defaults: { theme: 'light', title: 'Frequently asked questions', group: 'home' },
   },
   {

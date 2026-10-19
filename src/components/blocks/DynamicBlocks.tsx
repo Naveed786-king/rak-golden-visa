@@ -76,7 +76,7 @@ export async function Faq({ data }: P) {
           </Reveal>
         </div>
         <Reveal>
-          <AccordionView items={faqs.map((f) => ({ title: f.question, content: f.answer }))} dark={data.theme === 'dark'} />
+          <AccordionView items={faqs.map((f) => ({ title: f.question, content: f.answer }))} dark={data.theme === 'dark'} limit={data.limit === 0 || data.limit === '0' ? 0 : Number(data.limit) || 5} />
         </Reveal>
       </div>
       {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />}

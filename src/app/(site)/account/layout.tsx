@@ -1,9 +1,13 @@
+import { getI18n } from '@/lib/i18n/server';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import AccountNav from '@/components/portal/AccountNav';
 
 export const dynamic = 'force-dynamic';
-export const metadata = { title: 'My Account', robots: { index: false } };
+export async function generateMetadata() {
+  const { t } = await getI18n();
+  return { title: t('My Account'), robots: { index: false } };
+}
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();

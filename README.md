@@ -187,8 +187,8 @@ Everything works on Vercel: the database is a free hosted PostgreSQL, and upload
    This adds `DATABASE_URL` automatically.
 3. **Deployments → ⋯ → Redeploy**. The build creates all tables and the website content.
 4. Open `https://YOUR-PROJECT.vercel.app/admin/login` → it asks you to **create the admin account** (only the first time).
-5. Open **Admin → Languages** and leave it open for ~15 minutes: it translates the whole website into all languages.
-   After that, everything you save is translated automatically. A daily job also fills any gaps.
+5. All pages already open in all 10 languages (built-in professional translations, nothing to wait for).
+   For blog posts: **Admin → Languages** → engine *Google Gemini* → paste your Gemini API key → **Save**.
 6. Your own domain: project → **Settings → Domains**.
 
 Optional environment variables (project → Settings → Environment Variables): `JWT_SECRET` (any long random text),
@@ -207,7 +207,8 @@ Optional environment variables (project → Settings → Environment Variables):
 5. Admin → **Partner logos** → upload the logo images.
 6. Add photos to sections (Pages → edit → image fields) and blog cover images.
 7. Site settings → **Tracking & scripts** → paste Google Analytics / Tag Manager / Meta Pixel.
-8. Google Search Console → submit `https://yourdomain.com/sitemap.xml`.
+8. Google Search Console → verify your domain (Site settings → SEO → *Google verification code*) and submit `https://yourdomain.com/sitemap.xml`.
+   Bing / Yandex are told about every new post automatically (IndexNow).
 9. Review the Privacy Policy and Terms pages with your legal adviser.
 
 ---
@@ -218,6 +219,29 @@ Optional environment variables (project → Settings → Environment Variables):
 - **Every page section has a 🎨 Design tab** (Admin → Pages → open a section): background colour / gradient / photo with overlay, heading & text colours, fonts and sizes, padding & margin, content width, box style (glass, dark glass, outline, gold border…), hover effects, entrance animation, hide on mobile/desktop and custom CSS.
 - **Admin → Cost calculator** — the 3-step Golden Visa estimate (who is applying → new or renewal → family members, ages, inside/outside UAE, medical Normal/VIP). Every question, choice and price is editable; results can be sent to WhatsApp or saved as a lead. Add it to any page with the section **“Cost calculator”**.
 - **Languages** use [next-intl](https://next-intl.dev) for the interface texts and formatting; your content is translated automatically (Admin → Languages).
+
+---
+
+## 8c. 10 languages, blog auto-translation & SEO
+
+**Languages:** English, Arabic (right-to-left), Russian, Turkish, Chinese, French, German, Spanish, Romanian and Hindi.
+English is at `/`, the others at `/ar`, `/ru`, `/tr`, `/zh`, `/fr`, `/de`, `/es`, `/ro`, `/hi` (e.g. `/ar/about-us`). Same layout in every language.
+
+- **Pages** (home, about, services, visas, contact, legal, FAQs, menu, footer, calculator, buttons…) use the built-in professional translations in
+  `prisma/translations/<language>.json` — no machine translator. Clicking the language button switches the page instantly.
+- **Blog posts are translated with Google Gemini AI.** Admin → Languages → engine **Google Gemini** → paste your API key
+  (from [aistudio.google.com/apikey](https://aistudio.google.com/apikey)) → choose a model (`gemini-3.8-flash` fast, `gemini-4-argon` best) → **Test translation** → **Save**.
+  You can also set `GEMINI_API_KEY` (and optionally `GEMINI_MODEL`) as an environment variable instead.
+- When you click **Publish** (or **Save & update translations**) on a post, it is translated into the 9 other languages right away,
+  with a progress bar per language. Each language version can be checked and edited by hand in the post's language tabs.
+- Text you add or change later on pages (not covered by the built-in translations) is translated by the same Gemini engine.
+
+**SEO (done automatically):**
+- `sitemap.xml` lists every page in every language with `hreflang` links; blog posts only in the languages they are translated into.
+- Every page has canonical + `hreflang` tags, Open Graph (with language), Twitter cards, `BlogPosting` + `BreadcrumbList` + `FAQPage` structured data.
+- A language version of a post that is not translated yet is `noindex` and points to the English original (no duplicate content).
+- New and updated posts are sent to Bing / Yandex instantly with **IndexNow** (`/indexnow-key.txt`); RSS feed at `/feed.xml`.
+- Google: verify the site in Search Console (Site settings → SEO) and submit `/sitemap.xml` once — Google then re-reads it regularly.
 
 ---
 

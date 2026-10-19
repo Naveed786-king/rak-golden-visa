@@ -26,7 +26,9 @@ export default function PostCard({ post, dark }: { post: any; dark?: boolean }) 
       <div className="flex flex-1 flex-col p-7">
         <p className="flex items-center gap-4 text-xs opacity-60">
           <span className="flex items-center gap-1.5">
-            <CalendarDays className="h-3.5 w-3.5" /> {formatDate(post.publishedAt, undefined, localeInfo(locale).htmlLang)}
+            <CalendarDays className="h-3.5 w-3.5" />{' '}
+            {/* server and browser may spell month names slightly differently (e.g. Hindi) */}
+            <time dateTime={new Date(post.publishedAt).toISOString()} suppressHydrationWarning>{formatDate(post.publishedAt, undefined, localeInfo(locale).htmlLang)}</time>
           </span>
           <span className="flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" /> {readingTime(post.content)} <T>min read</T>

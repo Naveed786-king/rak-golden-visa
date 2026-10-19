@@ -75,7 +75,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
     <>
       {header.topbar.enabled && (
         <div className="site-topbar relative z-50 text-[0.78rem] border-b border-white/10">
-          <div className="container-x flex h-10 items-center justify-between gap-4">
+          <div className="hdr-wrap flex h-10 items-center justify-between gap-4">
             <div className="hidden md:flex items-center gap-5">
               <a href={`mailto:${site.emailVisa}`} className="flex items-center gap-1.5 hover:text-gold transition-colors">
                 <Mail className="h-3.5 w-3.5 text-gold" /> {site.emailVisa}
@@ -106,7 +106,7 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
       )}
 
       <header className="site-header" data-scrolled={scrolled ? '' : undefined}>
-        <div className="container-x">
+        <div className="hdr-wrap">
         <div className="hdr-island flex items-center justify-between gap-4">
           <span className="hdr-sheen" aria-hidden />
           <span className="hdr-progress" aria-hidden />

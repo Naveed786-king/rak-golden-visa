@@ -27,7 +27,7 @@ export type SiteSettings = {
   showPreloader: boolean;
   headScripts: string;
   bodyScripts: string;
-  seo: { titleTemplate: string; defaultTitle: string; description: string; keywords: string; ogImage: string };
+  seo: { titleTemplate: string; defaultTitle: string; description: string; keywords: string; ogImage: string; googleVerification?: string; bingVerification?: string };
 };
 
 export type HeaderSettings = {
@@ -98,6 +98,8 @@ export const defaultSite: SiteSettings = {
       'Apply for the RAK Golden Visa through property investment in Ras Al Khaimah. Eligibility, requirements, fees, processing time, benefits and family sponsorship — expert assistance from Brightlink Management Consultancy.',
     keywords: 'RAK Golden Visa, Ras Al Khaimah Golden Visa, UAE Golden Visa, property investor visa, retirement visa UAE',
     ogImage: '',
+    googleVerification: '',
+    bingVerification: '',
   },
 };
 
@@ -203,18 +205,22 @@ export const APPLICATION_STATUSES: { value: string; label: string; progress: num
 export const LEAD_STATUSES = ['new', 'contacted', 'qualified', 'converted', 'closed'];
 
 export type TranslationSettings = {
-  provider: 'google' | 'claude' | 'deepl' | 'off';
-  apiKey: string;
-  model: string;
+  provider: 'gemini' | 'google' | 'claude' | 'deepl' | 'off';
+  apiKey: string; // Claude or DeepL key
+  model: string; // Claude model
+  geminiKey: string; // Google Gemini key (aistudio.google.com/apikey)
+  geminiModel: string;
   autoTranslate: boolean;
   enabled: string[]; // language codes shown on the website
   showSwitcher: boolean;
 };
 
 export const defaultTranslation: TranslationSettings = {
-  provider: 'claude',
+  provider: 'gemini',
   apiKey: '',
   model: 'claude-sonnet-5-5',
+  geminiKey: process.env.GEMINI_API_KEY || '',
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
   autoTranslate: true,
   enabled: ['en', 'ar', 'ru', 'tr', 'zh', 'fr', 'de', 'es', 'ro', 'hi'],
   showSwitcher: true,

@@ -11,16 +11,34 @@ import ViewPing from './ViewPing';
 import LeadForm from '@/components/blocks/LeadForm';
 import T from '@/components/ui/T';
 
-export default function PostView({ post, related, site, lang = 'en-GB' }: { post: any; related: any[]; site: SiteSettings; lang?: string }) {
+export default function PostView({ post, related, site, lang = 'en-GB', url }: { post: any; related: any[]; site: SiteSettings; lang?: string; url?: string }) {
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/+$/, '');
+  const abs = (u?: string) => (!u ? undefined : /^https?:/.test(u) ? u : base + (u.startsWith('/') ? u : '/' + u));
+  const text = (post.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    headline: post.title,
+    headline: (post.title || '').slice(0, 110),
+    description: post.metaDescription || post.excerpt || text.slice(0, 160),
+    inLanguage: lang,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
-    author: { '@type': 'Organization', name: site.name },
-    image: post.cover || undefined,
-    description: post.excerpt,
+    mainEntityOfPage: url ? { '@type': 'WebPage', '@id': url } : undefined,
+    url,
+    image: abs(post.cover) ? [abs(post.cover)] : undefined,
+    author: { '@type': 'Organization', name: site.name, url: base || undefined },
+    publisher: { '@type': 'Organization', name: site.name, logo: abs(site.logo || site.logoLight) ? { '@type': 'ImageObject', url: abs(site.logo || site.logoLight) } : undefined },
+    articleSection: post.category || undefined,
+    keywords: post.tags || undefined,
+    wordCount: text ? text.split(' ').length : undefined,
+  };
+  const breadcrumbs = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: site.name, item: base ? base + '/' : undefined },
+      { '@type': 'ListItem', position: 2, name: post.title, item: url },
+    ],
   };
   return (
     <article>
@@ -47,7 +65,7 @@ export default function PostView({ post, related, site, lang = 'en-GB' }: { post
             <h1 className="mt-6 font-display text-4xl md:text-6xl font-semibold leading-[1.08] text-white">{post.title}</h1>
             <p className="mt-7 flex flex-wrap items-center justify-center gap-5 text-sm text-white/60">
               <span className="flex items-center gap-2"><User className="h-4 w-4 text-gold" /> {post.author}</span>
-              <span className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-gold" /> {formatDate(post.publishedAt, { day: 'numeric', month: 'long', year: 'numeric' }, lang)}</span>
+              <span className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-gold" /> <time dateTime={new Date(post.publishedAt).toISOString()}>{formatDate(post.publishedAt, { day: 'numeric', month: 'long', year: 'numeric' }, lang)}</time></span>
               <span className="flex items-center gap-2"><Clock className="h-4 w-4 text-gold" /> {readingTime(post.content)} <T>min read</T></span>
             </p>
           </Reveal>
@@ -102,7 +120,8 @@ export default function PostView({ post, related, site, lang = 'en-GB' }: { post
           </div>
         </section>
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs).replace(/</g, '\\u003c') }} />
     </article>
   );
 }

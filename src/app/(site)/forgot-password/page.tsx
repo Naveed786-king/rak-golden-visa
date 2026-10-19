@@ -1,7 +1,11 @@
+import { getI18n } from '@/lib/i18n/server';
 import AuthShell from '@/components/portal/AuthShell';
 import { ForgotForm } from '@/components/portal/AuthForms';
 
-export const metadata = { title: 'Forgot Password', robots: { index: false } };
+export async function generateMetadata() {
+  const { t } = await getI18n();
+  return { title: t('Forgot Password'), robots: { index: false } };
+}
 
 export default function ForgotPage() {
   return (

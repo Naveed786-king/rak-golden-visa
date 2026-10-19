@@ -1,5 +1,6 @@
 // Machine translation engine. Providers:
-//   claude  - Anthropic Claude AI (best quality, needs API key) - default
+//   gemini  - Google Gemini AI (needs API key) - default, used for new blog posts
+//   claude  - Anthropic Claude AI (needs API key)
 //   deepl   - DeepL API (needs API key; no Hindi)
 //   google  - free Google Translate web endpoint (no key, lower quality)
 // A provider that fails NEVER silently falls back to another one.
@@ -25,7 +26,8 @@ async function memGet(locale: string, texts: string[]) {
   try {
     const rows = await prisma.translationMemory.findMany({ where: { key: { in: [...keys, ...pkeys] } } });
     const map = new Map(rows.map((r) => [r.key, r.text]));
-    return keys.map((k, i) => map.get(k) || map.get(pkeys[i]));
+    // built-in professional translations always win over machine translations
+    return keys.map((k, i) => map.get(pkeys[i]) || map.get(k));
   } catch {
     return keys.map(() => undefined);
   }
@@ -131,6 +133,52 @@ async function claudeMany(texts: string[], locale: string, apiKey: string, model
   return out;
 }
 
+/* ------------------------------------------------------------------ gemini */
+async function geminiCall(apiKey: string, model: string, system: string, content: string, json: boolean, attempt = 0): Promise<string> {
+  const res = await fetch(`${process.env.GEMINI_API_BASE || 'https://generativelanguage.googleapis.com'}/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method: 'POST',
+    headers: { 'x-goog-api-key': apiKey, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: system }] },
+      contents: [{ role: 'user', parts: [{ text: content }] }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 65536, ...(json ? { responseMimeType: 'application/json' } : {}) },
+    }),
+  });
+  if ((res.status === 429 || res.status >= 500) && attempt < 5) {
+    await sleep(Math.min(60_000, 4000 * 2 ** attempt));
+    return geminiCall(apiKey, model, system, content, json, attempt + 1);
+  }
+  if (res.status === 400 || res.status === 401 || res.status === 403) {
+    const t = await res.text();
+    if (/API key|API_KEY|PERMISSION_DENIED|UNAUTHENTICATED/i.test(t)) throw new Error('Gemini API key is not valid - check it in Admin → Languages');
+    throw new Error(`Gemini API HTTP ${res.status}: ${t.slice(0, 200)}`);
+  }
+  if (res.status === 404) throw new Error(`Gemini model "${model}" was not found - choose another model in Admin → Languages`);
+  if (!res.ok) throw new Error(`Gemini API HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const d: any = await res.json();
+  const cand = d.candidates?.[0];
+  const text = (cand?.content?.parts || []).filter((p: any) => !p.thought).map((p: any) => p.text || '').join('');
+  if (!text) throw new Error(`Gemini returned no text (${cand?.finishReason || d.promptFeedback?.blockReason || 'unknown reason'})`);
+  return text;
+}
+
+async function geminiMany(texts: string[], locale: string, apiKey: string, model: string) {
+  const lang = localeInfo(locale).name;
+  const out: string[] = [];
+  for (let i = 0; i < texts.length; i += 80) {
+    const chunk = texts.slice(i, i + 80);
+    const raw = await geminiCall(apiKey, model, SYS(lang), `Translate each string in this JSON array. Reply with ONLY a JSON array of strings of the same length, same order.\n\n${JSON.stringify(chunk)}`, true);
+    const m = raw.match(/\[[\s\S]*\]/);
+    let arr: any = null;
+    try {
+      arr = m ? JSON.parse(m[0]) : null;
+    } catch {}
+    if (!Array.isArray(arr) || arr.length !== chunk.length) throw new Error('Gemini returned an invalid translation list');
+    out.push(...arr.map(String));
+  }
+  return out;
+}
+
 /* ------------------------------------------------------------------ deepl */
 async function deeplMany(texts: string[], locale: string, apiKey: string, html = false) {
   const target = localeInfo(locale).deepl;
@@ -154,30 +202,53 @@ async function deeplMany(texts: string[], locale: string, apiKey: string, html =
 }
 
 /* ------------------------------------------------------------------ public */
-export async function translationConfig() {
-  const cfg = await getSetting('translation');
-  memProvider = cfg.provider === 'claude' ? `claude-${cfg.model || DEFAULT_MODEL}` : cfg.provider;
-  return cfg;
+export const DEFAULT_MODEL = 'claude-sonnet-5-5';
+export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
+
+type Cfg = { provider: string; apiKey?: string; geminiKey?: string; model?: string; geminiModel?: string };
+
+/** API key for the chosen provider */
+export function providerKey(cfg: Cfg) {
+  return (cfg.provider === 'gemini' ? cfg.geminiKey : cfg.apiKey) || '';
 }
 
-export const DEFAULT_MODEL = 'claude-sonnet-5-5';
+/** Model for the chosen provider */
+export function providerModel(cfg: Cfg) {
+  if (cfg.provider === 'gemini') return cfg.geminiModel || DEFAULT_GEMINI_MODEL;
+  if (cfg.provider === 'claude') return cfg.model || DEFAULT_MODEL;
+  return '';
+}
+
+function engineName(cfg: Cfg) {
+  return cfg.provider === 'claude' || cfg.provider === 'gemini' ? `${cfg.provider}-${providerModel(cfg)}` : cfg.provider;
+}
+
+export async function translationConfig() {
+  const cfg = await getSetting('translation');
+  memProvider = engineName(cfg);
+  return cfg;
+}
 
 /** Short id of the engine in use - stored with every translation so a new engine re-translates old text. */
 export async function engineTag() {
   const cfg = await translationConfig();
   if (notReadyReason(cfg)) return 'pack'; // no API key: only the built-in translations are used
-  return cfg.provider === 'claude' ? `claude-${cfg.model || DEFAULT_MODEL}` : cfg.provider;
+  return engineName(cfg);
 }
 
 /** Why translation cannot run right now ('' = ready) */
-export function notReadyReason(cfg: { provider: string; apiKey?: string }) {
+export function notReadyReason(cfg: Cfg) {
   if (cfg.provider === 'off') return 'Translation is turned off';
-  if ((cfg.provider === 'claude' || cfg.provider === 'deepl') && !cfg.apiKey) return `Add your ${cfg.provider === 'claude' ? 'Claude (Anthropic)' : 'DeepL'} API key in Admin → Languages to start translating`;
+  const names: Record<string, string> = { claude: 'Claude (Anthropic)', deepl: 'DeepL', gemini: 'Google Gemini' };
+  if (names[cfg.provider] && !providerKey(cfg)) return `Add your ${names[cfg.provider]} API key in Admin → Languages to start translating`;
   return '';
 }
 
+/** packOnly: use ONLY the built-in translations (instant, no internet) - English stays where none exists */
+export type TrOpts = { packOnly?: boolean };
+
 /** Translate plain strings (multi-line strings are translated line by line). Returns same-length array. */
-export async function translateTexts(texts: string[], locale: string): Promise<string[]> {
+export async function translateTexts(texts: string[], locale: string, opts: TrOpts = {}): Promise<string[]> {
   if (texts.some((t) => t && t.includes('\n'))) {
     const flat: string[] = [];
     const shape = texts.map((t) => {
@@ -185,21 +256,21 @@ export async function translateTexts(texts: string[], locale: string): Promise<s
       flat.push(...ls);
       return ls.length;
     });
-    const tr = await translateLines(flat, locale);
+    const tr = await translateLines(flat, locale, opts);
     let k = 0;
     return shape.map((n) => tr.slice(k, (k += n)).join('\n'));
   }
-  return translateLines(texts, locale);
+  return translateLines(texts, locale, opts);
 }
 
-async function translateLines(texts: string[], locale: string): Promise<string[]> {
+async function translateLines(texts: string[], locale: string, opts: TrOpts = {}): Promise<string[]> {
   const cfg = await translationConfig();
   const result: string[] = texts.slice();
   const idx: number[] = [];
   texts.forEach((t, i) => {
     if (t && hasLetters(t)) idx.push(i);
   });
-  if (!idx.length || cfg.provider === 'off') return result;
+  if (!idx.length || (cfg.provider === 'off' && !opts.packOnly)) return result;
 
   const unique = Array.from(new Set(idx.map((i) => texts[i])));
   const cached = await memGet(locale, unique);
@@ -209,12 +280,13 @@ async function translateLines(texts: string[], locale: string): Promise<string[]
 
   if (todo.length) {
     let translated: string[];
-    if (notReadyReason(cfg)) {
+    if (opts.packOnly || notReadyReason(cfg)) {
       // No API key yet: texts without a built-in translation stay in English for now
       idx.forEach((i) => (result[i] = map.get(texts[i]) || texts[i]));
       return result;
     }
-    if (cfg.provider === 'claude') translated = await claudeMany(todo, locale, cfg.apiKey, cfg.model || DEFAULT_MODEL);
+    if (cfg.provider === 'gemini') translated = await geminiMany(todo, locale, providerKey(cfg), providerModel(cfg));
+    else if (cfg.provider === 'claude') translated = await claudeMany(todo, locale, cfg.apiKey, providerModel(cfg));
     else if (cfg.provider === 'deepl') translated = await deeplMany(todo, locale, cfg.apiKey);
     else translated = await googleMany(todo, localeInfo(locale).google);
     todo.forEach((t, k) => translated[k] && map.set(t, translated[k]));
@@ -227,19 +299,23 @@ async function translateLines(texts: string[], locale: string): Promise<string[]
 const BLOCK_TAG = /^<\/?(p|div|h[1-6]|li|ul|ol|table|thead|tbody|tr|td|th|blockquote|section|article|br|hr|img|figure|figcaption)\b/i;
 
 /** Translate an HTML fragment, keeping all tags. */
-export async function translateHtml(html: string, locale: string): Promise<string> {
+export async function translateHtml(html: string, locale: string, opts: TrOpts = {}): Promise<string> {
   if (!html || !hasLetters(html.replace(/<[^>]+>/g, ''))) return html;
   const cfg = await translationConfig();
-  if (cfg.provider === 'off') return html;
+  if (cfg.provider === 'off' && !opts.packOnly) return html;
 
   const [cachedWhole] = await memGet(locale, [html]);
   if (cachedWhole) return cachedWhole;
 
-  if (notReadyReason(cfg)) return html; // no API key and no built-in translation for this text
-  if (cfg.provider === 'claude' || cfg.provider === 'deepl') {
+  if (opts.packOnly || notReadyReason(cfg)) return html; // no API key and no built-in translation for this text
+  if (cfg.provider === 'claude' || cfg.provider === 'deepl' || cfg.provider === 'gemini') {
     let out: string;
+    const ask = `Translate the text inside this HTML. Keep every HTML tag and attribute (href, src, class, id) exactly as it is, translate image alt text and titles. Reply with ONLY the translated HTML.\n\n${html}`;
     if (cfg.provider === 'claude') {
-      out = await claudeCall(cfg.apiKey, cfg.model || DEFAULT_MODEL, SYS(localeInfo(locale).name), `Translate the text inside this HTML. Keep every HTML tag and attribute exactly as it is. Reply with ONLY the translated HTML.\n\n${html}`);
+      out = await claudeCall(cfg.apiKey, providerModel(cfg), SYS(localeInfo(locale).name), ask);
+      out = out.replace(/^```(?:html)?\s*|\s*```$/g, '').trim();
+    } else if (cfg.provider === 'gemini') {
+      out = await geminiCall(providerKey(cfg), providerModel(cfg), SYS(localeInfo(locale).name), ask, false);
       out = out.replace(/^```(?:html)?\s*|\s*```$/g, '').trim();
     } else {
       out = (await deeplMany([html], locale, cfg.apiKey, true))[0];

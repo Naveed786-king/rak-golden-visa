@@ -108,7 +108,9 @@ export async function getTestimonials() {
 
 export async function getPartners() {
   try {
-    return await prisma.partner.findMany({ where: { active: true }, orderBy: [{ order: 'asc' }, { createdAt: 'asc' }] });
+    const items = await prisma.partner.findMany({ where: { active: true }, orderBy: [{ order: 'asc' }, { createdAt: 'asc' }] });
+    const map = await getTranslationsFor('partner', items.map((i) => i.id), await loc());
+    return mergeList(items, map);
   } catch {
     return [];
   }

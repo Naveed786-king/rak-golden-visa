@@ -36,7 +36,14 @@ export async function getSetting<K extends keyof Map>(key: K): Promise<Map[K]> {
   try {
     const row = await prisma.setting.findUnique({ where: { key } });
     if (!row) return DEFAULTS[key];
-    return deepMerge(DEFAULTS[key], JSON.parse(row.value));
+    const v = deepMerge(DEFAULTS[key], JSON.parse(row.value));
+    if (key === 'translation') {
+      const t = v as TranslationSettings;
+      // Older sites were saved with Claude but no key: use Gemini when a Gemini key exists
+      if (t.provider === 'claude' && !t.apiKey && t.geminiKey) t.provider = 'gemini';
+      if (!t.geminiKey && process.env.GEMINI_API_KEY) t.geminiKey = process.env.GEMINI_API_KEY;
+    }
+    return v;
   } catch {
     return DEFAULTS[key];
   }

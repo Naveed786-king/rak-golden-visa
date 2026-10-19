@@ -322,6 +322,8 @@ export function SiteSettingsEditor() {
               { name: 'description', label: 'Default meta description', type: 'textarea' },
               { name: 'keywords', label: 'Keywords (comma separated)', type: 'text' },
               { name: 'ogImage', label: 'Default social share image (1200×630)', type: 'image' },
+              { name: 'googleVerification', label: 'Google Search Console verification code', type: 'text', help: 'Search Console → Add property → HTML tag → copy only the content="…" value. Then submit /sitemap.xml there so Google indexes new posts fast.' },
+              { name: 'bingVerification', label: 'Bing Webmaster verification code (optional)', type: 'text', help: 'New posts are sent to Bing automatically (IndexNow).' },
             ])}
           {tab === 'features' && (
             <FieldGroup

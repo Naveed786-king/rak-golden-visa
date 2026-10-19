@@ -61,6 +61,8 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
     setBusy('test');
     setTest('');
     try {
+      // test with what is typed on screen (saves the settings first)
+      if (cfg) await api('/api/admin/settings/translation', 'PUT', { value: cfg });
       const d = await api<{ result: string }>('/api/admin/translations', 'POST', { action: 'test', locale: 'ar' });
       setTest(d.result);
       toast('Translation works ✔');
@@ -142,12 +144,34 @@ export default function LanguagesManager({ isAdmin }: { isAdmin: boolean }) {
                 <div>
                   <label className="admin-label">Translation engine</label>
                   <select className="admin-input" value={cfg.provider} onChange={(e) => setCfg({ ...cfg, provider: e.target.value })}>
-                    <option value="claude">Claude AI — best, human-like quality (recommended)</option>
+                    <option value="gemini">Google Gemini AI — natural, human-like quality (recommended)</option>
+                    <option value="claude">Claude AI — human-like quality</option>
                     <option value="deepl">DeepL — good quality (no Hindi)</option>
                     <option value="google">Google Translate — free, basic quality</option>
                     <option value="off">Off — I will translate by hand</option>
                   </select>
                 </div>
+                {cfg.provider === 'gemini' && (
+                  <>
+                    <div>
+                      <label className="admin-label">Gemini API key</label>
+                      <input type="password" className="admin-input font-mono" value={cfg.geminiKey || ''} onChange={(e) => setCfg({ ...cfg, geminiKey: e.target.value })} placeholder="AIza…" autoComplete="off" />
+                      <p className="mt-1.5 text-xs text-gray-500">
+                        Create a key at <a className="font-bold text-gold-deep underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a>. Your pages use the built-in professional translations; Gemini translates new blog posts and any new text you add.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="admin-label">Gemini model</label>
+                      <input className="admin-input font-mono" list="gemini-models" value={cfg.geminiModel || ''} onChange={(e) => setCfg({ ...cfg, geminiModel: e.target.value })} placeholder="gemini-3.8-flash" />
+                      <datalist id="gemini-models">
+                        <option value="gemini-3.8-flash">Fast, very good quality (recommended)</option>
+                        <option value="gemini-4-argon">Best quality, slower</option>
+                        <option value="gemini-3.1-pro-preview">Pro (preview)</option>
+                      </datalist>
+                      <p className="mt-1.5 text-xs text-gray-500">gemini-3.8-flash = fast, best for publishing · gemini-4-argon = top quality, slower. Any model name from Google AI Studio works.</p>
+                    </div>
+                  </>
+                )}
                 {(cfg.provider === 'claude' || cfg.provider === 'deepl') && (
                   <>
                     <div>

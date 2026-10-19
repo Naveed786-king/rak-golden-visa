@@ -7,7 +7,7 @@ import { deleteStored } from '@/lib/upload';
 
 export const dynamic = 'force-dynamic';
 
-const ENTITY: Record<string, string> = { pages: 'page', posts: 'post', faqs: 'faq', services: 'service', testimonials: 'testimonial' };
+const ENTITY: Record<string, string> = { pages: 'page', posts: 'post', faqs: 'faq', services: 'service', testimonials: 'testimonial', partners: 'partner' };
 async function autoTranslate(resource: string, id: string) {
   const e = ENTITY[resource];
   if (!e) return;
@@ -63,7 +63,13 @@ export async function PUT(req: Request, { params }: Ctx) {
     }
     const item = await (prisma as any)[g.cfg.model].update({ where: { id: g.id }, data, ...(g.cfg.select ? { select: g.cfg.select } : {}) });
     refreshSite();
-    await autoTranslate(g.resource, g.id);
+    // ?translate=editor: the post editor translates right away itself (shows progress)
+    if (new URL(req.url).searchParams.get('translate') !== 'editor') await autoTranslate(g.resource, g.id);
+    if (g.resource === 'posts' && item?.status === 'published' && item?.slug) {
+      try {
+        (await import('@/lib/indexnow')).pingIndexNow(['/' + item.slug]);
+      } catch {}
+    }
     return ok({ item });
   } catch (e: any) {
     if (e.code === 'P2002') return fail('That value is already used (must be unique)');

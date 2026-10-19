@@ -1,12 +1,18 @@
+import { getI18n } from '@/lib/i18n/server';
+import { seoAlternates } from '@/lib/i18n/config';
 import { Suspense } from 'react';
 import ApplyWizard from '@/components/portal/ApplyWizard';
 import { Skyline } from '@/components/blocks/Hero';
 import T from '@/components/ui/T';
 
-export const metadata = {
-  title: 'Apply Online for RAK Golden Visa',
-  description: 'Start your RAK Golden Visa or Retirement Visa application online in 3 simple steps. Upload documents securely and track your progress in real time.',
-};
+export async function generateMetadata() {
+  const { t, locale } = await getI18n();
+  return {
+    title: t('Apply Online for RAK Golden Visa'),
+    description: t('Start your RAK Golden Visa or Retirement Visa application online in 3 simple steps. Upload documents securely and track your progress in real time.'),
+    alternates: seoAlternates('/apply', locale),
+  };
+}
 
 export default function ApplyPage() {
   return (

@@ -27,13 +27,30 @@ function requestTranslation(entity: Entity, id: string, locale: string) {
     .catch(() => {});
 }
 
+/**
+ * A language version that does not exist yet is built on the spot from the built-in
+ * professional translations (no AI, no internet, a few milliseconds) so visitors never
+ * see English on a translated page. Text without a built-in translation is then
+ * translated by the AI engine in the background.
+ */
+async function buildNow(entity: Entity, id: string, locale: string) {
+  try {
+    const { translateEntity } = await import('./content');
+    await translateEntity(entity, id, locale, false, { packOnly: true });
+  } catch (e) {
+    console.error('[translate] quick build failed', entity, id, locale, (e as Error).message);
+  }
+}
+
 export async function getTranslation<T = any>(entity: Entity, id: string, locale: string): Promise<T | null> {
   if (locale === DEFAULT_LOCALE) return null;
   try {
-    const row = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
+    let row = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
     if (!row) {
+      await buildNow(entity, id, locale);
       requestTranslation(entity, id, locale);
-      return null;
+      row = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
+      if (!row) return null;
     }
     return safeJson<T | null>(row.data, null);
   } catch {
@@ -48,7 +65,13 @@ export async function getTranslationsFor(entity: Entity, ids: string[], locale: 
     const rows = await prisma.translation.findMany({ where: { entity, locale, entityId: { in: ids } } });
     rows.forEach((r) => map.set(r.entityId, safeJson(r.data, null)));
     const missing = ids.filter((id) => !map.has(id));
-    missing.slice(0, 50).forEach((id) => requestTranslation(entity, id, locale));
+    if (missing.length) {
+      const now = missing.slice(0, 80);
+      for (let i = 0; i < now.length; i += 8) await Promise.all(now.slice(i, i + 8).map((id) => buildNow(entity, id, locale)));
+      const built = await prisma.translation.findMany({ where: { entity, locale, entityId: { in: now } } });
+      built.forEach((r) => map.set(r.entityId, safeJson(r.data, null)));
+      missing.slice(0, 50).forEach((id) => requestTranslation(entity, id, locale));
+    }
   } catch {}
   return map;
 }

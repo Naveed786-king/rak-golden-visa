@@ -1,24 +1,44 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/db';
-import { getSetting } from '@/lib/settings';
-import { localizePath } from '@/lib/i18n/config';
+import { LOCALES, localizePath } from '@/lib/i18n/config';
+import { baseUrl, absUrl, enabledLocales, postLocales } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
+// Every page in every language, with hreflang links between the language versions.
+// Blog posts are listed only in the languages they are really translated into.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const base = baseUrl();
   try {
-    const [pages, posts] = await Promise.all([
-      prisma.page.findMany({ where: { status: 'published' }, select: { slug: true, updatedAt: true } }),
-      prisma.post.findMany({ where: { status: 'published' }, select: { slug: true, updatedAt: true } }),
+    const [pages, posts, langs] = await Promise.all([
+      prisma.page.findMany({ where: { status: 'published' }, select: { slug: true, updatedAt: true, ogImage: true } }),
+      prisma.post.findMany({ where: { status: 'published', publishedAt: { lte: new Date() } }, select: { id: true, slug: true, updatedAt: true, cover: true }, orderBy: { publishedAt: 'desc' } }),
+      enabledLocales(),
     ]);
-    const tr = await getSetting('translation');
-    const langs = tr.enabled.length ? tr.enabled : ['en'];
+    const postLangs = await postLocales(posts.map((p) => p.id));
     const out: MetadataRoute.Sitemap = [];
-    for (const lang of langs) {
-      for (const p of pages) out.push({ url: base + localizePath(p.slug === 'home' ? '/' : `/${p.slug}`, lang), lastModified: p.updatedAt, priority: p.slug === 'home' ? 1 : 0.8 });
-      for (const p of posts) out.push({ url: base + localizePath(`/${p.slug}`, lang), lastModified: p.updatedAt, priority: 0.6 });
+    const entry = (path: string, locales: string[], lastModified: Date, priority: number, changeFrequency: 'daily' | 'weekly' | 'monthly', image?: string | null) => {
+      const languages: Record<string, string> = {};
+      for (const l of LOCALES) if (locales.includes(l.code)) languages[l.htmlLang] = base + localizePath(path, l.code);
+      languages['x-default'] = base + path;
+      for (const l of locales) {
+        out.push({
+          url: base + localizePath(path, l),
+          lastModified,
+          changeFrequency,
+          priority,
+          alternates: { languages },
+          ...(image ? { images: [absUrl(image)!] } : {}),
+        });
+      }
+    };
+    for (const p of pages) {
+      const path = p.slug === 'home' ? '/' : `/${p.slug}`;
+      const legal = /privacy|terms/.test(p.slug);
+      entry(path, langs, p.updatedAt, p.slug === 'home' ? 1 : legal ? 0.3 : 0.8, p.slug === 'home' || p.slug.includes('blog') || p.slug.includes('news') ? 'daily' : legal ? 'monthly' : 'weekly', p.ogImage);
     }
+    for (const p of posts) entry(`/${p.slug}`, postLangs.get(p.id) || ['en'], p.updatedAt, 0.7, 'weekly', p.cover);
+    if (langs.length) entry('/apply', langs, new Date(), 0.6, 'monthly');
     return out;
   } catch {
     return [{ url: base }];

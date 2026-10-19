@@ -6,7 +6,7 @@ import { slugify } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
-const ENTITY: Record<string, string> = { pages: 'page', posts: 'post', faqs: 'faq', services: 'service', testimonials: 'testimonial' };
+const ENTITY: Record<string, string> = { pages: 'page', posts: 'post', faqs: 'faq', services: 'service', testimonials: 'testimonial', partners: 'partner' };
 async function autoTranslate(resource: string, id: string) {
   const e = ENTITY[resource];
   if (!e) return;
@@ -67,7 +67,13 @@ export async function POST(req: Request, { params }: Ctx) {
     if (resource === 'posts' && data.content === undefined) data.content = '';
     const item = await (prisma as any)[cfg.model].create({ data, ...(cfg.select ? { select: cfg.select } : {}) });
     refreshSite();
-    await autoTranslate(resource, item.id);
+    // ?translate=editor: the post editor translates right away itself (shows progress)
+    if (new URL(req.url).searchParams.get('translate') !== 'editor') await autoTranslate(resource, item.id);
+    if (resource === 'posts' && item?.status === 'published' && item?.slug) {
+      try {
+        (await import('@/lib/indexnow')).pingIndexNow(['/' + item.slug]);
+      } catch {}
+    }
     return ok({ item });
   } catch (e: any) {
     if (e.code === 'P2002') return fail('That value is already used (must be unique)');

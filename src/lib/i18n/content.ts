@@ -5,10 +5,10 @@ import { getSetting } from '../settings';
 import { safeJson } from '../utils';
 import { BLOCK_MAP } from '@/components/blocks/schema';
 import type { Field } from '@/components/blocks/types';
-import { translateTexts, translateHtml, engineTag } from './translate';
+import { translateTexts, translateHtml, engineTag, TrOpts } from './translate';
 import { UI_STRINGS } from './ui-strings';
 
-export type Entity = 'page' | 'post' | 'faq' | 'service' | 'testimonial' | 'settings' | 'ui';
+export type Entity = 'page' | 'post' | 'faq' | 'service' | 'testimonial' | 'partner' | 'settings' | 'ui';
 
 type Item = { value: string; html: boolean; set: (v: string) => void };
 
@@ -45,7 +45,7 @@ function navItems(list: any[], items: Item[]) {
 }
 
 /** Loads the English source and returns { obj, items } where items point into obj */
-async function source(entity: Entity, id: string): Promise<{ obj: any; items: Item[] } | null> {
+export async function source(entity: Entity, id: string): Promise<{ obj: any; items: Item[] } | null> {
   const items: Item[] = [];
   if (entity === 'page') {
     const p = await prisma.page.findUnique({ where: { id } });
@@ -79,6 +79,13 @@ async function source(entity: Entity, id: string): Promise<{ obj: any; items: It
     if (!s) return null;
     const obj: any = { title: s.title, subtitle: s.subtitle, description: s.description };
     ['title', 'subtitle', 'description'].forEach((k) => plain(obj, k, items));
+    return { obj, items };
+  }
+  if (entity === 'partner') {
+    const p = await prisma.partner.findUnique({ where: { id } });
+    if (!p) return null;
+    const obj: any = { name: p.name };
+    plain(obj, 'name', items);
     return { obj, items };
   }
   if (entity === 'testimonial') {
@@ -164,14 +171,34 @@ export function hashItems(items: Item[]) {
     .digest('hex');
 }
 
-/** Translates one entity into one language and stores it. Returns status. */
-export async function translateEntity(entity: Entity, id: string, locale: string, force = false): Promise<'done' | 'skipped' | 'missing' | 'outdated'> {
+type TrResult = 'done' | 'skipped' | 'missing' | 'outdated';
+
+// The same item is never translated twice at the same moment (editor + background queue)
+const g = globalThis as unknown as { __rgvInflight?: Map<string, Promise<TrResult>> };
+const inflight: Map<string, Promise<TrResult>> = (g.__rgvInflight ??= new Map());
+
+/**
+ * Translates one entity into one language and stores it. Returns status.
+ * opts.packOnly: build it instantly from the built-in translations only (used when a visitor
+ * opens a language version that does not exist yet - the page never waits for an AI).
+ */
+export function translateEntity(entity: Entity, id: string, locale: string, force = false, opts: TrOpts = {}): Promise<TrResult> {
+  const key = `${entity}:${id}:${locale}:${opts.packOnly ? 'pack' : 'ai'}`;
+  const running = inflight.get(key);
+  if (running) return running;
+  const p = doTranslate(entity, id, locale, force, opts).finally(() => inflight.delete(key));
+  inflight.set(key, p);
+  return p;
+}
+
+async function doTranslate(entity: Entity, id: string, locale: string, force: boolean, opts: TrOpts): Promise<TrResult> {
   const src = await source(entity, id);
   if (!src) return 'missing';
   // "<content hash>:<engine>" - a new engine re-translates automatic translations
   const contentHash = hashItems(src.items);
-  const sourceHash = `${contentHash}:${await engineTag()}`;
+  const sourceHash = `${contentHash}:${opts.packOnly ? 'pack' : await engineTag()}`;
   const existing = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
+  if (opts.packOnly && existing) return 'skipped'; // never replace a real translation with the quick version
   if (existing && !force) {
     if (existing.sourceHash === sourceHash) return 'skipped';
     const sameContent = (existing.sourceHash || '').split(':')[0] === contentHash;
@@ -184,12 +211,18 @@ export async function translateEntity(entity: Entity, id: string, locale: string
   const plainItems = src.items.filter((i) => !i.html);
   const tr = await translateTexts(
     plainItems.map((i) => i.value),
-    locale
+    locale,
+    opts
   );
   plainItems.forEach((it, k) => it.set(tr[k]));
-  for (const it of src.items.filter((i) => i.html)) it.set(await translateHtml(it.value, locale));
+  for (const it of src.items.filter((i) => i.html)) it.set(await translateHtml(it.value, locale, opts));
 
   const data = JSON.stringify(src.obj);
+  if (opts.packOnly) {
+    // create only: if a real translation was saved meanwhile, keep it
+    await prisma.translation.create({ data: { entity, entityId: id, locale, data, sourceHash, status: 'auto' } }).catch(() => {});
+    return 'done';
+  }
   await prisma.translation.upsert({
     where: { entity_entityId_locale: { entity, entityId: id, locale } },
     update: { data, sourceHash, status: 'auto' },
@@ -200,12 +233,13 @@ export async function translateEntity(entity: Entity, id: string, locale: string
 
 /** Everything that should exist in every language */
 export async function allTranslatableEntities(): Promise<{ entity: Entity; id: string }[]> {
-  const [pages, posts, faqs, services, testimonials] = await Promise.all([
+  const [pages, posts, faqs, services, testimonials, partners] = await Promise.all([
     prisma.page.findMany({ where: { status: 'published' }, select: { id: true } }),
     prisma.post.findMany({ where: { status: 'published' }, select: { id: true } }),
     prisma.faq.findMany({ where: { active: true }, select: { id: true } }),
     prisma.service.findMany({ where: { active: true }, select: { id: true } }),
     prisma.testimonial.findMany({ where: { active: true }, select: { id: true } }),
+    prisma.partner.findMany({ where: { active: true }, select: { id: true } }),
   ]);
   return [
     { entity: 'ui', id: 'strings' },
@@ -218,5 +252,6 @@ export async function allTranslatableEntities(): Promise<{ entity: Entity; id: s
     ...faqs.map((p) => ({ entity: 'faq' as Entity, id: p.id })),
     ...posts.map((p) => ({ entity: 'post' as Entity, id: p.id })),
     ...testimonials.map((p) => ({ entity: 'testimonial' as Entity, id: p.id })),
+    ...partners.map((p) => ({ entity: 'partner' as Entity, id: p.id })),
   ];
 }
