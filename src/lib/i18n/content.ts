@@ -12,7 +12,7 @@ export type Entity = 'page' | 'post' | 'faq' | 'service' | 'testimonial' | 'part
 
 type Item = { value: string; html: boolean; set: (v: string) => void };
 
-const SKIP_FIELDS = new Set(['arabic', 'code', 'group', 'service', 'price', 'cardPrice', 'anchor', 'theme', 'category']);
+import { SKIP_FIELDS } from './fields';
 
 function collectFields(data: any, fields: Field[], items: Item[]) {
   if (!data || typeof data !== 'object') return;

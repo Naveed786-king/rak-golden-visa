@@ -54,6 +54,8 @@ export async function POST(req: Request, { params }: Ctx) {
   try {
     if (cfg.unique && !body[cfg.unique] && body.title) body[cfg.unique] = slugify(body.title);
     if (cfg.unique && body[cfg.unique]) body[cfg.unique] = body[cfg.unique] === 'home' ? 'home' : String(body[cfg.unique]).split('/').map(slugify).filter(Boolean).join('/');
+    // nothing usable left (e.g. only symbols): give it a safe address instead of an error
+    if (cfg.unique === 'slug' && body.title && !body.slug) body.slug = `${resource === 'pages' ? 'page' : 'post'}-${Date.now().toString(36)}`;
     const data = cleanData(cfg, body);
     if (resource === 'users') {
       const pw = String(body.password || '');

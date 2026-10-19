@@ -8,6 +8,7 @@ import { FieldGroup } from './FieldInput';
 import { ImageInput } from './MediaPicker';
 import { Btn, Card, Modal, api, toast, Toggle } from './ui';
 import { cn } from '@/lib/utils';
+import { LanguageTabs, PageTranslation } from './TranslationEditor';
 
 type PageData = { id: string; title: string; slug: string; status: string; metaTitle?: string; metaDescription?: string; ogImage?: string; blocks: Block[] };
 
@@ -15,6 +16,12 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 
 export default function PageEditor({ initial }: { initial: PageData }) {
   const [page, setPage] = useState<PageData>(initial);
+  // ?lang=ar opens the Arabic version straight away (links from the Pages list)
+  const [lang, setLang] = useState('en');
+  useEffect(() => {
+    const l = new URLSearchParams(window.location.search).get('lang');
+    if (l) setLang(l);
+  }, []);
   const [open, setOpen] = useState<string | null>(null);
   const [tab, setTab] = useState<'content' | 'design' | 'settings'>('content');
   const [lib, setLib] = useState<{ open: boolean; at: number }>({ open: false, at: 0 });
@@ -131,6 +138,17 @@ export default function PageEditor({ initial }: { initial: PageData }) {
           </Btn>
         </div>
 
+        <div className="mb-5">
+          <LanguageTabs entity="page" entityId={page.id} value={lang} onChange={(l) => {
+            if (l !== 'en' && dirty && !confirm('Save the English page first? Unsaved English changes are not shown in other languages.')) return;
+            setLang(l);
+          }} />
+        </div>
+
+        {lang !== 'en' ? (
+          <PageTranslation id={page.id} slug={page.slug} locale={lang} blocks={page.blocks} title={page.title} metaTitle={page.metaTitle} metaDescription={page.metaDescription} />
+        ) : (
+        <>
         {/* Page settings */}
         <Card className="mb-6 p-5">
           <div className="grid gap-4 md:grid-cols-[1fr_1fr_160px]">
@@ -317,6 +335,8 @@ export default function PageEditor({ initial }: { initial: PageData }) {
             </div>
           )}
         </div>
+        </>
+        )}
       </div>
 
       {preview && (

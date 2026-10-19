@@ -4,16 +4,22 @@ export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
 
+/**
+ * URL-friendly name. Keeps letters of every language (Arabic, Urdu, Hindi, Chinese, Russian…)
+ * so a title written in any language still gets a working web address.
+ */
 export function slugify(input: string) {
   return (input || '')
     .toString()
     .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '') // é -> e (Latin accents only; other scripts keep their marks)
+    .normalize('NFC')
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[^\p{L}\p{M}\p{N}\s-]/gu, '')
     .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 120);
 }
 
 export function formatDate(d: Date | string, opts?: Intl.DateTimeFormatOptions, lang = 'en-GB') {

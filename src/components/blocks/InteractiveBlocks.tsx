@@ -369,8 +369,8 @@ function Range({ label, value, min, max, step, onChange, fmt }: { label: string;
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-3 w-full h-2 rounded-full appearance-none cursor-pointer accent-[var(--brand-gold)]"
-        style={{ background: `linear-gradient(90deg, var(--brand-gold) ${pct}%, rgba(127,127,127,.25) ${pct}%)` }}
+        className="rgv-range mt-3 w-full h-2 rounded-full appearance-none cursor-pointer accent-[var(--brand-gold)]"
+        style={{ background: `linear-gradient(var(--range-dir, 90deg), var(--brand-gold) ${pct}%, rgba(127,127,127,.25) ${pct}%)` }}
       />
     </label>
   );

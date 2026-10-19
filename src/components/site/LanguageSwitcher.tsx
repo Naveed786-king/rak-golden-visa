@@ -23,12 +23,30 @@ export default function LanguageSwitcher({ variant = 'header' }: { variant?: 'he
     return () => document.removeEventListener('mousedown', close);
   }, []);
 
+  // after a language switch, return to the same place on the page
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('rgv_switch_scroll');
+      if (!saved) return;
+      sessionStorage.removeItem('rgv_switch_scroll');
+      const { p, ratio } = JSON.parse(saved);
+      if (p !== path) return;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo({ top: Math.max(0, ratio * max), behavior: 'instant' as ScrollBehavior });
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const go = (code: string) => {
+    if (code === locale) return setOpen(false);
     try {
       document.cookie = `rgv_lang=${code};path=/;max-age=31536000`;
+      document.cookie = 'rgv_switch=1;path=/;max-age=8';
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      sessionStorage.setItem('rgv_switch_scroll', JSON.stringify({ p: path, ratio: max > 0 ? window.scrollY / max : 0 }));
     } catch {}
-    // full page load so the whole page (incl. direction) switches language
-    window.location.href = localizePath(path, code) + window.location.search;
+    // full page load so the whole page (incl. right-to-left direction) switches language
+    window.location.href = localizePath(path, code) + window.location.search + window.location.hash;
   };
 
   if (langs.length < 2) return null;

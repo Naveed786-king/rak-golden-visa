@@ -45,7 +45,8 @@ export async function PUT(req: Request, { params }: Ctx) {
     if (g.cfg.unique && body[g.cfg.unique] !== undefined) {
       const raw = String(body[g.cfg.unique]);
       body[g.cfg.unique] = raw === 'home' ? 'home' : raw.split('/').map(slugify).filter(Boolean).join('/');
-      if (!body[g.cfg.unique]) return fail('Slug is required');
+      if (!body[g.cfg.unique] && g.cfg.unique === 'slug' && body.title) body.slug = slugify(body.title) || `${g.resource === 'pages' ? 'page' : 'post'}-${Date.now().toString(36)}`;
+      if (!body[g.cfg.unique]) return fail('Please enter a web address (slug)');
     }
     const data = cleanData(g.cfg, body, true);
     if (g.resource === 'users') {

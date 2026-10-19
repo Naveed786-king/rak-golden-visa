@@ -1,4 +1,5 @@
 'use client';
+import { LOCALES, localizePath } from '@/lib/i18n/config';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -114,6 +115,20 @@ export default function PagesList() {
                     /{p.slug === 'home' ? '' : p.slug} · {count} sections · updated {formatDateTime(p.updatedAt)}
                   </p>
                 </Link>
+                {/* every page exists in every language: open / edit each version */}
+                <div className="order-last flex w-full flex-wrap gap-1 pl-14 xl:order-none xl:w-auto xl:pl-0">
+                  {LOCALES.map((l) => (
+                    <Link
+                      key={l.code}
+                      href={l.code === 'en' ? `/admin/pages/${p.id}` : `/admin/pages/${p.id}?lang=${l.code}`}
+                      title={`Edit the ${l.name} page — ${localizePath(p.slug === 'home' ? '/' : `/${p.slug}`, l.code)}`}
+                      className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-1.5 py-1 text-[10.5px] font-bold text-gray-600 hover:bg-gold/20 hover:text-ink"
+                    >
+                      <span>{l.flag}</span>
+                      {l.code.toUpperCase()}
+                    </Link>
+                  ))}
+                </div>
                 <div className="flex items-center gap-1">
                   <Link href={`/admin/pages/${p.id}`} className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-1.5 text-xs font-bold text-white hover:bg-ink-2">
                     <Pencil className="h-3.5 w-3.5" /> Edit

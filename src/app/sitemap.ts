@@ -19,11 +19,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const out: MetadataRoute.Sitemap = [];
     const entry = (path: string, locales: string[], lastModified: Date, priority: number, changeFrequency: 'daily' | 'weekly' | 'monthly', image?: string | null) => {
       const languages: Record<string, string> = {};
-      for (const l of LOCALES) if (locales.includes(l.code)) languages[l.htmlLang] = base + localizePath(path, l.code);
-      languages['x-default'] = base + path;
+      for (const l of LOCALES) if (locales.includes(l.code)) languages[l.htmlLang] = encodeURI(base + localizePath(path, l.code));
+      languages['x-default'] = encodeURI(base + path);
       for (const l of locales) {
         out.push({
-          url: base + localizePath(path, l),
+          url: encodeURI(base + localizePath(path, l)),
           lastModified,
           changeFrequency,
           priority,

@@ -22,7 +22,12 @@ export async function GET(req: Request) {
   const id = u.searchParams.get('id');
   const locale = u.searchParams.get('locale');
   if (entity && id && locale) {
-    const row = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
+    let row = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
+    // ?build=1: a language version that does not exist yet is created right away from the built-in translations
+    if (!row && u.searchParams.get('build') && ENTITIES.includes(entity as Entity) && isLocale(locale)) {
+      await translateEntity(entity as Entity, id, locale, false, { packOnly: true }).catch(() => {});
+      row = await prisma.translation.findUnique({ where: { entity_entityId_locale: { entity, entityId: id, locale } } });
+    }
     return ok({ translation: row ? { ...row, data: safeJson(row.data, {}) } : null });
   }
   if (entity && id) {
