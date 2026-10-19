@@ -10,6 +10,7 @@ A complete, production-ready website for **RAK Golden Visa / Brightlink**, rebui
 
 Click the button → **Create codespace**. Wait ~3 minutes. The file **ADMIN-LOGIN.txt** opens with your website link, admin link and password.
 Free (GitHub gives 60 hours/month). The site sleeps when the codespace is idle — reopen it from github.com/codespaces to wake it.
+Every time the codespace starts it downloads the newest code from GitHub and rebuilds automatically. To update a running codespace right away, open its Terminal and run `bash .devcontainer/update.sh`.
 
 ---
 

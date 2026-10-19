@@ -15,6 +15,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!text) return fail('Message is empty');
   const msg = await prisma.message.create({ data: { applicationId: id, senderId: s.sub, body: text, fromAdmin: false } });
   await prisma.application.update({ where: { id }, data: { seen: false } });
-  notifyAdmin(`New message on ${app.refNo} from ${s.name}`, `<p><b>${escapeHtml(s.name)}</b> wrote:</p><blockquote>${escapeHtml(text)}</blockquote>`);
+  notifyAdmin(`New message on ${app.refNo} from ${s.name}`, `<p><b>${escapeHtml(s.name)}</b> wrote:</p><blockquote>${escapeHtml(text)}</blockquote>`, undefined, 'messages');
   return ok({ message: msg });
 }

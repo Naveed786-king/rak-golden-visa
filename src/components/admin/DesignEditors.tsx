@@ -215,7 +215,9 @@ export function EstimateEditor() {
         </div>
       </Card>
       <p className="mt-4 text-xs text-gray-500">
-        Tip: “Each person” fees are counted for the main applicant and every family member. Fees marked “Only if inside/outside the UAE” follow what each person selects. Texts are translated into all languages automatically after saving.
+        How the price is worked out: for every adult and child the calculator adds each fee you list (with its own adult, child and main-applicant price),
+        plus the chosen medical test for each adult, plus the fees of the chosen route (step 1) and visa type (step 2). Fees marked “Only if inside/outside
+        the UAE” follow the answer to “Where are you now?”. Texts are translated into all languages automatically after saving.
       </p>
     </div>
   );

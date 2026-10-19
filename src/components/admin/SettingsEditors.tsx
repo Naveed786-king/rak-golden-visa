@@ -349,6 +349,31 @@ export function SiteSettingsEditor() {
           {tab === 'email' &&
             (smtp.value ? (
               <div className="space-y-6">
+                <div className="rounded-2xl bg-gray-50 p-5 ring-1 ring-gray-200/70">
+                  <p className="text-sm font-extrabold">Notification emails</p>
+                  <p className="mt-1 text-xs text-gray-500">Who gets an email when something happens on the website. Add one or more addresses — one per line or separated by commas.</p>
+                  <div className="mt-4">
+                    <FieldGroup
+                      fields={[{ name: 'notifyEmail', label: 'Send website notifications to', type: 'textarea', help: 'Example: owner@yourdomain.com, sales@yourdomain.com. Empty = the visa enquiries email from the Contact tab.' }]}
+                      data={smtp.value}
+                      onChange={smtp.setValue}
+                    />
+                  </div>
+                  <p className="mt-4 text-xs font-bold uppercase tracking-wider text-gray-500">Email me about</p>
+                  <div className="mt-2">
+                    <FieldGroup
+                      fields={[
+                        { name: 'leads', label: 'New enquiries & calculator leads', type: 'boolean', half: true },
+                        { name: 'applications', label: 'New online applications', type: 'boolean', half: true },
+                        { name: 'messages', label: 'Client chat messages', type: 'boolean', half: true },
+                        { name: 'accounts', label: 'New client accounts', type: 'boolean', half: true },
+                        { name: 'subscribers', label: 'Newsletter subscribers', type: 'boolean', half: true },
+                      ]}
+                      data={{ leads: true, applications: true, messages: true, accounts: true, subscribers: true, ...(smtp.value.notifyOn || {}) }}
+                      onChange={(v: any) => smtp.setValue({ ...smtp.value, notifyOn: v })}
+                    />
+                  </div>
+                </div>
                 <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
                   Used to email you about new leads/applications and to email clients (status updates, password reset). Get these details from your hosting email (cPanel → Email Accounts → Connect Devices), Google Workspace (smtp.gmail.com, port 465, app password) or Zoho.
                 </p>
@@ -360,13 +385,12 @@ export function SiteSettingsEditor() {
                     { name: 'user', label: 'Username (full email address)', type: 'text' },
                     { name: 'pass', label: 'Password', type: 'text' },
                     { name: 'from', label: 'From (e.g. RAK Golden Visa <visa@yourdomain.com>)', type: 'text' },
-                    { name: 'notifyEmail', label: 'Send admin notifications to', type: 'text' },
                   ]}
                   data={smtp.value}
                   onChange={smtp.setValue}
                 />
                 <div className="flex gap-2 border-t border-gray-100 pt-5">
-                  <input value={testTo} onChange={(e) => setTestTo(e.target.value)} placeholder="Send test email to…" className="admin-input" />
+                  <input value={testTo} onChange={(e) => setTestTo(e.target.value)} placeholder="Send test email to… (empty = all notification emails)" className="admin-input" />
                   <Btn
                     variant="dark"
                     loading={testing}

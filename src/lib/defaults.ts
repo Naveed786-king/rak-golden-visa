@@ -56,7 +56,8 @@ export type SmtpSettings = {
   user: string;
   pass: string;
   from: string;
-  notifyEmail: string;
+  notifyEmail: string; // one or more addresses (comma or new line separated)
+  notifyOn: { leads: boolean; applications: boolean; messages: boolean; accounts: boolean; subscribers: boolean };
 };
 
 export const defaultSite: SiteSettings = {
@@ -173,6 +174,7 @@ export const defaultSmtp: SmtpSettings = {
   pass: '',
   from: '',
   notifyEmail: '',
+  notifyOn: { leads: true, applications: true, messages: true, accounts: true, subscribers: true },
 };
 
 export const SERVICE_OPTIONS = [

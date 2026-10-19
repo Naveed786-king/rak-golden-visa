@@ -385,6 +385,10 @@ input[type='range'].appearance-none::-moz-range-thumb { width: 18px; height: 18p
   .theme-light .estimate-card, .theme-sand .estimate-card { box-shadow: 0 40px 80px -40px rgba(10,18,34,.45), 0 0 0 8px rgba(255,255,255,.6); }
   .theme-dark .estimate-note { color: #fff; }
   .estimate-card h3 { font-family: var(--font-sans); }
+  /* calculator pop-up (rendered at the end of <body>) */
+  .rgv-wizard h3 { font-family: var(--font-sans); }
+  .rgv-wizard .field { background: #fff; border-color: #e6e0d2; color: #111827; }
+  .rgv-wizard .field::placeholder { color: #9aa1ad; }
   .estimate-card .field { background: #fff; border-color: #e6e0d2; color: #111827; }
   .estimate-card .field::placeholder { color: #9aa1ad; }
   .animate-pop { animation: pop .7s cubic-bezier(.2,.8,.2,1) both; }

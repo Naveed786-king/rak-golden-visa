@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Building2, Sun, Users, Briefcase, FileText, ArrowRight, ArrowLeft, Upload, X, LoaderCircle, CircleCheck, Lock, Sparkles } from 'lucide-react';
+import { Building2, Sun, Users, Briefcase, FileText, ArrowRight, ArrowLeft, Upload, X, LoaderCircle, CircleCheck, Lock, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { SERVICE_OPTIONS } from '@/lib/defaults';
 import { cn } from '@/lib/utils';
 import { useT } from '@/components/site/SiteProvider';
@@ -19,6 +19,7 @@ export default function ApplyWizard() {
   const t = useT();
   const sp = useSearchParams();
   const [step, setStep] = useState(0);
+  const [showPw, setShowPw] = useState(false);
   const [service, setService] = useState('');
   const [form, setForm] = useState<Record<string, string>>({ familyMembers: '0' });
   const [files, setFiles] = useState<File[]>([]);
@@ -52,6 +53,10 @@ export default function ApplyWizard() {
     if (step === 0 && !service) return setError(t('Please choose a service'));
     if (step === 1) {
       if (!form.fullName || !form.phone || !form.email) return setError(t('Please fill in your name, phone and email'));
+      if (!me) {
+        if (!form.password || form.password.length < 8) return setError(t('Please choose a password (min 8 characters) to create your client account'));
+        if (form.password !== form.password2) return setError(t('The two passwords do not match'));
+      }
     }
     setStep((s) => s + 1);
   }
@@ -64,7 +69,10 @@ export default function ApplyWizard() {
 
   async function submit() {
     setError('');
-    if (!me && (!form.password || form.password.length < 8)) return setError(t('Please choose a password (min 8 characters) to create your client account'));
+    if (!me && (!form.password || form.password.length < 8)) {
+      setStep(1);
+      return setError(t('Please choose a password (min 8 characters) to create your client account'));
+    }
     if (!form.agree) return setError(t('Please accept the terms to continue'));
     setLoading(true);
     const fd = new FormData();
@@ -174,6 +182,32 @@ export default function ApplyWizard() {
                 </select>
                 <textarea value={form.notes || ''} onChange={set('notes')} rows={3} placeholder={t('Anything else we should know?')} className="field sm:col-span-2 resize-none" />
               </div>
+
+              {!me ? (
+                <div className="mt-6 rounded-3xl bg-ink p-5 text-white md:p-6">
+                  <p className="flex items-center gap-2 font-bold">
+                    <Lock className="h-4 w-4 text-gold" /> {t('Create your password')}
+                  </p>
+                  <p className="mt-1 text-xs text-white/60">
+                    {t('Use it with your email to sign in any time, track your application and upload documents.')} {t('Already have an account?')}{' '}
+                    <SmartLink href="/login?next=/apply" className="font-bold text-gold underline">{t('Sign in first')}</SmartLink>
+                  </p>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <div className="relative">
+                      <input value={form.password || ''} onChange={set('password')} type={showPw ? 'text' : 'password'} autoComplete="new-password" placeholder={t('Password (min 8 characters)') + ' *'} className="field !bg-white/5 !border-white/15 !text-white pe-12" />
+                      <button type="button" onClick={() => setShowPw((v) => !v)} className="absolute end-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-gold" aria-label={showPw ? t('Hide password') : t('Show password')}>
+                        {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    <input value={form.password2 || ''} onChange={set('password2')} type={showPw ? 'text' : 'password'} autoComplete="new-password" placeholder={t('Repeat password') + ' *'} className="field !bg-white/5 !border-white/15 !text-white" />
+                  </div>
+                  {form.password && form.password.length < 8 && <p className="mt-2 text-xs text-amber-300">{t('At least 8 characters')}</p>}
+                </div>
+              ) : (
+                <p className="mt-6 flex items-center gap-2 rounded-2xl bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
+                  <Sparkles className="h-4 w-4" /> {t('Signed in as')} {me.email}. {t('This application will appear in your account.')}
+                </p>
+              )}
             </motion.div>
           )}
 
@@ -209,19 +243,10 @@ export default function ApplyWizard() {
                 </ul>
               )}
 
-              {!me ? (
-                <div className="mt-8 rounded-3xl bg-ink p-6 text-white">
-                  <p className="flex items-center gap-2 font-bold">
-                    <Lock className="h-4 w-4 text-gold" /> {t('Create your secure client account')}
-                  </p>
-                  <p className="mt-1 text-xs text-white/55">{t('Your login email:')} {form.email}. {t('Already have an account?')} <SmartLink href="/login?next=/apply" className="text-gold underline">{t('Sign in first')}</SmartLink>.</p>
-                  <input value={form.password || ''} onChange={set('password')} type="password" placeholder={t('Choose a password (min 8 characters)')} className="field mt-4 !bg-white/5 !border-white/15 !text-white" />
-                </div>
-              ) : (
-                <p className="mt-8 flex items-center gap-2 rounded-2xl bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
-                  <Sparkles className="h-4 w-4" /> {t('Signed in as')} {me.email}. {t('This application will appear in your account.')}
-                </p>
-              )}
+              <p className="mt-8 flex items-center gap-2 rounded-2xl bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
+                <Lock className="h-4 w-4 shrink-0" />
+                {me ? `${t('Signed in as')} ${me.email}. ${t('This application will appear in your account.')}` : `${t('Your login email:')} ${form.email}. ${t('Sign in with this email and your password to follow your application.')}`}
+              </p>
 
               <label className="mt-6 flex items-start gap-3 text-sm text-ink/70">
                 <input type="checkbox" checked={!!form.agree} onChange={(e) => setForm((f) => ({ ...f, agree: e.target.checked ? '1' : '' }))} className="mt-1 h-4 w-4 accent-[var(--brand-gold)]" />

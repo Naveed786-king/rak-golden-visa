@@ -18,6 +18,6 @@ export async function POST(req: Request) {
     data: { name, email, phone: b.phone ? String(b.phone) : null, nationality: b.nationality ? String(b.nationality) : null, passwordHash: await hashPassword(password), role: 'CUSTOMER' },
   });
   await startSession(user);
-  notifyAdmin(`New client account: ${name}`, rowsTable([['Name', name], ['Email', email], ['Phone', user.phone]]));
+  notifyAdmin(`New client account: ${name}`, rowsTable([['Name', name], ['Email', email], ['Phone', user.phone]]), email, 'accounts');
   return ok({ ok: true, redirect: '/account' });
 }

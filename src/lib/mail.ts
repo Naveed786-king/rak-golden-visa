@@ -1,11 +1,11 @@
 import nodemailer from 'nodemailer';
 import { getSetting } from './settings';
 
-export async function sendMail(opts: { to: string; subject: string; html: string; replyTo?: string }) {
+export async function sendMail(opts: { to: string | string[]; subject: string; html: string; replyTo?: string }) {
   try {
     const smtp = await getSetting('smtp');
     const site = await getSetting('site');
-    if (!smtp.host || !opts.to) return false;
+    if (!smtp.host || !opts.to || (Array.isArray(opts.to) && !opts.to.length)) return false;
     const transporter = nodemailer.createTransport({
       host: smtp.host,
       port: Number(smtp.port) || 587,
@@ -26,10 +26,31 @@ export async function sendMail(opts: { to: string; subject: string; html: string
   }
 }
 
-export async function notifyAdmin(subject: string, html: string, replyTo?: string) {
+export type NotifyKind = 'leads' | 'applications' | 'messages' | 'accounts' | 'subscribers';
+
+/** "a@x.com, b@y.com" or one per line -> valid, unique addresses */
+export function parseEmails(list: string | undefined | null): string[] {
+  const out = (list || '')
+    .split(/[\s,;]+/)
+    .map((e) => e.trim().toLowerCase())
+    .filter((e) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e));
+  return Array.from(new Set(out));
+}
+
+/** Everyone who receives the website notifications (Admin → Site settings → Email) */
+export async function notifyEmails(): Promise<string[]> {
   const smtp = await getSetting('smtp');
   const site = await getSetting('site');
-  const to = smtp.notifyEmail || site.emailVisa || site.emailGeneral;
+  const list = parseEmails(smtp.notifyEmail);
+  return list.length ? list : parseEmails(site.emailVisa || site.emailGeneral);
+}
+
+/** Emails the team about something new on the website (each kind can be switched off) */
+export async function notifyAdmin(subject: string, html: string, replyTo?: string, kind?: NotifyKind) {
+  const smtp = await getSetting('smtp');
+  if (kind && smtp.notifyOn && smtp.notifyOn[kind] === false) return false;
+  const to = await notifyEmails();
+  if (!to.length) return false;
   return sendMail({ to, subject, html, replyTo });
 }
 

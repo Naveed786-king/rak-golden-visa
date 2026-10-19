@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db';
 import { ok, fail, rateLimit, clientIp, isEmail } from '@/lib/api';
-import { getSession, hashPassword, startSession } from '@/lib/auth';
+import { getSession, hashPassword, startSession, checkPassword } from '@/lib/auth';
 import { savePrivateFile } from '@/lib/upload';
 import { makeRef } from '@/lib/utils';
 import { notifyAdmin, rowsTable, sendMail, escapeHtml } from '@/lib/mail';
@@ -24,12 +24,21 @@ export async function POST(req: Request) {
     const password = g('password');
     if (password.length < 8) return fail('Password must be at least 8 characters');
     const exists = await prisma.user.findUnique({ where: { email } });
-    if (exists) return fail('An account with this email already exists. Please sign in first, then submit your application.');
-    const user = await prisma.user.create({
-      data: { name: fullName, email, phone, nationality: g('nationality') || null, passwordHash: await hashPassword(password), role: 'CUSTOMER' },
-    });
-    await startSession(user);
-    userId = user.id;
+    if (exists) {
+      // returning client: the right password signs them in and the application goes to their account
+      if (!exists.active || !(await checkPassword(password, exists.passwordHash))) {
+        return fail('An account with this email already exists. Enter its password, or sign in first.');
+      }
+      await startSession(exists);
+      userId = exists.id;
+    } else {
+      const user = await prisma.user.create({
+        data: { name: fullName, email, phone, nationality: g('nationality') || null, passwordHash: await hashPassword(password), role: 'CUSTOMER' },
+      });
+      await startSession(user);
+      userId = user.id;
+      notifyAdmin(`New client account: ${fullName}`, rowsTable([['Name', fullName], ['Email', email], ['Phone', phone]]), email, 'accounts');
+    }
   }
 
   let refNo = makeRef();
@@ -81,7 +90,9 @@ export async function POST(req: Request) {
       ['Family members', String(app.familyMembers)],
       ['Documents', String(files.length)],
       ['Notes', app.notes],
-    ])}`
+    ])}`,
+    app.email || undefined,
+    'applications'
   );
   if (app.email) {
     sendMail({

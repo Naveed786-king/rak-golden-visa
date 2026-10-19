@@ -37,7 +37,8 @@ export async function POST(req: Request) {
       ['Page', lead.source],
       ['Message', lead.message],
     ])}`,
-    email || undefined
+    email || undefined,
+    'leads'
   );
   if (email) {
     sendMail({

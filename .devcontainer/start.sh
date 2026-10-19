@@ -9,7 +9,16 @@ if [ ! -f /workspaces/rgv-data/.env ]; then
 fi
 set -a; . /workspaces/rgv-data/.env; set +a
 export NEXT_PUBLIC_SITE_URL="https://${CODESPACE_NAME}-3000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
-[ -d .next ] || npm run build
+# Get the latest code from GitHub (only when there are no local edits) and rebuild when it changed
+git checkout -- next-env.d.ts 2>/dev/null || true  # rewritten by every build
+if git diff --quiet 2>/dev/null && git diff --cached --quiet 2>/dev/null; then
+  git pull --ff-only origin "$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)" || echo "[start] git pull skipped"
+fi
+HEAD_SHA=$(git rev-parse HEAD 2>/dev/null || echo none)
+if [ ! -d .next ] || [ "$(cat /workspaces/rgv-data/.built-sha 2>/dev/null)" != "$HEAD_SHA" ]; then
+  echo "[start] building version $HEAD_SHA ..."
+  npm install --no-audit --no-fund && npm run build && echo "$HEAD_SHA" > /workspaces/rgv-data/.built-sha
+fi
 pkill -f "next start" 2>/dev/null || true
 nohup npm start > /workspaces/rgv-data/server.log 2>&1 &
 gh codespace ports visibility 3000:public -c "$CODESPACE_NAME" >/dev/null 2>&1 || true
