@@ -2,14 +2,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Calculator, Check, ChevronLeft, ChevronRight, Info, LoaderCircle, Minus, Plus, RotateCcw, Share2, X, CircleCheck, Mail, MapPin, Plane, User, Baby, Stethoscope, Crown } from 'lucide-react';
+import { ArrowRight, Calculator, Check, ChevronLeft, ChevronRight, Info, LoaderCircle, Minus, Plus, RotateCcw, Share2, X, CircleCheck, Mail, MapPin, Plane, User, Users, Baby, Stethoscope, Crown } from 'lucide-react';
 import type { EstimateOption, EstimateSettings } from '@/lib/estimate';
 import { calculate, locationNeeded, money } from '@/lib/estimate';
 import { Icon, SocialIcon } from '@/components/ui/Icon';
 import { useLocale, useSite, useT } from '@/components/site/SiteProvider';
 import { cn } from '@/lib/utils';
 
-type Step = 'type' | 'location' | 'family' | 'medical' | 'result';
+type Step = 'type' | 'location' | 'familyAsk' | 'family' | 'medical' | 'result';
 
 /**
  * Golden Visa cost calculator.
@@ -25,10 +25,10 @@ export default function EstimateCalculator({ cfg }: { cfg: EstimateSettings }) {
   return (
     <div className="estimate">
       <div className="estimate-card flex flex-col overflow-hidden">
-        <CardHeader cfg={cfg} progress={1 / 6} />
+        <CardHeader cfg={cfg} progress={1 / 7} />
         <div className="flex-1 px-5 pt-4 pb-5 sm:px-6">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-gold-deep">
-            {t('Step')} 1 {t('of')} 6
+            {t('Step')} 1 {t('of')} 7
           </p>
           <h3 className="mt-1 text-[20px] font-extrabold leading-tight tracking-[-0.02em] !text-ink">{cfg.step1Title}</h3>
           <p className="mt-1 text-[14px] leading-snug text-ink/60">{cfg.step1Text}</p>
@@ -114,8 +114,12 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
   const cat = cfg.categories.find((c) => c.id === category);
   const [type, setType] = useState('');
   const [location, setLocation] = useState<'inside' | 'outside' | ''>('');
-  const [adults, setAdults] = useState(1);
+  // the applicant is always counted; the counters are the family members on top (start at 0)
+  const [withFamily, setWithFamily] = useState<boolean | null>(null);
+  const [famAdults, setFamAdults] = useState(0);
   const [children, setChildren] = useState(0);
+  const adults = 1 + (withFamily ? famAdults : 0);
+  const kids = withFamily ? children : 0;
   const [medical, setMedical] = useState<'normal' | 'vip' | ''>('');
   const [step, setStep] = useState<Step>('type');
   const [dir, setDir] = useState(1);
@@ -123,10 +127,17 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const needLocation = locationNeeded(cfg, type);
-  const steps: Step[] = ['type', ...(needLocation ? (['location'] as Step[]) : []), 'family', 'medical', 'result'];
+  const steps: Step[] = [
+    'type',
+    ...(needLocation ? (['location'] as Step[]) : []),
+    ...(cfg.allowDependents ? (['familyAsk'] as Step[]) : []),
+    ...(cfg.allowDependents && withFamily ? (['family'] as Step[]) : []),
+    'medical',
+    'result',
+  ];
   const idx = steps.indexOf(step);
   const typ = types.find((x) => x.id === type);
-  const result = useMemo(() => calculate(cfg, { category, type, location, adults, children, medical }), [cfg, category, type, location, adults, children, medical]);
+  const result = useMemo(() => calculate(cfg, { category, type, location, adults, children: kids, medical }), [cfg, category, type, location, adults, kids, medical]);
   const fmtLocale = locale === 'ar' ? 'ar-AE' : locale === 'hi' ? 'en-IN' : 'en-US';
   const cur = cfg.currency || 'AED';
   const fmtN = (n: number) => n.toLocaleString(fmtLocale, { maximumFractionDigits: 2 });
@@ -160,7 +171,7 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
     [
       cfg.whatsappText,
       `• ${cat?.label || ''} · ${typ?.label || ''}${needLocation && location ? ' · ' + (location === 'inside' ? cfg.insideLabel : cfg.outsideLabel) : ''}`,
-      `• ${cfg.adultLabel}: ${adults} · ${cfg.childLabel}: ${children} · ${medical === 'vip' ? cfg.medicalVipLabel : cfg.medicalNormalLabel}`,
+      `• ${cfg.adultLabel}: ${adults} · ${cfg.childLabel}: ${kids} · ${medical === 'vip' ? cfg.medicalVipLabel : cfg.medicalNormalLabel}`,
       ...result.groups.map((g) => `- ${g.label}${g.count > 1 ? ` ×${g.count}` : ''}: ${fmt(g.total)}`),
       `${cfg.totalLabel}: ${fmt(result.total)}`,
     ].join('\n');
@@ -169,7 +180,8 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
   const restart = () => {
     setType('');
     setLocation('');
-    setAdults(1);
+    setWithFamily(null);
+    setFamAdults(0);
     setChildren(0);
     setMedical('');
     go('type', -1);
@@ -197,7 +209,7 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
   // sticky bottom button for steps that need one
   const cta =
     step === 'family'
-      ? { label: t('Continue'), disabled: adults < 1, onClick: next }
+      ? { label: t('Continue'), disabled: false, onClick: next }
       : step === 'medical'
         ? { label: t('Calculate'), disabled: !medical, onClick: next }
         : null;
@@ -261,7 +273,7 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
                         onClick={() => {
                           setType(o.id);
                           setDir(1);
-                          setStep(locationNeeded(cfg, o.id) ? 'location' : 'family');
+                          setStep(locationNeeded(cfg, o.id) ? 'location' : cfg.allowDependents ? 'familyAsk' : 'medical');
                         }}
                       />
                     ))}
@@ -282,11 +294,40 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
                         media={<Media image={loc === 'inside' ? cfg.insideImage : cfg.outsideImage} icon={loc === 'inside' ? <MapPin className="h-7 w-7" /> : <Plane className="h-7 w-7" />} />}
                         onClick={() => {
                           setLocation(loc);
-                          go('family');
+                          go(cfg.allowDependents ? 'familyAsk' : 'medical');
                         }}
                       />
                     ))}
                   </div>
+                </>
+              )}
+
+              {step === 'familyAsk' && (
+                <>
+                  <StepTitle title={cfg.familyAskTitle} text={cfg.familyAskText} />
+                  <div className="grid gap-3">
+                    <Choice
+                      on={withFamily === false}
+                      title={cfg.justMeLabel}
+                      text={cfg.justMeText}
+                      media={<Media image={cfg.justMeImage} icon={<User className="h-7 w-7" />} />}
+                      onClick={() => {
+                        setWithFamily(false);
+                        go('medical');
+                      }}
+                    />
+                    <Choice
+                      on={withFamily === true}
+                      title={cfg.withFamilyLabel}
+                      text={cfg.withFamilyText}
+                      media={<Media image={cfg.withFamilyImage} icon={<Users className="h-7 w-7" />} />}
+                      onClick={() => {
+                        setWithFamily(true);
+                        go('family');
+                      }}
+                    />
+                  </div>
+                  {cfg.familyAskNote && <Note>{cfg.familyAskNote}</Note>}
                 </>
               )}
 
@@ -298,12 +339,12 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
                       title={cfg.adultLabel}
                       text={cfg.adultText}
                       media={<Media image={cfg.adultImage} icon={<User className="h-7 w-7" />} badge={`${cfg.medicalMinAge}+`} />}
-                      value={adults}
-                      min={1}
-                      max={cfg.allowDependents ? Number(cfg.maxAdults) || 10 : 1}
-                      onChange={setAdults}
+                      value={famAdults}
+                      min={0}
+                      max={Math.max(0, (Number(cfg.maxAdults) || 10) - 1)}
+                      onChange={setFamAdults}
                     />
-                    {cfg.allowDependents && (
+                    {(
                       <Counter
                         title={cfg.childLabel}
                         text={cfg.childText}

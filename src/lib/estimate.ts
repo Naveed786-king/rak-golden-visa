@@ -47,7 +47,17 @@ export type EstimateSettings = {
   outsideLabel: string;
   outsideText: string;
   outsideImage: string;
-  // step 4 - family
+  // step 4 - adding family members too?
+  familyAskTitle: string;
+  familyAskText: string;
+  justMeLabel: string;
+  justMeText: string;
+  justMeImage: string;
+  withFamilyLabel: string;
+  withFamilyText: string;
+  withFamilyImage: string;
+  familyAskNote: string;
+  // step 5 - family members (not counting the applicant)
   familyTitle: string;
   familyText: string;
   adultLabel: string;
@@ -128,8 +138,17 @@ export const defaultEstimate: EstimateSettings = {
   outsideLabel: 'Outside the UAE',
   outsideText: 'Applying from your home country',
   outsideImage: '',
+  familyAskTitle: 'Adding family members too?',
+  familyAskText: '',
+  justMeLabel: 'No, just me',
+  justMeText: 'Only my own visa',
+  justMeImage: '',
+  withFamilyLabel: 'Yes, add family',
+  withFamilyText: 'Add adults and children',
+  withFamilyImage: '',
+  familyAskNote: 'Your spouse, children and parents can be added now.',
   familyTitle: 'Add your family members',
-  familyText: 'Count yourself as one of the adults.',
+  familyText: 'You are already counted — add only your family.',
   adultLabel: 'Adults',
   adultText: '18 years and over',
   adultImage: '',
@@ -231,7 +250,17 @@ export const ESTIMATE_FIELDS: Field[] = [
   { name: 'outsideText', label: 'Choice 2 description', type: 'text', half: true },
   { name: 'insideImage', label: 'Choice 1 picture (optional)', type: 'image', half: true },
   { name: 'outsideImage', label: 'Choice 2 picture (optional)', type: 'image', half: true },
-  { name: '_h5', label: 'Step 4 — family members', type: 'heading' },
+  { name: '_h5a', label: 'Step 4 — adding family members too?', type: 'heading' },
+  { name: 'familyAskTitle', label: 'Question', type: 'text', half: true },
+  { name: 'familyAskText', label: 'Help text', type: 'text', half: true },
+  { name: 'justMeLabel', label: 'Choice 1', type: 'text', half: true },
+  { name: 'justMeText', label: 'Choice 1 description', type: 'text', half: true },
+  { name: 'withFamilyLabel', label: 'Choice 2', type: 'text', half: true },
+  { name: 'withFamilyText', label: 'Choice 2 description', type: 'text', half: true },
+  { name: 'justMeImage', label: 'Choice 1 picture (optional)', type: 'image', half: true },
+  { name: 'withFamilyImage', label: 'Choice 2 picture (optional)', type: 'image', half: true },
+  { name: 'familyAskNote', label: 'Info note', type: 'text' },
+  { name: '_h5', label: 'Step 5 — family members (the applicant is already counted)', type: 'heading' },
   { name: 'familyTitle', label: 'Title', type: 'text', half: true },
   { name: 'familyText', label: 'Help text', type: 'text', half: true },
   { name: 'adultLabel', label: 'Adults — name', type: 'text', half: true },
@@ -243,9 +272,9 @@ export const ESTIMATE_FIELDS: Field[] = [
   { name: 'familyNote', label: 'Info note', type: 'text' },
   { name: 'allowDependents', label: 'Allow adding family members', type: 'boolean', half: true },
   { name: 'medicalMinAge', label: 'Adult / medical test from age', type: 'number', half: true },
-  { name: 'maxAdults', label: 'Max adults', type: 'number', half: true },
+  { name: 'maxAdults', label: 'Max adults (incl. applicant)', type: 'number', half: true },
   { name: 'maxChildren', label: 'Max children', type: 'number', half: true },
-  { name: '_h6', label: 'Step 5 — medical test (adults only)', type: 'heading' },
+  { name: '_h6', label: 'Step 6 — medical test (adults only)', type: 'heading' },
   { name: 'medicalTitle', label: 'Title', type: 'text', half: true },
   { name: 'medicalText', label: 'Help text', type: 'text', half: true },
   { name: 'medicalNormalLabel', label: 'Option 1 name', type: 'text', half: true },
@@ -278,6 +307,7 @@ export const ESTIMATE_FIELDS: Field[] = [
 export const ESTIMATE_TEXT_KEYS = [
   'title', 'badge', 'footnote', 'step1Title', 'step1Text', 'step2Title', 'step2Text',
   'locationTitle', 'locationText', 'insideLabel', 'insideText', 'outsideLabel', 'outsideText',
+  'familyAskTitle', 'familyAskText', 'justMeLabel', 'justMeText', 'withFamilyLabel', 'withFamilyText', 'familyAskNote',
   'familyTitle', 'familyText', 'adultLabel', 'adultText', 'childLabel', 'childText', 'familyNote',
   'medicalTitle', 'medicalText', 'medicalNormalLabel', 'medicalNormalNote', 'medicalVipLabel', 'medicalVipNote', 'medicalNote',
   'resultTitle', 'resultText', 'totalLabel', 'mainLabel', 'adultResultLabel', 'childResultLabel', 'applicationLabel',
