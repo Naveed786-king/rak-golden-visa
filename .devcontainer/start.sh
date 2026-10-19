@@ -19,7 +19,10 @@ if [ ! -d .next ] || [ "$(cat /workspaces/rgv-data/.built-sha 2>/dev/null)" != "
   echo "[start] building version $HEAD_SHA ..."
   npm install --no-audit --no-fund && npm run build && echo "$HEAD_SHA" > /workspaces/rgv-data/.built-sha
 fi
+# stop the old website server (whatever is holding port 3000) before starting the new one
 pkill -f "next start" 2>/dev/null || true
+pkill -f "next-server" 2>/dev/null || true
+for i in 1 2 3 4 5; do (exec 3<>/dev/tcp/127.0.0.1/3000) 2>/dev/null || break; sleep 1; done
 nohup npm start > /workspaces/rgv-data/server.log 2>&1 &
 gh codespace ports visibility 3000:public -c "$CODESPACE_NAME" >/dev/null 2>&1 || true
 cat > ADMIN-LOGIN.txt <<TXT

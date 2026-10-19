@@ -205,7 +205,7 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
   const logo = cfg.logo || site?.logo || '';
 
   const content = (
-    <div className="rgv-wizard fixed inset-0 z-[90] flex items-end justify-center sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={cfg.title}>
+    <div className="rgv-wizard fixed inset-0 z-[1000] flex items-end justify-center sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={cfg.title}>
       <motion.div className="absolute inset-0 bg-ink/70 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={onClose} />
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
