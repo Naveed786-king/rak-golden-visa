@@ -23,7 +23,8 @@ fi
 pkill -f "next start" 2>/dev/null || true
 pkill -f "next-server" 2>/dev/null || true
 for i in 1 2 3 4 5; do (exec 3<>/dev/tcp/127.0.0.1/3000) 2>/dev/null || break; sleep 1; done
-nohup npm start > /workspaces/rgv-data/server.log 2>&1 &
+# fully detached: keeps running after the editor / terminal is closed
+setsid nohup npm start > /workspaces/rgv-data/server.log 2>&1 < /dev/null &
 gh codespace ports visibility 3000:public -c "$CODESPACE_NAME" >/dev/null 2>&1 || true
 cat > ADMIN-LOGIN.txt <<TXT
 YOUR WEBSITE IS RUNNING
