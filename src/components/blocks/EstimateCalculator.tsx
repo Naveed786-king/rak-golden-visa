@@ -2,14 +2,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Calculator, Check, ChevronLeft, ChevronRight, Info, LoaderCircle, Minus, Plus, RotateCcw, Share2, X, CircleCheck, Mail, MapPin, Plane, User, Users, Baby, Stethoscope, Crown } from 'lucide-react';
+import { ArrowRight, Calculator, Check, ChevronLeft, ChevronRight, Info, LoaderCircle, Minus, Plus, RotateCcw, Share2, X, CircleCheck, Mail, MapPin, Plane, User, Users, Baby, Stethoscope, Crown, FolderCheck, FolderPlus, FolderOpen } from 'lucide-react';
 import type { EstimateOption, EstimateSettings } from '@/lib/estimate';
 import { calculate, locationNeeded, money } from '@/lib/estimate';
 import { Icon, SocialIcon } from '@/components/ui/Icon';
 import { useLocale, useSite, useT } from '@/components/site/SiteProvider';
 import { cn } from '@/lib/utils';
 
-type Step = 'type' | 'location' | 'familyAsk' | 'family' | 'medical' | 'result';
+type Step = 'category' | 'type' | 'location' | 'familyAsk' | 'sponsor' | 'family' | 'medical' | 'result';
+
+/** Links to these anchors open the calculator pop-up (e.g. the menu's "Visa Calculator" button) */
+const OPEN_HASHES = ['#calculator', '#cost-calculator', '#estimate'];
 
 /**
  * Golden Visa cost calculator.
@@ -22,13 +25,51 @@ export default function EstimateCalculator({ cfg }: { cfg: EstimateSettings }) {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('');
 
+  // open automatically for /#calculator links — on arrival and on clicks while already on this page
+  useEffect(() => {
+    const fromHash = () => {
+      if (OPEN_HASHES.includes(window.location.hash.toLowerCase())) {
+        setCategory('');
+        setOpen(true);
+      }
+    };
+    fromHash();
+    const late = window.setTimeout(fromHash, 120); // client-side navigation sets the hash a moment later
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement | null)?.closest?.('a[href]') as HTMLAnchorElement | null;
+      if (!a || a.target === '_blank') return;
+      let u: URL;
+      try {
+        u = new URL(a.href, window.location.href);
+      } catch {
+        return;
+      }
+      if (u.origin !== window.location.origin || u.pathname !== window.location.pathname || !OPEN_HASHES.includes(u.hash.toLowerCase())) return;
+      e.preventDefault();
+      setCategory('');
+      setOpen(true);
+    };
+    window.addEventListener('hashchange', fromHash);
+    document.addEventListener('click', onClick, true);
+    return () => {
+      window.clearTimeout(late);
+      window.removeEventListener('hashchange', fromHash);
+      document.removeEventListener('click', onClick, true);
+    };
+  }, []);
+  const close = () => {
+    setOpen(false);
+    if (OPEN_HASHES.includes(window.location.hash.toLowerCase())) history.replaceState(history.state, '', window.location.pathname + window.location.search);
+  };
+
   return (
     <div className="estimate">
       <div className="estimate-card flex flex-col overflow-hidden">
-        <CardHeader cfg={cfg} progress={1 / 7} />
+        <CardHeader cfg={cfg} progress={1 / 8} />
         <div className="flex-1 px-5 pt-4 pb-5 sm:px-6">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-gold-deep">
-            {t('Step')} 1 {t('of')} 7
+            {t('Step')} 1 {t('of')} 8
           </p>
           <h3 className="mt-1 text-[20px] font-extrabold leading-tight tracking-[-0.02em] !text-ink">{cfg.step1Title}</h3>
           <p className="mt-1 text-[14px] leading-snug text-ink/60">{cfg.step1Text}</p>
@@ -61,7 +102,7 @@ export default function EstimateCalculator({ cfg }: { cfg: EstimateSettings }) {
         <CardFooter cfg={cfg} />
       </div>
       {cfg.footnote && <p className="estimate-note mt-4 text-center text-[13px] font-semibold opacity-60">{cfg.footnote}</p>}
-      {open && <Wizard cfg={cfg} category={category} onClose={() => setOpen(false)} />}
+      {open && <Wizard cfg={cfg} initialCategory={category} onClose={close} />}
     </div>
   );
 }
@@ -106,11 +147,15 @@ function CardFooter({ cfg }: { cfg: EstimateSettings }) {
 }
 
 /* ------------------------------------------------------------------ pop-up */
-function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: string; onClose: () => void }) {
+function Wizard({ cfg, initialCategory, onClose }: { cfg: EstimateSettings; initialCategory: string; onClose: () => void }) {
   const t = useT();
   const site = useSite();
   const locale = useLocale();
   const types = (cfg.types || []).filter((c) => !c.hidden);
+  const categories = (cfg.categories || []).filter((c) => !c.hidden);
+  // opened from a menu link → the first question (what describes you) is asked inside the pop-up
+  const askCategory = !initialCategory;
+  const [category, setCategory] = useState(initialCategory);
   const cat = cfg.categories.find((c) => c.id === category);
   const [type, setType] = useState('');
   const [location, setLocation] = useState<'inside' | 'outside' | ''>('');
@@ -121,23 +166,27 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
   const adults = 1 + (withFamily ? famAdults : 0);
   const kids = withFamily ? children : 0;
   const [medical, setMedical] = useState<'normal' | 'vip' | ''>('');
-  const [step, setStep] = useState<Step>('type');
+  const [sponsor, setSponsor] = useState<'open' | 'needs' | ''>('');
+  const sponsorStep = !!cfg.allowDependents && !cfg.hideSponsorStep;
+  const [step, setStep] = useState<Step>(askCategory ? 'category' : 'type');
   const [dir, setDir] = useState(1);
   const [mounted, setMounted] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const needLocation = locationNeeded(cfg, type);
   const steps: Step[] = [
+    ...(askCategory ? (['category'] as Step[]) : []),
     'type',
     ...(needLocation ? (['location'] as Step[]) : []),
     ...(cfg.allowDependents ? (['familyAsk'] as Step[]) : []),
+    ...(sponsorStep && withFamily ? (['sponsor'] as Step[]) : []),
     ...(cfg.allowDependents && withFamily ? (['family'] as Step[]) : []),
     'medical',
     'result',
   ];
   const idx = steps.indexOf(step);
   const typ = types.find((x) => x.id === type);
-  const result = useMemo(() => calculate(cfg, { category, type, location, adults, children: kids, medical }), [cfg, category, type, location, adults, kids, medical]);
+  const result = useMemo(() => calculate(cfg, { category, type, location, adults, children: kids, medical, sponsor: withFamily ? sponsor : '' }), [cfg, category, type, location, adults, kids, medical, withFamily, sponsor]);
   const fmtLocale = locale === 'ar' ? 'ar-AE' : locale === 'hi' ? 'en-IN' : 'en-US';
   const cur = cfg.currency || 'AED';
   const fmtN = (n: number) => n.toLocaleString(fmtLocale, { maximumFractionDigits: 2 });
@@ -184,7 +233,9 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
     setFamAdults(0);
     setChildren(0);
     setMedical('');
-    go('type', -1);
+    setSponsor('');
+    if (askCategory) setCategory('');
+    go(askCategory ? 'category' : 'type', -1);
   };
 
   async function share() {
@@ -259,6 +310,27 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
         <div ref={bodyRef} className="flex-1 overflow-y-auto overscroll-contain px-4 pt-5 pb-6 sm:px-6">
           <AnimatePresence mode="wait" custom={dir} initial={false}>
             <motion.div key={step} custom={dir} initial={{ opacity: 0, x: 28 * dir }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -28 * dir }} transition={{ duration: 0.22 }}>
+              {step === 'category' && (
+                <>
+                  <StepTitle title={cfg.step1Title} text={cfg.step1Text} />
+                  <div className="grid gap-3">
+                    {categories.map((o) => (
+                      <Choice
+                        key={o.id}
+                        on={category === o.id}
+                        title={o.label}
+                        text={o.description}
+                        media={<Media image={o.image} icon={<Icon name={o.icon || 'star'} className="h-7 w-7" />} />}
+                        onClick={() => {
+                          setCategory(o.id);
+                          go('type');
+                        }}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+
               {step === 'type' && (
                 <>
                   <StepTitle title={cfg.step2Title} text={cfg.step2Text} />
@@ -323,11 +395,39 @@ function Wizard({ cfg, category, onClose }: { cfg: EstimateSettings; category: s
                       media={<Media image={cfg.withFamilyImage} icon={<Users className="h-7 w-7" />} />}
                       onClick={() => {
                         setWithFamily(true);
-                        go('family');
+                        go(sponsorStep ? 'sponsor' : 'family');
                       }}
                     />
                   </div>
                   {cfg.familyAskNote && <Note>{cfg.familyAskNote}</Note>}
+                </>
+              )}
+
+              {step === 'sponsor' && (
+                <>
+                  <StepTitle title={cfg.sponsorTitle} text={cfg.sponsorText} />
+                  <div className="grid gap-3">
+                    <Choice
+                      on={sponsor === 'open'}
+                      title={cfg.sponsorOpenLabel}
+                      text={cfg.sponsorOpenText}
+                      media={<Media image={cfg.sponsorOpenImage} icon={<FolderCheck className="h-7 w-7" />} />}
+                      onClick={() => {
+                        setSponsor('open');
+                        go('family');
+                      }}
+                    />
+                    <Choice
+                      on={sponsor === 'needs'}
+                      title={cfg.sponsorNeedsLabel}
+                      text={[`${cur} ${fmtN(Number(cfg.sponsorFee) || 0)}`, cfg.sponsorNeedsText].filter(Boolean).join(' · ')}
+                      media={<Media image={cfg.sponsorNeedsImage} icon={<FolderPlus className="h-7 w-7" />} gold />}
+                      onClick={() => {
+                        setSponsor('needs');
+                        go('family');
+                      }}
+                    />
+                  </div>
                 </>
               )}
 
@@ -565,7 +665,7 @@ function Result({
     </span>
   );
   const icon = (k: string) =>
-    k === 'child' ? <Baby className="h-5 w-5" /> : k === 'application' ? <Icon name="file-check" className="h-5 w-5" /> : <User className="h-5 w-5" />;
+    k === 'child' ? <Baby className="h-5 w-5" /> : k === 'application' ? <Icon name="file-check" className="h-5 w-5" /> : k === 'sponsor' ? <FolderOpen className="h-5 w-5" /> : <User className="h-5 w-5" />;
 
   async function sendLead(e: React.FormEvent) {
     e.preventDefault();

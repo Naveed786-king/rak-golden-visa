@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, Clock, MapPin, Mail, Phone, CalendarDays } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Clock, MapPin, Mail, Phone, CalendarDays, Star } from 'lucide-react';
 import { Section, Heading } from '@/components/ui/Section';
 import Reveal, { Stagger, StaggerItem } from '@/components/ui/Reveal';
 import SmartLink from '@/components/ui/SmartLink';
@@ -90,8 +90,45 @@ export async function Testimonials({ data }: P) {
   return (
     <Section theme={data.theme} anchor={data.anchor}>
       <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
+      {!data.hideGoogle && <GoogleBadge data={data} dark={data.theme === 'dark'} />}
       <TestimonialsView items={JSON.parse(JSON.stringify(items))} dark={data.theme === 'dark'} limit={Number(data.limit) > 0 ? Number(data.limit) : 5} />
     </Section>
+  );
+}
+
+export const GOOGLE_REVIEWS_URL = 'https://share.google/TJhm9WAfaegt0WaI7';
+
+/* "4.8 ★★★★★ · 37 Google reviews · Read on Google" — numbers and link are editable on the block */
+function GoogleBadge({ data, dark }: { data: any; dark?: boolean }) {
+  const rating = String(data.googleRating || '4.8').trim();
+  const count = Number(data.googleCount) > 0 ? Number(data.googleCount) : 37;
+  const url = String(data.googleUrl || GOOGLE_REVIEWS_URL).trim();
+  const r = Math.max(0, Math.min(5, parseFloat(rating) || 5));
+  return (
+    <div className="-mt-4 mb-10 flex justify-center">
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(
+          'group inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full px-5 py-2.5 text-sm transition',
+          dark ? 'bg-white/10 ring-1 ring-white/15 hover:bg-white/15' : 'bg-white shadow-[0_15px_35px_-25px_rgba(10,18,34,0.45)] ring-1 ring-ink/10 hover:ring-gold/60',
+        )}
+      >
+        <span className="font-display text-xl font-bold leading-none">{rating}</span>
+        <span className="flex gap-0.5 text-gold" aria-label={`${rating} / 5`}>
+          {Array.from({ length: 5 }).map((_, j) => (
+            <Star key={j} className="h-4 w-4" fill={j < Math.round(r) ? 'currentColor' : 'none'} />
+          ))}
+        </span>
+        <span className="opacity-75">
+          <bdi>{count}</bdi> <T>Google reviews</T>
+        </span>
+        <span className="inline-flex items-center gap-1 font-semibold text-gold-deep group-hover:underline">
+          <T>Read on Google</T> <ArrowUpRight className="h-3.5 w-3.5 rtl:-scale-x-100" />
+        </span>
+      </a>
+    </div>
   );
 }
 

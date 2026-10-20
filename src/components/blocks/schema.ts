@@ -332,7 +332,14 @@ export const BLOCKS: BlockSchema[] = [
     label: 'Testimonials',
     description: 'Client reviews (manage in Admin → Testimonials)',
     group: 'Dynamic',
-    fields: [eyebrow, title, subtitle, { name: 'limit', label: 'Reviews shown before "Show more" (default 5)', type: 'number' }],
+    fields: [
+      eyebrow, title, subtitle,
+      { name: 'limit', label: 'Reviews shown before "Show more" (default 5)', type: 'number' },
+      { name: 'hideGoogle', label: 'Hide the Google rating badge', type: 'boolean' },
+      { name: 'googleRating', label: 'Google rating (default 4.8)', type: 'text', half: true },
+      { name: 'googleCount', label: 'Number of Google reviews (default 37)', type: 'number', half: true },
+      { name: 'googleUrl', label: 'Link to your Google reviews', type: 'text' },
+    ],
     defaults: { theme: 'sand', title: 'See What Our Happy Customers Are Saying' },
   },
   {

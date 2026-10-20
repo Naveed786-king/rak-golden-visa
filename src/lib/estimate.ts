@@ -57,7 +57,20 @@ export type EstimateSettings = {
   withFamilyText: string;
   withFamilyImage: string;
   familyAskNote: string;
-  // step 5 - family members (not counting the applicant)
+  // step 5 - sponsor's file (only when family members are added)
+  sponsorTitle: string;
+  sponsorText: string;
+  sponsorOpenLabel: string;
+  sponsorOpenText: string;
+  sponsorOpenImage: string;
+  sponsorNeedsLabel: string;
+  sponsorNeedsText: string;
+  sponsorNeedsImage: string;
+  sponsorFee: number;
+  sponsorResultLabel: string;
+  sponsorLineLabel: string;
+  hideSponsorStep: boolean;
+  // step 6 - family members (not counting the applicant)
   familyTitle: string;
   familyText: string;
   adultLabel: string;
@@ -118,10 +131,10 @@ export const defaultEstimate: EstimateSettings = {
       label: 'Property investor',
       description: 'Ras Al Khaimah property worth AED 2M+',
       icon: 'building',
-      fees: [{ label: 'Property valuation & title deed check (RAK)', amount: 1050, applies: 'application', when: 'any' }],
+      fees: [],
     },
     { id: 'retiree', label: 'Retiree (55+)', description: '5-year retirement residency', icon: 'sun', fees: [] },
-    { id: 'investor', label: 'Business investor', description: 'Company owner / partner', icon: 'briefcase', fees: [{ label: 'Trade licence & capital verification', amount: 750, applies: 'application', when: 'any' }] },
+    { id: 'investor', label: 'Business investor', description: 'Company owner / partner', icon: 'briefcase', fees: [] },
     { id: 'professional', label: 'Skilled professional', description: 'Salary AED 30,000+', icon: 'student', fees: [] },
   ],
   step2Title: 'New visa or renewal?',
@@ -147,6 +160,18 @@ export const defaultEstimate: EstimateSettings = {
   withFamilyText: 'Add adults and children',
   withFamilyImage: '',
   familyAskNote: 'Your spouse, children and parents can be added now.',
+  sponsorTitle: 'Does the sponsor’s file need to be opened?',
+  sponsorText: 'The sponsor file is opened once per sponsor, not for each family member.',
+  sponsorOpenLabel: 'Already open',
+  sponsorOpenText: 'No opening fee',
+  sponsorOpenImage: '',
+  sponsorNeedsLabel: 'Needs opening',
+  sponsorNeedsText: 'charged once',
+  sponsorNeedsImage: '',
+  sponsorFee: 353.91,
+  sponsorResultLabel: 'Sponsor file',
+  sponsorLineLabel: 'Sponsor file opening (once)',
+  hideSponsorStep: false,
   familyTitle: 'Add your family members',
   familyText: 'You are already counted — add only your family.',
   adultLabel: 'Adults',
@@ -260,7 +285,20 @@ export const ESTIMATE_FIELDS: Field[] = [
   { name: 'justMeImage', label: 'Choice 1 picture (optional)', type: 'image', half: true },
   { name: 'withFamilyImage', label: 'Choice 2 picture (optional)', type: 'image', half: true },
   { name: 'familyAskNote', label: 'Info note', type: 'text' },
-  { name: '_h5', label: 'Step 5 — family members (the applicant is already counted)', type: 'heading' },
+  { name: '_h5b', label: 'Step 5 — does the sponsor’s file need to be opened? (only shown when family is added)', type: 'heading' },
+  { name: 'sponsorTitle', label: 'Question', type: 'text', half: true },
+  { name: 'sponsorText', label: 'Help text', type: 'text', half: true },
+  { name: 'sponsorOpenLabel', label: 'Choice 1 (already open)', type: 'text', half: true },
+  { name: 'sponsorOpenText', label: 'Choice 1 description', type: 'text', half: true },
+  { name: 'sponsorNeedsLabel', label: 'Choice 2 (needs opening)', type: 'text', half: true },
+  { name: 'sponsorNeedsText', label: 'Choice 2 description (shown after the price)', type: 'text', half: true },
+  { name: 'sponsorFee', label: 'File opening price (charged once)', type: 'number', half: true },
+  { name: 'sponsorResultLabel', label: 'Result card name', type: 'text', half: true },
+  { name: 'sponsorLineLabel', label: 'Result line name', type: 'text', half: true },
+  { name: 'hideSponsorStep', label: 'Skip this step', type: 'boolean', half: true },
+  { name: 'sponsorOpenImage', label: 'Choice 1 picture (optional)', type: 'image', half: true },
+  { name: 'sponsorNeedsImage', label: 'Choice 2 picture (optional)', type: 'image', half: true },
+  { name: '_h5', label: 'Step 6 — family members (the applicant is already counted)', type: 'heading' },
   { name: 'familyTitle', label: 'Title', type: 'text', half: true },
   { name: 'familyText', label: 'Help text', type: 'text', half: true },
   { name: 'adultLabel', label: 'Adults — name', type: 'text', half: true },
@@ -274,7 +312,7 @@ export const ESTIMATE_FIELDS: Field[] = [
   { name: 'medicalMinAge', label: 'Adult / medical test from age', type: 'number', half: true },
   { name: 'maxAdults', label: 'Max adults (incl. applicant)', type: 'number', half: true },
   { name: 'maxChildren', label: 'Max children', type: 'number', half: true },
-  { name: '_h6', label: 'Step 6 — medical test (adults only)', type: 'heading' },
+  { name: '_h6', label: 'Step 7 — medical test (adults only)', type: 'heading' },
   { name: 'medicalTitle', label: 'Title', type: 'text', half: true },
   { name: 'medicalText', label: 'Help text', type: 'text', half: true },
   { name: 'medicalNormalLabel', label: 'Option 1 name', type: 'text', half: true },
@@ -308,6 +346,7 @@ export const ESTIMATE_TEXT_KEYS = [
   'title', 'badge', 'footnote', 'step1Title', 'step1Text', 'step2Title', 'step2Text',
   'locationTitle', 'locationText', 'insideLabel', 'insideText', 'outsideLabel', 'outsideText',
   'familyAskTitle', 'familyAskText', 'justMeLabel', 'justMeText', 'withFamilyLabel', 'withFamilyText', 'familyAskNote',
+  'sponsorTitle', 'sponsorText', 'sponsorOpenLabel', 'sponsorOpenText', 'sponsorNeedsLabel', 'sponsorNeedsText', 'sponsorResultLabel', 'sponsorLineLabel',
   'familyTitle', 'familyText', 'adultLabel', 'adultText', 'childLabel', 'childText', 'familyNote',
   'medicalTitle', 'medicalText', 'medicalNormalLabel', 'medicalNormalNote', 'medicalVipLabel', 'medicalVipNote', 'medicalNote',
   'resultTitle', 'resultText', 'totalLabel', 'mainLabel', 'adultResultLabel', 'childResultLabel', 'applicationLabel',
@@ -316,8 +355,8 @@ export const ESTIMATE_TEXT_KEYS = [
 
 /* ------------------------------------------------------------------ calculation */
 export type Line = { label: string; amount: number; note?: string };
-export type Group = { key: 'main' | 'adult' | 'child' | 'application'; label: string; count: number; lines: Line[]; each: number; total: number };
-export type EstimateInput = { category?: string; type?: string; location?: 'inside' | 'outside' | ''; adults: number; children: number; medical?: 'normal' | 'vip' | '' };
+export type Group = { key: 'main' | 'adult' | 'child' | 'application' | 'sponsor'; label: string; count: number; lines: Line[]; each: number; total: number };
+export type EstimateInput = { category?: string; type?: string; location?: 'inside' | 'outside' | ''; adults: number; children: number; medical?: 'normal' | 'vip' | ''; sponsor?: 'open' | 'needs' | '' };
 
 const num = (v: any) => (v === '' || v === null || v === undefined || isNaN(Number(v)) ? null : Number(v));
 
@@ -386,6 +425,11 @@ export function calculate(cfg: EstimateSettings, input: EstimateInput) {
   }
   const app = rules.filter((r) => r.applies === 'application' && num(r.amount)).map((r) => ({ label: r.label, amount: Number(r.amount), note: r.note }));
   if (app.length) groups.push({ key: 'application', label: cfg.applicationLabel, count: 1, lines: app, each: sum(app), total: sum(app) });
+  const sponsorFee = num(cfg.sponsorFee) ?? 0;
+  if (input.sponsor === 'needs' && sponsorFee > 0) {
+    const sl = [{ label: cfg.sponsorLineLabel || cfg.sponsorNeedsLabel, amount: sponsorFee }];
+    groups.push({ key: 'sponsor', label: cfg.sponsorResultLabel || cfg.sponsorNeedsLabel, count: 1, lines: sl, each: sponsorFee, total: sponsorFee });
+  }
   return { groups, total: groups.reduce((s, g) => s + g.total, 0), people: adults + children };
 }
 

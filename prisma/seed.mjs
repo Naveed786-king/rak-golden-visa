@@ -161,6 +161,30 @@ async function upgrades() {
     }
     await mark('estimate-v1');
   }
+  // calculator: drop the old "per application" property / business checks (no longer charged)
+  if (!(await done('estimate-no-application-fees'))) {
+    const row = await prisma.setting.findUnique({ where: { key: 'estimate' } });
+    if (row) {
+      try {
+        const v = JSON.parse(row.value);
+        const old = /property valuation|title deed check|trade licen[cs]e & capital/i;
+        for (const c of v.categories || []) if (Array.isArray(c.fees)) c.fees = c.fees.filter((f) => !(f.applies === 'application' && old.test(f.label || '')));
+        await prisma.setting.update({ where: { key: 'estimate' }, data: { value: JSON.stringify(v) } });
+      } catch {}
+    }
+    await mark('estimate-no-application-fees');
+  }
+  // real Google reviews (Brightlink Management Consultancy) as active testimonials
+  if (!(await done('google-reviews-v1'))) {
+    let n = 0;
+    for (const [i, [name, text]] of C.googleReviews.entries()) {
+      if (await prisma.testimonial.findFirst({ where: { name } })) continue;
+      await prisma.testimonial.create({ data: { name, text, role: 'Google review', country: '', rating: 5, order: 10 + i, active: true } });
+      n++;
+    }
+    await mark('google-reviews-v1');
+    console.log(`✔ ${n} Google reviews added to testimonials`);
+  }
 }
 
 main()
