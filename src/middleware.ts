@@ -54,5 +54,5 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   // Run on everything except static files
-  matcher: ['/((?!_next/static|_next/image|uploads/|icon.svg|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|woff2?)$).*)'],
+  matcher: ['/((?!api/admin/backup|_next/static|_next/image|uploads/|icon.svg|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|woff2?)$).*)'],
 };

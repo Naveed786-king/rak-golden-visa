@@ -9,17 +9,28 @@
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-// Load .env (no extra dependency)
-const envFile = path.join(root, '.env');
-if (existsSync(envFile)) {
+// Load .env and .env.local (no extra dependency)
+for (const name of ['.env.local', '.env']) {
+  const envFile = path.join(root, name);
+  if (!existsSync(envFile)) continue;
   for (const line of readFileSync(envFile, 'utf8').split(/\r?\n/)) {
     const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*"?(.*?)"?\s*$/);
     if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
   }
+}
+
+// Own hosting (xCloud, VPS…) without a JWT_SECRET: create a strong one once and keep it in
+// .env.local (not in git), so logins are secure without typing a secret into the hosting panel.
+if (!process.env.JWT_SECRET && !process.env.VERCEL && process.argv[2] === 'prepare') {
+  const secret = crypto.randomBytes(48).toString('hex');
+  writeFileSync(path.join(root, '.env.local'), (existsSync(path.join(root, '.env.local')) ? readFileSync(path.join(root, '.env.local'), 'utf8').replace(/\n?$/, '\n') : '') + `JWT_SECRET=${secret}\n`);
+  process.env.JWT_SECRET = secret;
+  console.log('[db] created a private login secret in .env.local');
 }
 
 // Vercel/Neon integrations sometimes only provide POSTGRES_* variables

@@ -30,6 +30,7 @@ import {
   Languages,
   Calculator,
   Palette,
+  DatabaseBackup,
 } from 'lucide-react';
 import { Toaster, toast } from './ui';
 import { cn, formatDateTime } from '@/lib/utils';
@@ -68,6 +69,7 @@ const NAV = [
       { href: '/admin/footer', label: 'Footer', icon: PanelBottom },
       { href: '/admin/languages', label: 'Languages', icon: Languages },
       { href: '/admin/settings', label: 'Site settings', icon: Settings, adminOnly: true },
+      { href: '/admin/backup', label: 'Backup & move', icon: DatabaseBackup, adminOnly: true },
     ],
   },
   {
