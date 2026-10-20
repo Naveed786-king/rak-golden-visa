@@ -14,6 +14,13 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith('/admin')) {
     if (locale !== DEFAULT_LOCALE) return NextResponse.redirect(new URL(pathname, req.url));
     if (pathname === '/admin/login') {
+      // ?relogin=1: the saved login points to an account that no longer exists (e.g. after a
+      // backup restore or a deleted user) — forget it and show the sign-in form (no redirect loop)
+      if (req.nextUrl.searchParams.has('relogin')) {
+        const res = NextResponse.next();
+        res.cookies.set(SESSION_COOKIE, '', { path: '/', maxAge: 0 });
+        return res;
+      }
       if (staff) return NextResponse.redirect(new URL('/admin', req.url));
       return NextResponse.next();
     }

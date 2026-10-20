@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
-  if (!user || !isStaff(user.role)) redirect('/admin/login');
+  if (!user || !isStaff(user.role)) redirect('/admin/login?relogin=1');
   const site = await getSetting('site');
   return (
     <AdminShell user={{ name: user.name, email: user.email, role: user.role }} siteName={site.name}>
