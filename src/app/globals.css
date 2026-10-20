@@ -498,3 +498,110 @@ html[data-anim-ready] .blk[data-anim='blur']:not(.in) > :first-child { filter: b
 @media (prefers-reduced-motion: reduce) {
   html[data-anim-ready] .blk[data-anim]:not(.in) > :first-child { opacity: 1; transform: none; filter: none; }
 }
+
+/* UAE Dirham symbol (replaces "AED" before amounts) — takes the text colour */
+.dh {
+  display: inline-block;
+  width: 0.84em;
+  height: 0.84em;
+  vertical-align: -0.08em;
+  margin-inline-end: 0.12em;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: url(/dirham.svg) center / contain no-repeat;
+  mask: url(/dirham.svg) center / contain no-repeat;
+}
+.text-gold-gradient .dh { background: linear-gradient(135deg, var(--brand-gold-light), var(--brand-gold)); }
+
+/* Small scroll-in parts (.reveal) — hidden only after the page is ready and only below the screen */
+.reveal[data-rv='wait'] { opacity: 0; transform: translate3d(var(--rv-x, 0px), var(--rv-y, 24px), 0); }
+.reveal[data-rv='in'] {
+  transition: opacity .6s ease var(--rv-d, 0s), transform .6s cubic-bezier(.2,.8,.2,1) var(--rv-d, 0s);
+}
+.anim-off .reveal[data-rv] { opacity: 1 !important; transform: none !important; transition: none !important; }
+
+/* Phones: shorter, smaller, vertical-only movements (no sideways overflow, nothing appears late) */
+@media (max-width: 767px) {
+  .blk[data-anim] > :first-child { --anim-dur: 550ms; --anim-delay: 0ms; }
+  html[data-anim-ready] .blk[data-anim='fade-up']:not(.in) > :first-child,
+  html[data-anim-ready] .blk[data-anim='slide-left']:not(.in) > :first-child,
+  html[data-anim-ready] .blk[data-anim='slide-right']:not(.in) > :first-child,
+  html[data-anim-ready] .blk[data-anim='flip']:not(.in) > :first-child { transform: translateY(28px); }
+  html[data-anim-ready] .blk[data-anim='blur']:not(.in) > :first-child { filter: blur(6px); transform: none; }
+  .reveal[data-rv='wait'] { transform: translate3d(0, 18px, 0); }
+  .reveal[data-rv='in'] { transition-duration: .45s; }
+}
+
+/* Hero entrance — pure CSS, runs as soon as the page paints (no JavaScript needed) */
+@keyframes fx-up { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
+@keyframes fx-word { from { opacity: 0; transform: translate3d(0, 28px, 0); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes fx-left { from { opacity: 0; transform: translate3d(-24px, 0, 0); } to { opacity: 1; transform: none; } }
+@keyframes fx-right { from { opacity: 0; transform: translate3d(24px, 0, 0); } to { opacity: 1; transform: none; } }
+@keyframes fx-pop { from { opacity: 0; transform: scale(.92) rotate(-3deg); } to { opacity: 1; transform: none; } }
+.fx-up { animation: fx-up .7s cubic-bezier(.2,.8,.2,1) var(--d, 0s) both; }
+.fx-word { animation: fx-word .7s cubic-bezier(.2,.8,.2,1) var(--d, 0s) both; }
+.fx-left { animation: fx-left .8s cubic-bezier(.2,.8,.2,1) var(--d, 0s) both; }
+.fx-right { animation: fx-right .8s cubic-bezier(.2,.8,.2,1) var(--d, 0s) both; }
+.fx-pop { animation: fx-pop .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s) both; }
+@media (max-width: 767px) { .fx-up, .fx-word, .fx-pop { animation-duration: .5s; } }
+.anim-off .fx-up, .anim-off .fx-word, .anim-off .fx-left, .anim-off .fx-right, .anim-off .fx-pop { animation: none; }
+@media (max-width: 767px) { .fx-up, .fx-word, .fx-pop { animation-delay: calc(var(--d, 0s) * .5); } }
+/* Hero visa card: 3D tilt only with a mouse; on phones a flat card (iOS can drop 3D layers while scrolling) */
+@media (hover: hover) and (pointer: fine) {
+  .vc-3d { transform-style: preserve-3d; }
+  .vc-3d-in { transform: translateZ(40px); }
+}
+
+/* Phones: long words / Arabic titles never push a column wider than the screen */
+main .grid > * { min-width: 0; }
+main h1, main h2, main h3, main h4 { overflow-wrap: break-word; }
+/* Arabic letters need more line height than the Latin display font (lines touched each other) */
+[dir='rtl'] h1, [dir='rtl'] h2, [dir='rtl'] h3, [dir='rtl'] .font-display { line-height: 1.32 !important; }
+[dir='rtl'] .font-display.text-5xl, [dir='rtl'] .font-display.text-6xl, [dir='rtl'] .text-gold-gradient { line-height: 1.25 !important; }
+/* Phones: long button labels (Russian, German, French, Arabic…) wrap inside the button instead of running off screen */
+@media (max-width: 640px) {
+  .btn { white-space: normal; max-width: 100%; text-align: center; line-height: 1.3; }
+  .btn > svg { flex-shrink: 0; }
+}
+
+/* Phones & tablets: smooth scrolling.
+   Blurred glass, huge blurred glow circles, blend modes and the endless gold shimmer made each scroll
+   frame 60–160 ms to paint (white gaps / late content while swiping). Here they are replaced by
+   flat equivalents — the look stays the same, painting is ~8× faster. */
+@media (max-width: 1023px), (hover: none) {
+  main .glass, main [class*='backdrop-blur'], footer .glass, footer [class*='backdrop-blur'],
+  .glass-ui main .glass, .glass-ui .theme-dark :is(.box, .card-lift) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .theme-dark .glass, .glass-ui .theme-dark :is(.box, .card-lift) { background-color: rgba(18, 28, 48, 0.72); }
+  main .absolute[class*='blur-'], footer .absolute[class*='blur-'] { display: none !important; }
+  .text-gold-gradient { animation: none !important; }
+  main .mix-blend-multiply { mix-blend-mode: normal !important; }
+}
+@media (max-width: 1023px), (hover: none) {
+  /* the hero's gold glow, drawn as a cheap gradient instead of a 140px blur */
+  .hero-bg {
+    background:
+      radial-gradient(70% 45% at 95% 0%, color-mix(in oklab, var(--brand-gold) 22%, transparent), transparent 70%),
+      radial-gradient(60% 40% at 0% 100%, color-mix(in oklab, var(--brand-gold) 12%, transparent), transparent 70%);
+  }
+}
+
+/* Article tables on phones: each row becomes a card, every value labelled with its column — nothing cut off */
+@media (max-width: 640px) {
+  .rte table.rte-stack { display: block !important; width: 100% !important; min-width: 0 !important; overflow: visible; border: 0; font-size: .95rem; }
+  .rte table.rte-stack thead, .rte table.rte-stack tr:first-child:has(th) { display: none !important; }
+  .rte table.rte-stack tbody { display: block; }
+  .rte table.rte-stack tr { display: block; margin: 0 0 .75rem; border: 1px solid #e7e1d4; border-radius: 16px; overflow: hidden; background: #fff; }
+  .rte table.rte-stack td {
+    display: flex !important; width: auto !important; justify-content: space-between; gap: 1rem; text-align: end;
+    border: 0; border-top: 1px solid #f0ebe0; padding: .6rem .9rem; white-space: normal !important;
+  }
+  .rte table.rte-stack td:first-child { border-top: 0; background: var(--brand-sand); font-weight: 700; color: var(--brand-ink); text-align: start; }
+  .rte table.rte-stack td::before { content: attr(data-label); flex-shrink: 0; max-width: 45%; text-align: start; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; opacity: .55; }
+  .rte table.rte-stack td:first-child::before { display: none; }
+  .theme-dark .rte table.rte-stack tr { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.12); }
+  .theme-dark .rte table.rte-stack td { border-color: rgba(255,255,255,.08); }
+  .theme-dark .rte table.rte-stack td:first-child { background: rgba(255,255,255,.06); color: #fff; }
+}

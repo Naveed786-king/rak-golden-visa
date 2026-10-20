@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'framer-motion';
+import { Dirham } from './Dirham';
 
 /** Animates numbers inside a string like "300+", "12+", "AED 2M" */
 export default function Counter({ value, duration = 1.8, className }: { value: string; duration?: number; className?: string }) {
@@ -31,7 +32,7 @@ export default function Counter({ value, duration = 1.8, className }: { value: s
   const formatted = n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   return (
     <span ref={ref} className={className} dir="ltr">
-      {match[1]}
+      {/^\s*AED\s?$/.test(match[1]) ? <Dirham /> : match[1]}
       {formatted}
       {match[3]}
     </span>

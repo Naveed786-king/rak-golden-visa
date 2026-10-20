@@ -1,6 +1,12 @@
-'use client';
-import { motion, type Variants } from 'framer-motion';
+import type { CSSProperties } from 'react';
 
+/**
+ * Scroll-in animation wrapper.
+ * The content is ALWAYS in the HTML and visible — nothing waits for JavaScript. After the page
+ * is ready, DesignEffects hides only the parts below the screen and fades them in as they arrive
+ * (also when scrolling fast on phones). Before, framer-motion rendered everything at opacity 0,
+ * so slow phones showed empty white/blue areas until the scripts had loaded.
+ */
 type Props = {
   children: React.ReactNode;
   className?: string;
@@ -11,42 +17,24 @@ type Props = {
   once?: boolean;
 };
 
-export default function Reveal({ children, className, delay = 0, y = 28, x = 0, as = 'div', once = true }: Props) {
-  const M: any = (motion as any)[as];
+export default function Reveal({ children, className, delay = 0, y = 28, x = 0, as = 'div' }: Props) {
+  const Tag = as as any;
+  const style = { '--rv-y': `${Math.min(y, 28)}px`, '--rv-x': `${x}px`, '--rv-d': `${delay}s` } as CSSProperties;
   return (
-    <M
-      className={className ? `reveal ${className}` : 'reveal'}
-      initial={{ opacity: 0, y, x }}
-      whileInView={{ opacity: 1, y: 0, x: 0 }}
-      viewport={{ once, margin: '-60px' }}
-      transition={{ duration: 0.8, delay, ease: [0.2, 0.8, 0.2, 1] }}
-    >
+    <Tag className={className ? `reveal ${className}` : 'reveal'} style={style}>
       {children}
-    </M>
+    </Tag>
   );
 }
 
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
-};
-const item: Variants = {
-  hidden: { opacity: 0, y: 26 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.2, 0.8, 0.2, 1] } },
-};
-
 export function Stagger({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <motion.div className={className} variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
+    <div className={className} data-rv-stagger="">
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 export function StaggerItem({ children, className }: { children: React.ReactNode; className?: string }) {
-  return (
-    <motion.div className={className ? `reveal ${className}` : 'reveal'} variants={item}>
-      {children}
-    </motion.div>
-  );
+  return <div className={className ? `reveal ${className}` : 'reveal'}>{children}</div>;
 }

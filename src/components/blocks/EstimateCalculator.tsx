@@ -8,6 +8,7 @@ import { calculate, locationNeeded, money } from '@/lib/estimate';
 import { Icon, SocialIcon } from '@/components/ui/Icon';
 import { useLocale, useSite, useT } from '@/components/site/SiteProvider';
 import { cn } from '@/lib/utils';
+import { Dirham, withDirham } from '@/components/ui/Dirham';
 
 type Step = 'category' | 'type' | 'location' | 'familyAsk' | 'sponsor' | 'family' | 'medical' | 'result';
 
@@ -92,7 +93,7 @@ export default function EstimateCalculator({ cfg }: { cfg: EstimateSettings }) {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[15px] font-extrabold text-ink">{o.label}</span>
-                  {o.description && <span className="mt-0.5 block text-[12.5px] leading-snug text-ink/55">{o.description}</span>}
+                  {o.description && <span className="mt-0.5 block text-[12.5px] leading-snug text-ink/55">{withDirham(o.description)}</span>}
                 </span>
                 <ArrowRight className="h-4 w-4 shrink-0 text-ink/25 transition-transform group-hover:translate-x-0.5 group-hover:text-gold-deep rtl:rotate-180" />
               </button>
@@ -565,11 +566,11 @@ function Choice({ on, title, text, price, media, onClick }: { on: boolean; title
       {media}
       <span className="min-w-0 flex-1">
         <span className="block text-[17px] font-extrabold leading-tight text-ink">{title}</span>
-        {text && <span className="mt-1 block text-[13.5px] leading-snug text-ink/60">{text}</span>}
+        {text && <span className="mt-1 block text-[13.5px] leading-snug text-ink/60">{withDirham(text)}</span>}
       </span>
       {price && (
         <span className="shrink-0 text-[16px] font-extrabold tabular-nums text-ink" dir="ltr">
-          {price}
+          {withDirham(price)}
         </span>
       )}
       {on ? (
@@ -660,7 +661,7 @@ function Result({
   const [error, setError] = useState('');
   const amt = (n: number) => (
     <span className="whitespace-nowrap tabular-nums" dir="ltr">
-      <span className="me-1 text-[0.8em] font-bold opacity-70">{cur}</span>
+      {cur === 'AED' ? <Dirham className="opacity-80" /> : <span className="me-1 text-[0.8em] font-bold opacity-70">{cur}</span>}
       {fmtN(n)}
     </span>
   );

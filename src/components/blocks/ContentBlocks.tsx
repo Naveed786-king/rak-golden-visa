@@ -8,6 +8,7 @@ import { cn, lines } from '@/lib/utils';
 import type { SiteSettings } from '@/lib/defaults';
 import { Skyline } from './Hero';
 import T from '@/components/ui/T';
+import { Dirham, dirhamHtml, withDirham } from '@/components/ui/Dirham';
 
 type P = { data: any; site: SiteSettings };
 
@@ -64,7 +65,7 @@ export function IntroSplit({ data, site }: P) {
         <div>
           <Heading eyebrow={data.eyebrow} title={data.title} align="left" className="!mb-8" />
           <Reveal>
-            {data.content && <div className="rte" dangerouslySetInnerHTML={{ __html: data.content }} />}
+            {data.content && <div className="rte" dangerouslySetInnerHTML={{ __html: dirhamHtml(data.content) }} />}
             {bullets.length > 0 && (
               <ul className="mt-8 grid gap-3 sm:grid-cols-2">
                 {bullets.map((b, i) => (
@@ -106,7 +107,7 @@ export function IntroSplit({ data, site }: P) {
                 {data.cardPrice ? (
                   <>
                     <p className="text-xs uppercase tracking-[0.25em] text-white/50">{data.cardPriceLabel}</p>
-                    <p className="font-display text-5xl font-bold text-gold-gradient mt-1">{data.cardPrice}</p>
+                    <p className="font-display text-5xl font-bold text-gold-gradient mt-1">{withDirham(data.cardPrice)}</p>
                   </>
                 ) : null}
                 <div className={data.cardPrice ? 'mt-8 grid gap-3' : 'grid gap-3'}>
@@ -306,7 +307,7 @@ export function About({ data }: P) {
         <div>
           <Heading eyebrow={data.eyebrow} title={data.title} align="left" className="!mb-6" />
           <Reveal>
-            {data.content && <div className="rte" dangerouslySetInnerHTML={{ __html: data.content }} />}
+            {data.content && <div className="rte" dangerouslySetInnerHTML={{ __html: dirhamHtml(data.content) }} />}
             {stats.length > 0 && (
               <div className="mt-10 grid grid-cols-2 gap-4">
                 {stats.map((s, i) => (
@@ -377,14 +378,36 @@ export function Table({ data }: P) {
       <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
       <Reveal className="mx-auto max-w-5xl">
         <div className={cn('box overflow-hidden rounded-3xl', dark ? 'glass' : 'bg-white ring-1 ring-ink/10 shadow-[0_30px_60px_-40px_rgba(10,18,34,0.4)]')}>
-          <div className="overflow-x-auto thin-scroll">
-            <table className="w-full min-w-[560px] text-left text-sm">
+          {/* phones: each row as a card — nothing is cut off or needs sideways scrolling */}
+          <ul className="sm:hidden">
+            {headers.length > 0 && (
+              <li className="bg-ink px-5 py-3.5 text-[11px] font-extrabold uppercase tracking-wider text-gold">{withDirham(headers[0])}</li>
+            )}
+            {rows.map((r, i) => {
+              const last = data.highlightLast && i === rows.length - 1;
+              return (
+                <li key={i} className={cn('border-t px-5 py-4', dark ? 'border-white/10' : 'border-ink/5', last && 'bg-gradient-to-r from-gold-light/60 to-gold/40 !text-ink')}>
+                  <p className="text-[15px] font-bold leading-snug">{withDirham(r[0])}</p>
+                  {r.slice(1).map((c, j) =>
+                    c ? (
+                      <p key={j} className="mt-1.5 flex items-baseline justify-between gap-4 text-[14px]">
+                        {headers[j + 1] && <span className="shrink-0 text-[11px] font-bold uppercase tracking-wider opacity-55">{withDirham(headers[j + 1])}</span>}
+                        <span className={cn('text-end', last ? 'font-extrabold' : 'font-semibold')}>{withDirham(c)}</span>
+                      </p>
+                    ) : null
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          <div className="hidden overflow-x-auto thin-scroll sm:block">
+            <table className="w-full min-w-[560px] text-start text-sm">
               {headers.length > 0 && (
                 <thead>
                   <tr className="bg-ink text-white">
                     {headers.map((h, i) => (
                       <th key={i} className={cn('px-6 py-4 text-xs font-extrabold uppercase tracking-wider', i === 0 ? 'text-gold' : 'text-white/90')}>
-                        {h}
+                        {withDirham(h)}
                       </th>
                     ))}
                   </tr>
@@ -404,7 +427,7 @@ export function Table({ data }: P) {
                     >
                       {r.map((c, j) => (
                         <td key={j} className={cn('px-6 py-4', j === 0 && 'font-semibold')}>
-                          {c}
+                          {withDirham(c)}
                         </td>
                       ))}
                     </tr>
@@ -414,7 +437,7 @@ export function Table({ data }: P) {
             </table>
           </div>
         </div>
-        {data.notes && <div className="rte mt-8 text-sm" dangerouslySetInnerHTML={{ __html: data.notes }} />}
+        {data.notes && <div className="rte mt-8 text-sm" dangerouslySetInnerHTML={{ __html: dirhamHtml(data.notes) }} />}
         {data.cta?.label && (
           <div className="mt-8 text-center">
             <Cta link={data.cta} />
@@ -430,18 +453,18 @@ export function Offer({ data }: P) {
   const lists: any[] = data.lists || [];
   return (
     <Section theme={data.theme || 'dark'} anchor={data.anchor}>
-      <div className="relative overflow-hidden rounded-[2.5rem] border border-gold/30 p-8 md:p-14 bg-gradient-to-br from-white/[0.06] to-transparent">
-        <div className="absolute -top-32 -right-32 h-80 w-80 rounded-full bg-gold/25 blur-3xl" />
-        <Sparkles className="absolute right-10 top-10 h-10 w-10 text-gold/40 animate-spin-slow" />
-        <div className="relative grid gap-12 lg:grid-cols-[1fr_1.1fr]">
+      <div className="relative overflow-hidden rounded-[2.5rem] border border-gold/30 p-6 sm:p-8 md:p-14 bg-gradient-to-br from-white/[0.06] to-transparent">
+        <div className="absolute -top-32 -end-32 h-80 w-80 rounded-full bg-gold/25 blur-3xl" />
+        <Sparkles className="absolute end-6 top-6 md:end-10 md:top-10 h-10 w-10 text-gold/40 animate-spin-slow" />
+        <div className="relative grid gap-12 lg:grid-cols-[1fr_1.1fr] [&>*]:min-w-0">
           <Reveal>
             {data.eyebrow && <span className="eyebrow">{data.eyebrow}</span>}
-            {data.badge && <span className="ml-3 inline-block rounded-full bg-gold px-3 py-1 text-[0.7rem] font-extrabold uppercase tracking-wider text-ink align-middle">{data.badge}</span>}
-            <h2 className="mt-5 font-display text-5xl md:text-6xl font-semibold leading-[1.05]">
+            {data.badge && <span className="ms-3 inline-block rounded-full bg-gold px-3 py-1 text-[0.7rem] font-extrabold uppercase tracking-wider text-ink align-middle">{data.badge}</span>}
+            <h2 className="mt-5 font-display text-[2.4rem] sm:text-5xl md:text-6xl font-semibold leading-[1.05]">
               <span className="text-gold-gradient">{data.title}</span>
             </h2>
             {data.tagline && <p className="mt-4 font-display text-2xl italic opacity-80">{data.tagline}</p>}
-            {data.content && <div className="rte mt-6" dangerouslySetInnerHTML={{ __html: data.content }} />}
+            {data.content && <div className="rte mt-6" dangerouslySetInnerHTML={{ __html: dirhamHtml(data.content) }} />}
             {data.cta?.label && (
               <div className="mt-8">
                 <Cta link={data.cta} />
@@ -540,14 +563,15 @@ export function Pricing({ data }: P) {
               {p.featured && (
                 <>
                   <div className="absolute inset-0 bg-pattern opacity-[0.06]" />
-                  <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-gold/30 blur-3xl" />
-                  <span className="absolute right-6 top-6 inline-flex items-center gap-1 rounded-full bg-gold px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-ink">
+                  <div className="absolute -top-24 -end-24 h-56 w-56 rounded-full bg-gold/30 blur-3xl" />
+                  {/* in the flow (not floating) so a long plan name — or Arabic — never runs under it */}
+                  <span className="relative mb-4 inline-flex items-center gap-1 self-start rounded-full bg-gold px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-ink">
                     <Crown className="h-3 w-3" /> <T>Most popular</T>
                   </span>
                 </>
               )}
               <h3 className={cn('relative font-display text-3xl font-semibold', p.featured && '!text-white')}>{p.name}</h3>
-              <p className={cn('relative mt-4 font-display text-5xl font-bold', p.featured ? 'text-gold-gradient' : 'text-ink')}>{p.price}</p>
+              <p className={cn('relative mt-4 font-display text-5xl font-bold', p.featured ? 'text-gold-gradient' : 'text-ink')}>{withDirham(p.price)}</p>
               {p.time && (
                 <p className={cn('relative mt-3 inline-flex items-center gap-2 text-xs font-bold', p.featured ? 'text-gold-light' : 'text-gold-deep')}>
                   <Clock className="h-4 w-4" /> {p.time}
@@ -615,7 +639,7 @@ export function ImageText({ data }: P) {
         <div className={cn(data.reverse ? 'lg:order-2' : 'lg:order-1')}>
           <Heading eyebrow={data.eyebrow} title={data.title} align="left" className="!mb-6" />
           <Reveal>
-            {data.content && <div className="rte" dangerouslySetInnerHTML={{ __html: data.content }} />}
+            {data.content && <div className="rte" dangerouslySetInnerHTML={{ __html: dirhamHtml(data.content) }} />}
             {bullets.length > 0 && (
               <ul className="mt-6 space-y-3">
                 {bullets.map((b, i) => (
@@ -644,7 +668,7 @@ export function RichText({ data }: P) {
       <div className={cn('mx-auto', data.width === 'wide' ? 'max-w-6xl' : 'max-w-3xl')}>
         {data.title && <h2 className="font-display text-4xl md:text-5xl font-semibold mb-8">{data.title}</h2>}
         <Reveal>
-          <div className="rte" dangerouslySetInnerHTML={{ __html: data.content || '' }} />
+          <div className="rte" dangerouslySetInnerHTML={{ __html: dirhamHtml(data.content || '') }} />
         </Reveal>
       </div>
     </Section>

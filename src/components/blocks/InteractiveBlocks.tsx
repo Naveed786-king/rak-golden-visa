@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import SmartLink from '@/components/ui/SmartLink';
 import { cn } from '@/lib/utils';
 import { useT } from '@/components/site/SiteProvider';
+import { Dirham, dirhamHtml, withDirham } from '@/components/ui/Dirham';
 
 /* ---------------- Vertical tabs ---------------- */
 export function TabsView({ items, dark, cta }: { items: any[]; dark?: boolean; cta?: any }) {
@@ -134,9 +135,9 @@ export function AccordionView({ items, dark, html = false, limit = 0 }: { items:
                   {isOpen && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
                       {html ? (
-                        <div className="rte px-5 sm:px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: it.content }} />
+                        <div className="rte px-5 sm:px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: dirhamHtml(it.content) }} />
                       ) : (
-                        <div className="rte px-5 sm:px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: it.content.includes('<') ? it.content : it.content.replace(/\n/g, '<br/>') }} />
+                        <div className="rte px-5 sm:px-6 pb-6 text-[0.95rem]" dangerouslySetInnerHTML={{ __html: dirhamHtml(it.content.includes('<') ? it.content : it.content.replace(/\n/g, '<br/>')) }} />
                       )}
                     </motion.div>
                   )}
@@ -334,7 +335,7 @@ export function Calculator({ dark }: { dark?: boolean }) {
                 </span>
                 <span>
                   <span className="block font-bold">{r.title}</span>
-                  <span className="block text-sm opacity-75">{r.text}</span>
+                  <span className="block text-sm opacity-75">{withDirham(r.text)}</span>
                 </span>
               </li>
             ))}
@@ -360,7 +361,7 @@ function Range({ label, value, min, max, step, onChange, fmt }: { label: string;
     <label className="block">
       <span className="flex items-end justify-between">
         <span className="text-sm font-bold opacity-70">{label}</span>
-        <span className="font-display text-2xl font-bold text-gold">{fmt(value)}</span>
+        <span className="font-display text-2xl font-bold text-gold">{withDirham(fmt(value))}</span>
       </span>
       <input
         type="range"

@@ -10,6 +10,7 @@ import ShareButtons from './ShareButtons';
 import ViewPing from './ViewPing';
 import LeadForm from '@/components/blocks/LeadForm';
 import T from '@/components/ui/T';
+import { Dirham, dirhamHtml, withDirham } from '@/components/ui/Dirham';
 
 export default function PostView({ post, related, site, lang = 'en-GB', url }: { post: any; related: any[]; site: SiteSettings; lang?: string; url?: string }) {
   const base = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/+$/, '');
@@ -76,7 +77,7 @@ export default function PostView({ post, related, site, lang = 'en-GB', url }: {
       <div className="container-x grid gap-12 py-16 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0">
           {post.excerpt && <p className="font-display text-2xl leading-relaxed text-ink/80 border-l-4 border-gold pl-6 mb-10 italic">{post.excerpt}</p>}
-          <div className="rte" dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div className="rte" dangerouslySetInnerHTML={{ __html: dirhamHtml(post.content) }} />
           {post.tags && (
             <div className="mt-10 flex flex-wrap gap-2">
               {post.tags.split(',').map((t: string) => t.trim()).filter(Boolean).map((t: string) => (

@@ -14,6 +14,7 @@ import T from '@/components/ui/T';
 import EstimateCalculator from './EstimateCalculator';
 import { getLocalizedEstimate } from '@/lib/settings';
 import { getLocale } from '@/lib/i18n/server';
+import { Dirham, dirhamHtml, withDirham } from '@/components/ui/Dirham';
 
 type P = { data: any; site: SiteSettings };
 
@@ -190,7 +191,7 @@ export async function Services({ data }: P) {
                     {s.price && (
                       <>
                         <p className="text-[0.65rem] font-bold uppercase tracking-widest opacity-50"><T>From</T></p>
-                        <p className="font-display text-2xl font-bold text-gold-deep">{s.price.replace(/^From\s*/i, '')}</p>
+                        <p className="font-display text-2xl font-bold text-gold-deep">{withDirham(s.price.replace(/^From\s*/i, ''))}</p>
                       </>
                     )}
                   </div>
@@ -272,7 +273,7 @@ export function Contact({ data, site }: P) {
           <Heading eyebrow={data.eyebrow} title={data.title} align="left" className="!mb-6" />
           {data.content && (
             <Reveal>
-              <div className="rte" dangerouslySetInnerHTML={{ __html: data.content }} />
+              <div className="rte" dangerouslySetInnerHTML={{ __html: dirhamHtml(data.content) }} />
             </Reveal>
           )}
           <Stagger className="mt-10 grid gap-4 sm:grid-cols-2">

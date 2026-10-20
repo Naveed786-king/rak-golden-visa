@@ -66,13 +66,13 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
       {/* Back card */}
       <div className="absolute inset-0 translate-x-6 translate-y-8 rotate-6 rounded-[28px] glass" />
       <motion.div
-        style={{ rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d' }}
-        className="relative aspect-[1.586] rounded-[28px] p-7 overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8)]"
+        style={{ rotateX: rx, rotateY: ry }}
+        className="vc-3d relative aspect-[1.586] rounded-[28px] p-7 overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8)]"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-[#f3e2b3] via-gold to-[#7d5d22]" />
         <div className="absolute inset-0 bg-pattern opacity-25 mix-blend-multiply" />
         <motion.div style={{ left: glareX }} className="absolute -top-1/2 h-[200%] w-24 -translate-x-1/2 rotate-12 bg-white/35 blur-xl" />
-        <div className="relative flex h-full flex-col justify-between text-ink" style={{ transform: 'translateZ(40px)' }}>
+        <div className="vc-3d-in relative flex h-full flex-col justify-between text-ink">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-[0.62rem] font-extrabold tracking-[0.3em] opacity-70">{t('UNITED ARAB EMIRATES')}</p>
@@ -106,13 +106,8 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
         </div>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.1, duration: 0.8 }}
-        className="absolute hidden sm:block -left-4 md:-left-12 -bottom-10 animate-float"
-      >
-        <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-2xl">
+      <div className="fx-left absolute hidden sm:block -left-4 md:-left-12 -bottom-10" style={{ '--d': '1.1s' } as any}>
+        <div className="animate-float flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-2xl">
           <span className="grid h-10 w-10 place-items-center rounded-full bg-emerald-500/15 text-emerald-600">
             <Zap className="h-5 w-5" />
           </span>
@@ -121,14 +116,9 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
             <p className="text-sm font-extrabold text-ink">{t('In 48 working hours')}</p>
           </div>
         </div>
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.3, duration: 0.8 }}
-        className="absolute hidden sm:block -right-2 md:-right-8 -top-8 animate-float [animation-delay:2s]"
-      >
-        <div className="flex items-center gap-3 rounded-2xl glass px-4 py-3 text-white">
+      </div>
+      <div className="fx-right absolute hidden sm:block -right-2 md:-right-8 -top-8" style={{ '--d': '1.3s' } as any}>
+        <div className="animate-float [animation-delay:2s] flex items-center gap-3 rounded-2xl glass px-4 py-3 text-white">
           <span className="grid h-10 w-10 place-items-center rounded-full bg-gold text-ink">
             <Users className="h-5 w-5" />
           </span>
@@ -137,7 +127,7 @@ function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
             <p className="text-sm font-bold">{t('Spouse, children & parents')}</p>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -152,7 +142,7 @@ export default function Hero({ data }: { data: any }) {
 
   return (
     <section ref={ref} id={data.anchor || undefined} className="theme-dark relative overflow-hidden pt-16 pb-36 md:pt-24 md:pb-48">
-      <motion.div style={{ y: yBg }} className="absolute inset-0">
+      <motion.div style={{ y: yBg }} className="hero-bg absolute inset-0">
         {data.image ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -174,51 +164,37 @@ export default function Hero({ data }: { data: any }) {
       <div className="container-x relative grid items-center gap-16 lg:grid-cols-[1.15fr_1fr]">
         <div>
           {data.eyebrow && (
-            <motion.span
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2.5 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-bold tracking-wide text-gold-light"
+            <span
+              className="fx-up inline-flex items-center gap-2.5 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-bold tracking-wide text-gold-light"
             >
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
               </span>
               <ShieldCheck className="h-4 w-4" /> {data.eyebrow}
-            </motion.span>
+            </span>
           )}
 
           <h1 className="mt-7 font-display text-[2.9rem] leading-[1.02] sm:text-6xl lg:text-[5.2rem] font-semibold text-white">
             {words.map((w, i) => (
-              <motion.span
-                key={i}
-                className="inline-block mr-[0.25em]"
-                initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 0.7, delay: 0.15 + i * 0.06, ease: [0.2, 0.8, 0.2, 1] }}
-              >
+              <span key={i} className="fx-word inline-block me-[0.25em]" style={{ '--d': `${0.15 + i * 0.06}s` } as any}>
                 {w}
-              </motion.span>
+              </span>
             ))}
             {data.highlight && (
-              <motion.span
-                className="inline-block italic text-gold-gradient pr-2"
-                initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 0.8, delay: 0.2 + words.length * 0.06 }}
-              >
+              <span className="fx-word inline-block italic text-gold-gradient pe-2" style={{ '--d': `${0.2 + words.length * 0.06}s` } as any}>
                 {data.highlight}
-              </motion.span>
+              </span>
             )}
           </h1>
 
           {data.subtitle && (
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.7 }} className="mt-7 max-w-xl text-base md:text-lg leading-relaxed text-white/70">
+            <p style={{ '--d': '0.6s' } as any} className="fx-up mt-7 max-w-xl text-base md:text-lg leading-relaxed text-white/70">
               {data.subtitle}
-            </motion.p>
+            </p>
           )}
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.7 }} className="mt-9 flex flex-wrap gap-3">
+          <div style={{ '--d': '0.8s' } as any} className="fx-up mt-9 flex flex-wrap gap-3">
             {data.primary?.label && (
               <SmartLink href={data.primary.href} className="btn btn-gold">
                 {data.primary.label} <ArrowRight className="h-4 w-4" />
@@ -230,10 +206,10 @@ export default function Hero({ data }: { data: any }) {
                 {data.secondary.label}
               </SmartLink>
             )}
-          </motion.div>
+          </div>
 
           {badges.length > 0 && (
-            <motion.ul initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 0.8 }} className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+            <ul style={{ '--d': '1s' } as any} className="fx-up mt-8 flex flex-wrap gap-x-6 gap-y-3">
               {badges.map((b, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/75">
                   <span className="grid h-5 w-5 place-items-center rounded-full bg-gold/20 text-gold">
@@ -242,24 +218,24 @@ export default function Hero({ data }: { data: any }) {
                   {b}
                 </li>
               ))}
-            </motion.ul>
+            </ul>
           )}
 
           {stats.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 0.8 }} className="mt-12 grid grid-cols-3 max-w-lg divide-x divide-white/10 border-t border-white/10 pt-8">
+            <div style={{ '--d': '1.1s' } as any} className="fx-up mt-12 grid grid-cols-3 max-w-lg divide-x divide-white/10 border-t border-white/10 pt-8">
               {stats.slice(0, 3).map((s, i) => (
                 <div key={i} className="px-4 first:pl-0">
-                  <Counter value={s.value} className="block font-display text-4xl md:text-5xl font-bold text-gold-gradient" />
+                  <Counter value={s.value} className="block whitespace-nowrap font-display text-[1.85rem] sm:text-4xl md:text-5xl font-bold text-gold-gradient" />
                   <span className="mt-1 block text-xs uppercase tracking-wider text-white/55">{s.label}</span>
                 </div>
               ))}
-            </motion.div>
+            </div>
           )}
         </div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.9, rotate: -4 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ delay: 0.4, duration: 1, ease: [0.2, 0.8, 0.2, 1] }} className="relative px-6 md:px-10 py-10">
+        <div style={{ '--d': '0.4s' } as any} className="fx-pop relative px-6 md:px-10 py-10">
           <VisaCard title={data.cardTitle} subtitle={data.cardSubtitle} />
-        </motion.div>
+        </div>
       </div>
 
       <Skyline className="absolute bottom-0 left-0 w-full h-28 md:h-44 text-white/[0.04]" />
