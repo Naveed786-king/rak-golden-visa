@@ -534,7 +534,7 @@
 "All articles": "Tüm yazılar",
 "Have a question about your visa?": "Vizenizle ilgili bir sorunuz mu var?",
 "Our consultants reply within minutes on WhatsApp.": "Danışmanlarımız WhatsApp'ta dakikalar içinde yanıt verir.",
-"Ask on WhatsApp": "WhatsApp'tan sorun",
+"Ask on WhatsApp": "WhatsApp’tan sorun",
 "Privacy Policy": "Gizlilik Politikası",
 "How we collect, use and protect your personal information.": "Kişisel bilgilerinizi nasıl topladığımız, kullandığımız ve koruduğumuz.",
 "How we collect, use and protect your personal data.": "Kişisel verilerinizi nasıl topladığımız, kullandığımız ve koruduğumuz.",
@@ -1177,7 +1177,17 @@
 "Needs opening": "Açılması gerekiyor",
 "charged once": "bir kez ödenir",
 "Sponsor file": "Sponsor dosyası",
-"Sponsor file opening (once)": "Sponsor dosyası açılışı (bir kez)"
+"Sponsor file opening (once)": "Sponsor dosyası açılışı (bir kez)",
+"Is this your first Golden Visa or a renewal?": "Bu ilk Golden Visa başvurunuz mu, yoksa yenileme mi?",
+"This decides whether a change of status fee applies.": "Statü değişikliği ücretinin uygulanıp uygulanmayacağını bu belirler.",
+"Still to be quoted": "Ayrıca fiyatlandırılacak",
+"Mandatory insurance": "Zorunlu sigorta",
+"Quote required": "Teklif gerekli",
+"Our service fees": "Hizmet ücretimiz",
+"Estimated government fees only.": "Yalnızca tahmini devlet harçlarıdır.",
+"Insurance is mandatory and must be provided or arranged before the residence visa is issued.": "Sigorta zorunludur ve oturum vizesi düzenlenmeden önce sağlanmalı veya ayarlanmalıdır.",
+"Insurance premiums and our service fees are quoted separately. Message us on WhatsApp for your own quotation.": "Sigorta primleri ve hizmet ücretlerimiz ayrıca fiyatlandırılır. Size özel teklif için WhatsApp’tan yazın.",
+"A separate dependant deposit may apply where shown.": "Belirtilen durumlarda bakmakla yükümlü olunan kişiler için ayrı bir depozito gerekebilir."
 },
 "html": {
 "<p>The RAK Golden Visa is a <strong>10-year renewable residency permit</strong> issued by the Federal Authority for Identity, Citizenship, Customs and Port Security (ICP). Eligible categories include property investors, skilled professionals, executives, entrepreneurs, scientists, doctors, engineers, outstanding students, and other exceptional talents meeting the applicable UAE government requirements.</p><p>Golden Visa holders do not require a local sponsor and may sponsor their eligible family members for the same residency duration.</p><p>Brightlink Management Consultancy assists applicants throughout the complete Golden Visa process, including eligibility assessment, document preparation, application submission, medical fitness coordination, Emirates ID biometrics, and residency issuance through the relevant RAK authorities.</p>": "<p>RAK Golden Visa, Federal Kimlik, Vatandaşlık, Gümrük ve Liman Güvenliği Otoritesi (ICP) tarafından verilen <strong>10 yıllık, yenilenebilir bir oturma iznidir</strong>. Uygun kategoriler arasında gayrimenkul yatırımcıları, nitelikli profesyoneller, yöneticiler, girişimciler, bilim insanları, doktorlar, mühendisler, üstün başarılı öğrenciler ve BAE hükümetinin geçerli şartlarını karşılayan diğer olağanüstü yetenekler yer alır.</p><p>Golden Visa sahiplerinin yerel bir sponsora ihtiyacı yoktur ve uygun aile üyelerine aynı oturum süresi için sponsor olabilirler.</p><p>Brightlink Management Consultancy; uygunluk değerlendirmesi, belge hazırlığı, başvurunun yapılması, sağlık kontrolü koordinasyonu, Emirates ID biyometrisi ve ilgili RAK makamları aracılığıyla oturumun verilmesi dahil olmak üzere Golden Visa sürecinin tamamında başvuru sahiplerine destek olur.</p>",

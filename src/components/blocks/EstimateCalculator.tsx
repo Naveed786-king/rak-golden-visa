@@ -735,6 +735,33 @@ function Result({
       </div>
       {cfg.resultText && <p className="mt-2.5 text-center text-[12.5px] leading-snug text-ink/55">{cfg.resultText}</p>}
 
+      {/* still to be quoted + notes */}
+      {cfg.quotedTitle && (cfg.quoted1Label || cfg.quoted2Label) && (
+        <div className="mt-4 rounded-[22px] border border-ink/8 bg-white px-4 py-3.5">
+          <p className="text-[11.5px] font-extrabold uppercase tracking-[0.14em] text-ink/50">{cfg.quotedTitle}</p>
+          {[
+            [cfg.quoted1Label, cfg.quoted1Value],
+            [cfg.quoted2Label, cfg.quoted2Value],
+          ]
+            .filter(([l]) => l)
+            .map(([l, v], i) => (
+              <p key={i} className="mt-2 flex items-baseline justify-between gap-3 text-[15px]">
+                <span className="text-ink/75">{l}</span>
+                {v && <span className="text-end font-extrabold text-red-600">{v}</span>}
+              </p>
+            ))}
+        </div>
+      )}
+      {[cfg.note1, cfg.note2, cfg.note3, cfg.note4].some(Boolean) && (
+        <ul className="mt-3 grid gap-2 rounded-[22px] bg-[#eef1f6] px-4 py-3.5">
+          {[cfg.note1, cfg.note2, cfg.note3, cfg.note4].filter(Boolean).map((n, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-[13.5px] leading-snug text-ink/75">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-ink/70" /> <span>{n}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <a href={waHref} target="_blank" rel="noopener noreferrer" className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-4 text-[16px] font-extrabold text-white shadow-[0_14px_30px_-14px_#25D366] transition hover:-translate-y-0.5 hover:bg-[#1fbd59]">
         <SocialIcon name="whatsapp" className="h-5 w-5" /> {cfg.whatsappLabel}
       </a>

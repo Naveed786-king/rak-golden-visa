@@ -111,6 +111,16 @@ export type EstimateSettings = {
   leadTitle: string;
   leadButton: string;
   leadThanks: string;
+  // result: still to be quoted + notes (empty = hidden)
+  quotedTitle: string;
+  quoted1Label: string;
+  quoted1Value: string;
+  quoted2Label: string;
+  quoted2Value: string;
+  note1: string;
+  note2: string;
+  note3: string;
+  note4: string;
   /** @deprecated replaced by the steps above (kept so older saved settings still load) */
   step3Title?: string;
   step3Text?: string;
@@ -138,13 +148,13 @@ export const defaultEstimate: EstimateSettings = {
     { id: 'professional', label: 'Skilled professional', description: 'Salary AED 30,000+', icon: 'student', fees: [] },
   ],
   step2Title: 'New visa or renewal?',
-  step2Text: 'Renewals inside the UAE skip the entry permit.',
+  step2Text: 'Is this your first Golden Visa or a renewal?',
   types: [
     { id: 'new', label: 'New visa', description: 'First Golden Visa application', icon: 'sparkles', fees: [] },
     { id: 'renewal', label: 'Renewal', description: 'Renew an existing Golden Visa', icon: 'file-check', fees: [], noLocationFees: true },
   ],
   locationTitle: 'Where are you now?',
-  locationText: 'This decides the entry permit or change of status fee.',
+  locationText: 'This decides whether a change of status fee applies.',
   insideLabel: 'Inside the UAE',
   insideText: 'On a visit, tourist or residence visa',
   insideImage: '',
@@ -199,7 +209,6 @@ export const defaultEstimate: EstimateSettings = {
   fees: [
     { label: 'Immigration & Visa', amount: 2710, mainAmount: '', childAmount: '', applies: 'each', when: 'any' },
     { label: 'Emirates ID – 10 Years', amount: 1154, mainAmount: '', childAmount: '', applies: 'each', when: 'any' },
-    { label: 'Entry permit', amount: 1250, mainAmount: '', childAmount: '', applies: 'each', when: 'outside' },
     { label: 'Change of status (inside UAE)', amount: 750, mainAmount: '', childAmount: '', applies: 'each', when: 'inside' },
   ],
   resultTitle: 'Your estimate',
@@ -214,6 +223,15 @@ export const defaultEstimate: EstimateSettings = {
   leadTitle: 'Get this estimate by email or a call back',
   leadButton: 'Send me the estimate',
   leadThanks: 'Thank you! A consultant will contact you shortly.',
+  quotedTitle: 'Still to be quoted',
+  quoted1Label: 'Mandatory insurance',
+  quoted1Value: 'Quote required',
+  quoted2Label: 'Our service fees',
+  quoted2Value: 'Ask on WhatsApp',
+  note1: 'Estimated government fees only.',
+  note2: 'Insurance is mandatory and must be provided or arranged before the residence visa is issued.',
+  note3: 'Insurance premiums and our service fees are quoted separately. Message us on WhatsApp for your own quotation.',
+  note4: 'A separate dependant deposit may apply where shown.',
 };
 
 /* ------------------------------------------------------------------ admin form */
@@ -265,7 +283,7 @@ export const ESTIMATE_FIELDS: Field[] = [
   { name: '_h3', label: 'Step 2 — new visa or renewal (pop-up)', type: 'heading' },
   { name: 'step2Title', label: 'Question', type: 'text', half: true },
   { name: 'step2Text', label: 'Help text', type: 'text', half: true },
-  { name: 'types', label: 'Choices (each can have its own prices)', type: 'list', itemLabel: 'Choice', fields: OPTION_FIELDS([{ name: 'noLocationFees', label: 'Skip “Where are you now?” — no entry permit / change of status fees', type: 'boolean' }]) },
+  { name: 'types', label: 'Choices (each can have its own prices)', type: 'list', itemLabel: 'Choice', fields: OPTION_FIELDS([{ name: 'noLocationFees', label: 'Skip “Where are you now?” — no change of status fee', type: 'boolean' }]) },
   { name: '_h4', label: 'Step 3 — where are you now?', type: 'heading' },
   { name: 'locationTitle', label: 'Question', type: 'text', half: true },
   { name: 'locationText', label: 'Help text', type: 'text', half: true },
@@ -339,6 +357,16 @@ export const ESTIMATE_FIELDS: Field[] = [
   { name: 'leadTitle', label: 'Lead form title', type: 'text' },
   { name: 'leadButton', label: 'Lead form button', type: 'text', half: true },
   { name: 'leadThanks', label: 'Thank-you message', type: 'text', half: true },
+  { name: '_h9', label: 'Result — “Still to be quoted” box and notes (leave a line empty to hide it)', type: 'heading' },
+  { name: 'quotedTitle', label: 'Box title', type: 'text' },
+  { name: 'quoted1Label', label: 'Line 1', type: 'text', half: true },
+  { name: 'quoted1Value', label: 'Line 1 — right side (red)', type: 'text', half: true },
+  { name: 'quoted2Label', label: 'Line 2', type: 'text', half: true },
+  { name: 'quoted2Value', label: 'Line 2 — right side (red)', type: 'text', half: true },
+  { name: 'note1', label: 'Note 1', type: 'text' },
+  { name: 'note2', label: 'Note 2', type: 'text' },
+  { name: 'note3', label: 'Note 3', type: 'text' },
+  { name: 'note4', label: 'Note 4', type: 'text' },
 ];
 
 /** Text fields that are translated into other languages */
@@ -351,6 +379,7 @@ export const ESTIMATE_TEXT_KEYS = [
   'medicalTitle', 'medicalText', 'medicalNormalLabel', 'medicalNormalNote', 'medicalVipLabel', 'medicalVipNote', 'medicalNote',
   'resultTitle', 'resultText', 'totalLabel', 'mainLabel', 'adultResultLabel', 'childResultLabel', 'applicationLabel',
   'whatsappLabel', 'whatsappText', 'leadTitle', 'leadButton', 'leadThanks',
+  'quotedTitle', 'quoted1Label', 'quoted1Value', 'quoted2Label', 'quoted2Value', 'note1', 'note2', 'note3', 'note4',
 ] as const;
 
 /* ------------------------------------------------------------------ calculation */

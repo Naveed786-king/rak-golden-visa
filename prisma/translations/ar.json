@@ -1177,7 +1177,17 @@
 "Needs opening": "يحتاج إلى فتح",
 "charged once": "تُدفع مرة واحدة",
 "Sponsor file": "ملف الكفيل",
-"Sponsor file opening (once)": "فتح ملف الكفيل (مرة واحدة)"
+"Sponsor file opening (once)": "فتح ملف الكفيل (مرة واحدة)",
+"Is this your first Golden Visa or a renewal?": "هل هذه أول تأشيرة ذهبية لك أم تجديد؟",
+"This decides whether a change of status fee applies.": "يحدد ذلك ما إذا كانت رسوم تعديل الوضع مطبّقة.",
+"Still to be quoted": "بانتظار التسعير",
+"Mandatory insurance": "التأمين الإلزامي",
+"Quote required": "يتطلب عرض سعر",
+"Our service fees": "رسوم خدماتنا",
+"Estimated government fees only.": "رسوم حكومية تقديرية فقط.",
+"Insurance is mandatory and must be provided or arranged before the residence visa is issued.": "التأمين إلزامي ويجب توفيره أو ترتيبه قبل إصدار تأشيرة الإقامة.",
+"Insurance premiums and our service fees are quoted separately. Message us on WhatsApp for your own quotation.": "تُسعَّر أقساط التأمين ورسوم خدماتنا بشكل منفصل. راسلنا عبر واتساب للحصول على عرض سعرك.",
+"A separate dependant deposit may apply where shown.": "قد يُطلب تأمين منفصل للمُعالين حيثما يُذكر ذلك."
 },
 "html": {
 "<p>The RAK Golden Visa is a <strong>10-year renewable residency permit</strong> issued by the Federal Authority for Identity, Citizenship, Customs and Port Security (ICP). Eligible categories include property investors, skilled professionals, executives, entrepreneurs, scientists, doctors, engineers, outstanding students, and other exceptional talents meeting the applicable UAE government requirements.</p><p>Golden Visa holders do not require a local sponsor and may sponsor their eligible family members for the same residency duration.</p><p>Brightlink Management Consultancy assists applicants throughout the complete Golden Visa process, including eligibility assessment, document preparation, application submission, medical fitness coordination, Emirates ID biometrics, and residency issuance through the relevant RAK authorities.</p>": "<p>الإقامة الذهبية في رأس الخيمة هي <strong>تصريح إقامة لمدة 10 سنوات قابل للتجديد</strong> تصدره الهيئة الاتحادية للهوية والجنسية والجمارك وأمن المنافذ (ICP). وتشمل الفئات المؤهلة مستثمري العقارات والمهنيين المهرة والتنفيذيين وروّاد الأعمال والعلماء والأطباء والمهندسين والطلاب المتفوقين وغيرهم من أصحاب المواهب الاستثنائية الذين يستوفون متطلبات حكومة الإمارات المعمول بها.</p><p>لا يحتاج حاملو الإقامة الذهبية إلى كفيل محلي، ويمكنهم كفالة أفراد عائلاتهم المؤهلين لنفس مدة الإقامة.</p><p>تساعد Brightlink Management Consultancy المتقدمين في جميع مراحل الإقامة الذهبية، بما في ذلك تقييم الأهلية وإعداد المستندات وتقديم الطلب وتنسيق الفحص الطبي وبصمات الهوية الإماراتية وإصدار الإقامة عبر الجهات المختصة في رأس الخيمة.</p>",

@@ -174,6 +174,22 @@ async function upgrades() {
     }
     await mark('estimate-no-application-fees');
   }
+  // calculator: no entry permit fee any more (removed everywhere)
+  if (!(await done('estimate-no-entry-permit'))) {
+    const row = await prisma.setting.findUnique({ where: { key: 'estimate' } });
+    if (row) {
+      try {
+        const v = JSON.parse(row.value);
+        const isEntry = (f) => /^\s*entry\s*permit/i.test(f?.label || '');
+        if (Array.isArray(v.fees)) v.fees = v.fees.filter((f) => !isEntry(f));
+        if (v.step2Text === 'Renewals inside the UAE skip the entry permit.') v.step2Text = 'Is this your first Golden Visa or a renewal?';
+        if (v.locationText === 'This decides the entry permit or change of status fee.') v.locationText = 'This decides whether a change of status fee applies.';
+        for (const o of [...(v.categories || []), ...(v.types || [])]) if (Array.isArray(o.fees)) o.fees = o.fees.filter((f) => !isEntry(f));
+        await prisma.setting.update({ where: { key: 'estimate' }, data: { value: JSON.stringify(v) } });
+      } catch {}
+    }
+    await mark('estimate-no-entry-permit');
+  }
   // real Google reviews (Brightlink Management Consultancy) as active testimonials
   if (!(await done('google-reviews-v1'))) {
     let n = 0;
