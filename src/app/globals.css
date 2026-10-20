@@ -356,6 +356,8 @@ input[type='range'].appearance-none::-moz-range-thumb { width: 18px; height: 18p
   .hdr-icon:hover { color: var(--brand-gold); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand-gold) 60%, transparent); background: rgba(255,255,255,.08); }
   .hdr-phone { display: flex; align-items: center; gap: .65rem; padding-inline-end: .5rem; }
   .hdr-cta { border-radius: 14px !important; padding: .7rem 1.15rem !important; box-shadow: 0 10px 24px -10px color-mix(in oklab, var(--brand-gold) 80%, transparent), inset 0 1px 0 rgba(255,255,255,.45); }
+  /* while the mega menu is open the header sits above the floating WhatsApp bubble */
+  .site-header:has(.mega-wrap) { z-index: 55; }
   /* Services mega menu: solid navy so the page behind never shows through */
   .mega.glass-menu {
     background:
