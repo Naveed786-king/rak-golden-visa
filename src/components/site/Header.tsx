@@ -167,9 +167,8 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 <span className="block text-sm font-bold">{site.phoneDisplay}</span>
               </span>
             </a>
-            <div className="hidden md:block">
-              <LanguageSwitcher />
-            </div>
+            {/* language switch on every screen size (on phones it takes the place of the phone icon) */}
+            <LanguageSwitcher />
             {header.showLogin && (
               <Link href={accountHref} className="hdr-icon !hidden md:!grid" aria-label={me ? t('My account') : t('Client login')} title={me ? me.name : t('Client login')}>
                 <User className="h-4 w-4" />
@@ -180,9 +179,6 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 {header.cta.label} <ArrowUpRight className="h-4 w-4" />
               </SmartLink>
             )}
-            <a href={`tel:${site.phone}`} className="hdr-icon sm:!hidden" aria-label={t('Call now')}>
-              <Phone className="h-4 w-4 text-gold" />
-            </a>
             <button onClick={() => setOpen(true)} className="hdr-icon hdr-menu-btn lg:!hidden" aria-label={t('Menu')} aria-expanded={open}>
               <Menu className="h-5 w-5" />
             </button>

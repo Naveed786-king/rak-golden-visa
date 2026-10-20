@@ -730,7 +730,7 @@ function Result({
         <div className="relative bg-gradient-to-br from-ink-2 to-ink px-4 py-5 text-center text-white">
           <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-gold-light via-gold to-gold-deep" />
           <p className="text-[11.5px] font-extrabold uppercase tracking-[0.16em] text-gold-light">{cfg.totalLabel}</p>
-          <p className="mt-1 font-display text-[40px] font-bold leading-none text-gold-gradient">{amt(result.total)}</p>
+          <p className="mt-1.5 font-sans text-[36px] font-extrabold leading-none tracking-[-0.02em] tabular-nums text-gold-gradient sm:text-[40px]">{amt(result.total)}</p>
         </div>
       </div>
       {cfg.resultText && <p className="mt-2.5 text-center text-[12.5px] leading-snug text-ink/55">{cfg.resultText}</p>}

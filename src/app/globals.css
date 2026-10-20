@@ -605,3 +605,16 @@ main h1, main h2, main h3, main h4 { overflow-wrap: break-word; }
   .theme-dark .rte table.rte-stack td { border-color: rgba(255,255,255,.08); }
   .theme-dark .rte table.rte-stack td:first-child { background: rgba(255,255,255,.06); color: #fff; }
 }
+
+/* Language list (and other header pop-ups) on phones: solid navy panel, readable over the page */
+@media (max-width: 1023px), (hover: none) {
+  .site-header .glass-menu {
+    background: color-mix(in oklab, var(--hdr-bg-solid, var(--brand-ink)) 98%, black) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,.7);
+    max-height: min(70vh, 460px);
+    overflow-y: auto;
+  }
+}
