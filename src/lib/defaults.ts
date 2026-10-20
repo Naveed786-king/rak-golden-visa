@@ -1,6 +1,6 @@
 // Default settings. Everything here is editable from Admin → Settings / Header / Footer.
 
-export type NavLink = { label: string; href: string; description?: string; children?: NavLink[] };
+export type NavLink = { label: string; href: string; description?: string; icon?: string; children?: NavLink[] };
 
 export type SiteSettings = {
   name: string;
@@ -30,11 +30,26 @@ export type SiteSettings = {
   seo: { titleTemplate: string; defaultTitle: string; description: string; keywords: string; ogImage: string; googleVerification?: string; bingVerification?: string };
 };
 
+export type MegaMenu = {
+  enabled: boolean;
+  attachTo: string; // the menu item (by its link) that opens the big panel, e.g. /services
+  eyebrow: string;
+  title: string;
+  text: string;
+  bullets: string; // one per line
+  groups: { title: string; links: NavLink[] }[];
+  calculatorLabel: string;
+  calculatorHref: string;
+  allLabel: string;
+  allHref: string;
+};
+
 export type HeaderSettings = {
   topbar: { enabled: boolean; text: string; linkLabel: string; linkHref: string };
   menu: NavLink[];
   cta: { label: string; href: string };
   showLogin: boolean;
+  mega: MegaMenu;
 };
 
 export type FooterSettings = {
@@ -128,6 +143,57 @@ export const defaultHeader: HeaderSettings = {
   ],
   cta: { label: 'Apply Now', href: '/apply' },
   showLogin: true,
+  mega: {
+    enabled: true,
+    attachTo: '/services',
+    eyebrow: 'Visa & document services',
+    title: 'One team, every document.',
+    text: 'From your first eligibility check to the Emirates ID in your hand — handled through official channels, with every government fee shown before you pay.',
+    bullets: 'Licensed by Dubai DET\nTransparent fixed fees\nAvailable in 10 languages',
+    groups: [
+      {
+        title: 'Visas & Residency',
+        links: [
+          { label: 'RAK Investor Visa', href: '/ras-al-khaimah-property-golden-visa', icon: 'building' },
+          { label: 'RAK Retirement Visa', href: '/ras-al-khaimah-retirement-visa', icon: 'sun' },
+          { label: 'Family Golden Visa', href: '/services/family-golden-visa', icon: 'users' },
+          { label: 'Visit Visas', href: '/services/visit-visas', icon: 'plane' },
+          { label: 'UAE Visa Cancellation', href: '/services/visa-cancellation', icon: 'ban' },
+        ],
+      },
+      {
+        title: 'ID, Medical & Insurance',
+        links: [
+          { label: 'Emirates ID Services', href: '/services/emirates-id', icon: 'card' },
+          { label: 'Medical Fitness Test', href: '/services/medical-fitness-test', icon: 'doctor' },
+          { label: 'Health Insurance', href: '/services/health-insurance', icon: 'health' },
+          { label: 'Update Personal Information', href: '/services/update-personal-information', icon: 'user-check' },
+        ],
+      },
+      {
+        title: 'Attestation',
+        links: [
+          { label: 'MOFA Attestation', href: '/services/mofa-attestation', icon: 'stamp' },
+          { label: 'Educational Certificate Attestation', href: '/services/educational-certificate-attestation', icon: 'student' },
+          { label: 'Marriage Certificate Attestation', href: '/services/marriage-certificate-attestation', icon: 'handshake' },
+          { label: 'Birth Certificate Attestation', href: '/services/birth-certificate-attestation', icon: 'baby' },
+        ],
+      },
+      {
+        title: 'Legal & Documents',
+        links: [
+          { label: 'Legal Translation', href: '/services/legal-translation', icon: 'globe' },
+          { label: 'Police Clearance Certificate', href: '/services/police-clearance-certificate', icon: 'shield' },
+          { label: 'Golden Visa Cost Calculator', href: '/#calculator', icon: 'calculator' },
+          { label: 'All Services', href: '/services', icon: 'layers' },
+        ],
+      },
+    ],
+    calculatorLabel: 'Visa Calculator',
+    calculatorHref: '/#calculator',
+    allLabel: 'View all services',
+    allHref: '/services',
+  },
 };
 
 export const defaultFooter: FooterSettings = {
@@ -184,10 +250,17 @@ export const SERVICE_OPTIONS = [
   'Golden Visa – Professionals / Other',
   'UAE Visa Cancellation',
   'Emirates ID Services',
-  'Medical (EHS)',
+  'Medical Fitness Centers – Residency Visa Examination',
   'Health Insurance',
+  'Update Personal Information',
+  'Legal Translation',
+  'Police Clearance Certificate',
+  'Marriage Certificate Attestation',
+  'Birth Certificate Attestation',
+  'Educational Certificate Attestation',
+  'MOFA Attestation',
   'Attestation Services',
-  'Visit Visa',
+  'Visit Visas',
   'Other',
 ];
 

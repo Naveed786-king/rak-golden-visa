@@ -102,6 +102,13 @@ export async function source(entity: Entity, id: string): Promise<{ obj: any; it
       plain(h.topbar, 'text', items);
       plain(h.topbar, 'linkLabel', items);
       plain(h.cta, 'label', items);
+      if (h.mega) {
+        ['eyebrow', 'title', 'text', 'bullets', 'calculatorLabel', 'allLabel'].forEach((k) => plain(h.mega, k, items));
+        for (const g of h.mega.groups || []) {
+          plain(g, 'title', items);
+          navItems(g.links, items);
+        }
+      }
       return { obj: h, items };
     }
     if (id === 'footer') {

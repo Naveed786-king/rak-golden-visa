@@ -8,10 +8,11 @@ import type { HeaderSettings, SiteSettings } from '@/lib/defaults';
 import { cn } from '@/lib/utils';
 import Logo from './Logo';
 import LanguageSwitcher from './LanguageSwitcher';
+import MegaMenu from './MegaMenu';
 import { useT, useLocalize } from './SiteProvider';
 import { splitLocale } from '@/lib/i18n/config';
 import SmartLink from '@/components/ui/SmartLink';
-import { SocialIcon } from '@/components/ui/Icon';
+import { Icon, SocialIcon } from '@/components/ui/Icon';
 
 type Me = { name: string; role: string } | null;
 
@@ -68,6 +69,8 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
     };
   }, [open]);
 
+  const mega = header.mega?.enabled && header.mega.groups?.length ? header.mega : null;
+  const isMega = (href: string) => !!mega && href === mega.attachTo;
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname?.startsWith(href));
   const accountHref = me ? (me.role === 'CUSTOMER' ? '/account' : '/admin') : L('/login');
 
@@ -114,17 +117,19 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
 
           <nav className="site-nav hidden lg:flex items-center gap-1" onMouseLeave={() => setDrop(null)}>
             {header.menu.map((item, i) => (
-              <div key={i} className="relative" onMouseEnter={() => setDrop(item.children?.length ? i : null)}>
+              <div key={i} className={isMega(item.href) ? '' : 'relative'} onMouseEnter={() => setDrop(item.children?.length || isMega(item.href) ? i : null)}>
                 <SmartLink
                   href={item.href}
                   className="nav-link flex items-center gap-1 px-3 xl:px-4 py-2.5 font-semibold"
                   data-active={isActive(item.href) ? '' : undefined}
                 >
                   {item.label}
-                  {!!item.children?.length && <ChevronDown className={cn('h-3.5 w-3.5 opacity-70 transition-transform', drop === i && 'rotate-180')} />}
+                  {(!!item.children?.length || isMega(item.href)) && <ChevronDown className={cn('h-3.5 w-3.5 opacity-70 transition-transform', drop === i && 'rotate-180')} />}
                 </SmartLink>
                 <AnimatePresence>
-                  {drop === i && item.children?.length ? (
+                  {drop === i && isMega(item.href) && mega ? (
+                    <MegaMenu key="mega" mega={mega} ctaLabel={header.cta?.label} ctaHref={header.cta?.href} />
+                  ) : drop === i && item.children?.length ? (
                     <motion.div
                       initial={{ opacity: 0, y: 12, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -210,7 +215,22 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                     <SmartLink href={item.href} className={cn('block py-4 font-display text-2xl', isActive(item.href) ? 'text-gold' : 'text-white')}>
                       {item.label}
                     </SmartLink>
-                    {item.children?.length ? (
+                    {isMega(item.href) && mega ? (
+                      <div className="space-y-4 pb-4 ps-1">
+                        {mega.groups.map((g, gi) => (
+                          <div key={gi}>
+                            <p className="text-[10.5px] font-extrabold uppercase tracking-[0.16em] text-gold-light/80">{g.title}</p>
+                            <div className="mt-1.5 space-y-0.5">
+                              {g.links.map((c, j) => (
+                                <SmartLink key={j} href={c.href} className="flex items-center gap-2.5 rounded-lg py-1.5 text-sm text-white/75 hover:text-gold">
+                                  <Icon name={c.icon || 'check'} className="h-4 w-4 shrink-0 text-gold/80" /> {c.label}
+                                </SmartLink>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : item.children?.length ? (
                       <div className="pb-3 pl-3 space-y-1">
                         {item.children.map((c, j) => (
                           <SmartLink key={j} href={c.href} className="block py-1.5 text-sm text-white/65 hover:text-gold">

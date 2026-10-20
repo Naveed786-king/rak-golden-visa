@@ -131,8 +131,10 @@ export async function Services({ data }: P) {
       <Stagger className={cn('grid gap-6 md:grid-cols-2', additional ? 'lg:grid-cols-3' : 'lg:grid-cols-3')}>
         {items.map((s) => (
           <StaggerItem key={s.id}>
-            <div className={cn('card-lift group relative flex h-full flex-col overflow-hidden rounded-[2rem] p-7', dark ? 'glass' : 'bg-white ring-1 ring-ink/5 shadow-[0_20px_50px_-35px_rgba(10,18,34,0.35)]', s.featured && !dark && 'ring-2 ring-gold/60')}>
+            <div className={cn('card-lift group relative flex h-full flex-col overflow-hidden rounded-[2rem] p-7', s.link && 'cursor-pointer', dark ? 'glass' : 'bg-white ring-1 ring-ink/5 shadow-[0_20px_50px_-35px_rgba(10,18,34,0.35)]', s.featured && !dark && 'ring-2 ring-gold/60')}>
               <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-gold/0 blur-2xl transition-all duration-700 group-hover:bg-gold/20" />
+              {/* the whole card opens the service page */}
+              {s.link && <SmartLink href={s.link} className="absolute inset-0 z-[1] rounded-[2rem]" ariaLabel={s.title}><span className="sr-only">{s.title}</span></SmartLink>}
               {s.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={s.image} alt={s.title} className="-mx-7 -mt-7 mb-6 h-44 w-[calc(100%+3.5rem)] max-w-none object-cover" />
@@ -142,7 +144,7 @@ export async function Services({ data }: P) {
                 </span>
               )}
               {s.featured && <span className="absolute right-6 top-6 rounded-full bg-gold px-2.5 py-1 text-[0.6rem] font-extrabold uppercase tracking-wider text-ink"><T>Popular</T></span>}
-              <h3 className="relative mt-5 font-display text-2xl font-semibold leading-snug">{s.title}</h3>
+              <h3 className={cn('relative mt-5 font-display text-2xl font-semibold leading-snug transition-colors', s.link && 'group-hover:text-gold-deep')}>{s.title}</h3>
               {s.subtitle && <p className="mt-1 text-xs font-bold uppercase tracking-wider text-gold-deep">{s.subtitle}</p>}
               {s.description && <p className="mt-3 flex-1 text-sm leading-relaxed opacity-70">{s.description}</p>}
               {!additional && (
@@ -155,7 +157,7 @@ export async function Services({ data }: P) {
                       </>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="relative z-[2] flex gap-2">
                     {s.link && (
                       <SmartLink href={s.link} className="grid h-11 w-11 place-items-center rounded-full ring-1 ring-current/15 hover:bg-ink hover:text-gold transition" ariaLabel={s.title}>
                         <ArrowUpRight className="h-4 w-4" />

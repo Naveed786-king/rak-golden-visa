@@ -24,6 +24,7 @@ if (!process.env.DATABASE_URL) process.env.DATABASE_URL = process.env.POSTGRES_P
 const prisma = new PrismaClient();
 const force = process.argv.includes('--force');
 const C = await import('./content.mjs');
+const SP = await import('./service-pages.mjs');
 const faqs = JSON.parse(readFileSync(path.join(__dirname, 'faqs.json'), 'utf8'));
 
 async function main() {
@@ -52,6 +53,7 @@ async function main() {
   const pageCount = await prisma.page.count();
   if (pageCount > 0 && !force) {
     console.log('✔ Database already has content — skipping content seed (use "npm run seed:reset" to restore the original content).');
+    await servicePages();
     return;
   }
 
@@ -88,6 +90,28 @@ async function main() {
     for (const t of C.testimonialPlaceholders) await prisma.testimonial.create({ data: t });
     console.log('✔ 3 sample testimonials (hidden — replace with real reviews)');
   }
+  if (force) await prisma.setting.deleteMany({ where: { key: 'upgrade:service-pages-v1' } });
+  await servicePages();
+}
+
+/* One page per service (/services/<slug>) + service cards linked to them. Runs once per website. */
+async function servicePages() {
+  const key = 'upgrade:service-pages-v1';
+  if (await prisma.setting.findUnique({ where: { key } })) return;
+  let made = 0;
+  for (const s of SP.SERVICE_PAGES) {
+    const slug = `services/${s.slug}`;
+    if (!(await prisma.page.findUnique({ where: { slug } }))) {
+      await prisma.page.create({ data: { slug, title: s.title, metaDescription: s.description, blocks: JSON.stringify(SP.servicePageBlocks(s)), status: 'published' } });
+      made++;
+    }
+    const match = await prisma.service.findFirst({ where: { title: { in: [s.title, s.replaces].filter(Boolean) } } });
+    const data = { title: s.title, subtitle: s.subtitle, description: s.description, icon: s.icon, link: `/${slug}`, slug: s.slug };
+    if (match) await prisma.service.update({ where: { id: match.id }, data: s.replaces && match.title === s.replaces ? { ...data, price: s.price } : { link: data.link, slug: s.slug } });
+    else await prisma.service.create({ data: { ...data, price: s.price, category: 'main', order: 50, active: true } });
+  }
+  await prisma.setting.upsert({ where: { key }, update: { value: '1' }, create: { key, value: '1' } });
+  console.log(`✔ Service pages: ${made} created, service cards linked`);
 }
 
 /* prisma/translations/<lang>.json = { "plain": { english: translation }, "html": { englishHtml: translationHtml } }

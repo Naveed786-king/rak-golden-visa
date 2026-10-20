@@ -103,9 +103,13 @@ export function IntroSplit({ data, site }: P) {
                   ))}
                 </ul>
                 <div className="my-8 h-px bg-gradient-to-r from-gold/0 via-gold/40 to-gold/0" />
-                <p className="text-xs uppercase tracking-[0.25em] text-white/50">{data.cardPriceLabel}</p>
-                <p className="font-display text-5xl font-bold text-gold-gradient mt-1">{data.cardPrice}</p>
-                <div className="mt-8 grid gap-3">
+                {data.cardPrice ? (
+                  <>
+                    <p className="text-xs uppercase tracking-[0.25em] text-white/50">{data.cardPriceLabel}</p>
+                    <p className="font-display text-5xl font-bold text-gold-gradient mt-1">{data.cardPrice}</p>
+                  </>
+                ) : null}
+                <div className={data.cardPrice ? 'mt-8 grid gap-3' : 'grid gap-3'}>
                   <Cta link={data.cardCta} className="btn btn-gold w-full" />
                   <a href={`tel:${site.phone}`} className="btn btn-ghost-light w-full">
                     <Phone className="h-4 w-4" /> {site.phoneDisplay}

@@ -69,7 +69,15 @@ export async function getLocalizedBundle(locale: string) {
     getTranslation<any>('settings', 'footer', locale),
     getTranslation<any>('settings', 'site', locale),
   ]);
-  const header = h ? { ...bundle.header, ...h, menu: h.menu?.length === bundle.header.menu.length ? mergeLinks(bundle.header.menu, h.menu) : bundle.header.menu, cta: { ...bundle.header.cta, label: h.cta?.label || bundle.header.cta.label } } : bundle.header;
+  const header = h
+    ? {
+        ...bundle.header,
+        ...h,
+        menu: h.menu?.length === bundle.header.menu.length ? mergeLinks(bundle.header.menu, h.menu) : bundle.header.menu,
+        cta: { ...bundle.header.cta, label: h.cta?.label || bundle.header.cta.label },
+        mega: mergeMega(bundle.header.mega, h.mega),
+      }
+    : bundle.header;
   const footer = f
     ? {
         ...bundle.footer,
@@ -81,6 +89,15 @@ export async function getLocalizedBundle(locale: string) {
     : bundle.footer;
   const site = s ? { ...bundle.site, ...s, seo: { ...bundle.site.seo, ...(s.seo || {}) } } : bundle.site;
   return { site, header, footer };
+}
+
+/** Services mega menu: English structure, translated texts */
+function mergeMega(base: any, tr: any) {
+  if (!base || !tr) return base;
+  const out: any = { ...base };
+  for (const k of ['eyebrow', 'title', 'text', 'bullets', 'calculatorLabel', 'allLabel']) if (typeof tr[k] === 'string' && tr[k]) out[k] = tr[k];
+  out.groups = (base.groups || []).map((g: any, i: number) => ({ ...g, title: tr.groups?.[i]?.title || g.title, links: mergeLinks(g.links, tr.groups?.[i]?.links || []) }));
+  return out;
 }
 
 /** Keep the original links (href) and only take translated labels */

@@ -77,6 +77,47 @@ export function HeaderEditor() {
             <FieldGroup fields={[linkList('menu', 'Menu items', false, true)]} data={value} onChange={setValue} />
           </div>
         </Card>
+        <Card title="Services mega menu" className="p-0">
+          <div className="p-5">
+            <p className="mb-4 text-xs text-gray-500">The big panel that opens when visitors hover the menu item below (desktop). On phones the same links appear grouped in the menu. Texts are translated into all languages after saving.</p>
+            <FieldGroup
+              fields={[
+                { name: 'enabled', label: 'Show the mega menu', type: 'boolean', half: true },
+                { name: 'attachTo', label: 'Opens from the menu item with link', type: 'text', half: true, help: 'e.g. /services' },
+                { name: 'eyebrow', label: 'Small heading', type: 'text', half: true },
+                { name: 'title', label: 'Title', type: 'text', half: true },
+                { name: 'text', label: 'Text', type: 'textarea' },
+                { name: 'bullets', label: 'Check marks (one per line)', type: 'lines' },
+                {
+                  name: 'groups',
+                  label: 'Columns',
+                  type: 'list',
+                  itemLabel: 'Column',
+                  fields: [
+                    { name: 'title', label: 'Column title', type: 'text' },
+                    {
+                      name: 'links',
+                      label: 'Links',
+                      type: 'list',
+                      itemLabel: 'Link',
+                      fields: [
+                        { name: 'label', label: 'Label', type: 'text', half: true },
+                        { name: 'href', label: 'Link', type: 'text', half: true },
+                        { name: 'icon', label: 'Icon', type: 'icon' },
+                      ],
+                    },
+                  ],
+                },
+                { name: 'calculatorLabel', label: 'Calculator button', type: 'text', half: true },
+                { name: 'calculatorHref', label: 'Calculator link', type: 'text', half: true },
+                { name: 'allLabel', label: '“All services” link text', type: 'text', half: true },
+                { name: 'allHref', label: '“All services” link', type: 'text', half: true },
+              ]}
+              data={value.mega || {}}
+              onChange={(m) => setValue({ ...value, mega: m })}
+            />
+          </div>
+        </Card>
         <Card title="Header button" className="p-0">
           <div className="p-5">
             <FieldGroup
