@@ -409,22 +409,22 @@ function Wizard({ cfg, initialCategory, onClose }: { cfg: EstimateSettings; init
                   <StepTitle title={cfg.sponsorTitle} text={cfg.sponsorText} />
                   <div className="grid gap-3">
                     <Choice
-                      on={sponsor === 'open'}
-                      title={cfg.sponsorOpenLabel}
-                      text={cfg.sponsorOpenText}
-                      media={<Media image={cfg.sponsorOpenImage} icon={<FolderCheck className="h-7 w-7" />} />}
-                      onClick={() => {
-                        setSponsor('open');
-                        go('family');
-                      }}
-                    />
-                    <Choice
                       on={sponsor === 'needs'}
                       title={cfg.sponsorNeedsLabel}
                       text={[`${cur} ${fmtN(Number(cfg.sponsorFee) || 0)}`, cfg.sponsorNeedsText].filter(Boolean).join(' · ')}
                       media={<Media image={cfg.sponsorNeedsImage} icon={<FolderPlus className="h-7 w-7" />} gold />}
                       onClick={() => {
                         setSponsor('needs');
+                        go('family');
+                      }}
+                    />
+                    <Choice
+                      on={sponsor === 'open'}
+                      title={cfg.sponsorOpenLabel}
+                      text={cfg.sponsorOpenText}
+                      media={<Media image={cfg.sponsorOpenImage} icon={<FolderCheck className="h-7 w-7" />} />}
+                      onClick={() => {
+                        setSponsor('open');
                         go('family');
                       }}
                     />
