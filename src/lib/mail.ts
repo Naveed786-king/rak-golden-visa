@@ -1,16 +1,38 @@
 import nodemailer from 'nodemailer';
 import { getSetting } from './settings';
 
+/** Last sending error, in plain words (shown by Admin → Email → Test) */
+export let lastMailError = '';
+
+function explainMailError(e: any): string {
+  const msg = String(e?.response || e?.message || e || '');
+  const code = String(e?.code || '');
+  if (/534|5\.7\.9|Application-specific password/i.test(msg))
+    return 'Gmail needs an App password, not your normal password. Google Account → Security → 2-Step Verification ON → App passwords → create one and paste the 16 letters here (no spaces).';
+  if (/535|5\.7\.8|Username and Password not accepted|BadCredentials|Invalid login/i.test(msg))
+    return 'Username or password not accepted. For Gmail use the full address as username and a 16-letter App password (Google Account → Security → App passwords).';
+  if (/ETIMEDOUT|ESOCKET|ECONNREFUSED|EHOSTUNREACH|Greeting never received|timeout/i.test(code + ' ' + msg))
+    return 'The server could not connect to the mail server (port blocked or wrong port). Try port 587 with SSL OFF; if that also fails, ask your hosting to open outgoing ports 465/587.';
+  if (/wrong version number|SSL routines/i.test(msg))
+    return 'SSL setting does not match the port: use port 465 with SSL ON, or port 587 with SSL OFF.';
+  if (/ENOTFOUND|EAI_AGAIN/i.test(code + ' ' + msg)) return 'SMTP host name not found — check the host (e.g. smtp.gmail.com).';
+  return msg || 'Unknown error';
+}
+
 export async function sendMail(opts: { to: string | string[]; subject: string; html: string; replyTo?: string }) {
   try {
     const smtp = await getSetting('smtp');
     const site = await getSetting('site');
-    if (!smtp.host || !opts.to || (Array.isArray(opts.to) && !opts.to.length)) return false;
+    if (!smtp.host) { lastMailError = 'SMTP host is empty.'; return false; }
+    if (!opts.to || (Array.isArray(opts.to) && !opts.to.length)) { lastMailError = 'No recipient email address.'; return false; }
+    const port = Number(smtp.port) || 587;
     const transporter = nodemailer.createTransport({
-      host: smtp.host,
-      port: Number(smtp.port) || 587,
-      secure: !!smtp.secure,
-      auth: smtp.user ? { user: smtp.user, pass: smtp.pass } : undefined,
+      host: String(smtp.host).trim(),
+      port,
+      secure: port === 465 ? true : !!smtp.secure && port !== 587,
+      auth: smtp.user ? { user: String(smtp.user).trim(), pass: String(smtp.pass || '').replace(/\s+/g, '') } : undefined,
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
     });
     await transporter.sendMail({
       from: smtp.from || `${site.name} <${smtp.user}>`,
@@ -19,8 +41,10 @@ export async function sendMail(opts: { to: string | string[]; subject: string; h
       html: wrap(opts.html, site.name),
       replyTo: opts.replyTo,
     });
+    lastMailError = '';
     return true;
   } catch (e) {
+    lastMailError = explainMailError(e);
     console.error('[mail] failed:', (e as Error).message);
     return false;
   }
