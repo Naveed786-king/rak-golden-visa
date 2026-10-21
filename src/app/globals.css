@@ -152,6 +152,12 @@ body {
 .theme-dark .field { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); color: #fff; }
 .theme-dark .field::placeholder { color: #8e98ab; }
 .theme-dark select.field option { color: #111; }
+/* white card placed on a dark section (e.g. admin login): keep fields dark-on-white so typed text is visible */
+.theme-dark .on-light .field { background: #fff; border-color: #e6e0d2; color: #111827; -webkit-text-fill-color: #111827; caret-color: #111827; }
+.theme-dark .on-light .field::placeholder { color: #9ca3af; -webkit-text-fill-color: #9ca3af; }
+.on-light .field:-webkit-autofill,
+.on-light .field:-webkit-autofill:hover,
+.on-light .field:-webkit-autofill:focus { -webkit-text-fill-color: #111827; -webkit-box-shadow: 0 0 0 1000px #fff inset; transition: background-color 9999s ease-out 0s; }
 
 }
 

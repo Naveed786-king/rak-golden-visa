@@ -8,6 +8,26 @@ export function baseUrl() {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/+$/, '');
 }
 
+/**
+ * Site address for sitemap.xml / robots.txt / feed.xml.
+ * Uses NEXT_PUBLIC_SITE_URL when set; otherwise the domain the request came in on
+ * (e.g. https://rakgoldenvisa.com), so Google never receives localhost links.
+ */
+export async function requestBaseUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return baseUrl();
+  try {
+    const { headers } = await import('next/headers');
+    const h = await headers();
+    const host = (h.get('x-forwarded-host') || h.get('host') || '').split(',')[0].trim();
+    if (host) {
+      const local = /^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(host);
+      const proto = local ? (h.get('x-forwarded-proto') || 'http').split(',')[0].trim() : 'https';
+      return `${proto}://${host}`.replace(/\/+$/, '');
+    }
+  } catch {}
+  return baseUrl();
+}
+
 export function absUrl(pathOrUrl?: string | null) {
   if (!pathOrUrl) return undefined;
   if (/^https?:\/\//.test(pathOrUrl)) return pathOrUrl;

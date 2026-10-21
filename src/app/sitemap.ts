@@ -1,14 +1,15 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/db';
 import { LOCALES, localizePath } from '@/lib/i18n/config';
-import { baseUrl, absUrl, enabledLocales, postLocales } from '@/lib/seo';
+import { requestBaseUrl, enabledLocales, postLocales } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
 // Every page in every language, with hreflang links between the language versions.
 // Blog posts are listed only in the languages they are really translated into.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = baseUrl();
+  const base = await requestBaseUrl();
+  const abs = (u: string) => (/^https?:\/\//.test(u) ? u : base + (u.startsWith('/') ? u : '/' + u));
   try {
     const [pages, posts, langs] = await Promise.all([
       prisma.page.findMany({ where: { status: 'published' }, select: { slug: true, updatedAt: true, ogImage: true } }),
@@ -28,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency,
           priority,
           alternates: { languages },
-          ...(image ? { images: [absUrl(image)!] } : {}),
+          ...(image ? { images: [abs(image)] } : {}),
         });
       }
     };

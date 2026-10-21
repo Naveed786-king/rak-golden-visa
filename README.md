@@ -302,3 +302,14 @@ uploads/           uploaded files (media + private client documents)
 | Emails not arriving | Site settings → Email (SMTP) → Test; check spam; use port 465 + SSL |
 | `Prisma` error on cPanel | Make sure Node 20+, then *Run NPM Install* again and `npm run build` |
 | 502 Bad Gateway (VPS) | `pm2 logs rak-golden-visa` to see the error, `pm2 restart rak-golden-visa` |
+| "Your connection is not private" / `NET::ERR_CERT_AUTHORITY_INVALID` | The server is showing a self-signed certificate. **xCloud** → your site → **SSL** → choose **Let's Encrypt (free)** for `rakgoldenvisa.com` **and** `www.rakgoldenvisa.com` → Issue. DNS must point straight at the server (Cloudflare: orange cloud **off** while issuing). If you turn the Cloudflare proxy on afterwards, set Cloudflare → SSL/TLS → **Full (strict)**. Then make sure `.env` has `NEXT_PUBLIC_SITE_URL="https://rakgoldenvisa.com"` and restart. |
+| Admin login: typed email/password not visible | Fixed in code (white card on dark page). Pull the latest code and rebuild. |
+
+## 14. Google Search Console (owner access + sitemap)
+
+1. Open [search.google.com/search-console](https://search.google.com/search-console) → **Add property** → **URL prefix** → `https://rakgoldenvisa.com`.
+2. Choose **HTML tag**, copy only the `content="…"` value → Admin → **Site settings → SEO → Google Search Console verification code** → Save → back in Search Console click **Verify**. (Or use the **Domain** property with the TXT record in Cloudflare DNS.)
+3. **Sitemaps** → enter `sitemap.xml` → **Submit**. It lists every published page in every enabled language, all blog posts (in the languages they are translated into) and `/apply`, with hreflang links.
+4. **Settings → Users and permissions → Add user** → `brightlinkconsulting.dubai@gmail.com` → Permission **Owner**. (Only a verified owner can add another owner — choose *Full* first if Owner is not offered, then promote.)
+
+Pages usually appear in Google within a few days to a few weeks.

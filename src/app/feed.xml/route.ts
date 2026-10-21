@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db';
 import { getSetting } from '@/lib/settings';
-import { baseUrl, absUrl } from '@/lib/seo';
+import { requestBaseUrl } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,7 +8,8 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 
 // RSS feed of the latest blog posts - helps search engines and news readers find new posts quickly
 export async function GET() {
-  const base = baseUrl();
+  const base = await requestBaseUrl();
+  const absUrl = (u: string) => (/^https?:\/\//.test(u) ? u : base + (u.startsWith('/') ? u : '/' + u));
   const [site, posts] = await Promise.all([
     getSetting('site'),
     prisma.post.findMany({ where: { status: 'published', publishedAt: { lte: new Date() } }, orderBy: { publishedAt: 'desc' }, take: 30 }).catch(() => []),
