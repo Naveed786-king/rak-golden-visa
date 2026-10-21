@@ -19,6 +19,10 @@ const nextConfig = {
   },
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
+  // Let's Encrypt SSL check files (free https certificate on xCloud / VPS)
+  async rewrites() {
+    return { beforeFiles: [{ source: '/.well-known/acme-challenge/:token', destination: '/api/acme-challenge/:token' }] };
+  },
   serverExternalPackages: ['@prisma/client', 'bcryptjs', 'nodemailer'],
   experimental: {
     serverActions: { bodySizeLimit: '20mb' },
