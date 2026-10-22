@@ -1,4 +1,4 @@
-import { getSession } from '@/lib/auth';
+import { getVerifiedSession as getSession } from '@/lib/auth';
 import ApplicationAdmin from '@/components/admin/ApplicationAdmin';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {

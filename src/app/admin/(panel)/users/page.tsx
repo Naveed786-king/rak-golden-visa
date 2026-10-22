@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { getSession } from '@/lib/auth';
+import { getVerifiedSession as getSession } from '@/lib/auth';
 import { UsersManager } from '@/components/admin/Managers';
 
 export default async function Page() {

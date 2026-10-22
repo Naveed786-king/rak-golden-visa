@@ -30,7 +30,12 @@ export function rateLimit(key: string, limit = 10, windowMs = 60_000) {
 }
 
 export function clientIp(req: Request) {
-  return (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || req.headers.get('x-real-ip') || 'local';
+  // Cloudflare sets CF-Connecting-IP to the real visitor (it cannot be faked through Cloudflare).
+  // Otherwise use the LAST X-Forwarded-For entry (added by our own proxy) — the first entry is visitor-controlled.
+  const cf = (req.headers.get('cf-connecting-ip') || '').trim();
+  if (cf) return cf;
+  const xff = (req.headers.get('x-forwarded-for') || '').split(',').map((x) => x.trim()).filter(Boolean);
+  return xff[xff.length - 1] || req.headers.get('x-real-ip') || 'local';
 }
 
 export function isEmail(v?: string | null) {
