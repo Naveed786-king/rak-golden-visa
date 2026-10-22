@@ -131,7 +131,6 @@ export function designCss(d: DesignSettings) {
   root.push(`--hdr-h:${num(h.height, 56, 140) ?? 76}px`, `--logo-h:${num(h.logoHeight, 24, 120) ?? 46}px`);
   root.push(`--top-bg:${col(h.topbarBg) || '#070D19'}`, `--top-text:${col(h.topbarText) || '#C9CFDA'}`, `--menu-size:${num(h.menuSize, 11, 22) ?? 15}px`);
   root.push(`--ftr-bg:${col(f.bg) || '#0A1222'}`, `--ftr-text:${col(f.text) || 'rgba(255,255,255,.62)'}`, `--ftr-head:${col(f.heading) || 'var(--brand-gold)'}`, `--ftr-logo-h:${num(f.logoHeight, 24, 140) ?? 64}px`);
-  if (f.bgImage) root.push(`--ftr-img:url("${url(f.bgImage)}")`);
   out.push(`:root{${root.join(';')}}`);
   const bs = num(d.fonts.baseSize, 13, 20);
   if (bs && bs !== 16) out.push(`html{font-size:${bs}px}`);

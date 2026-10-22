@@ -442,9 +442,6 @@ input[type='range'].appearance-none::-moz-range-thumb { width: 18px; height: 18p
 .ftr-light .site-footer .ftr-strong, .ftr-light .site-footer a.ftr-muted:hover { color: var(--brand-ink); }
 .ftr-light .site-footer .bg-pattern { opacity: .03; }
 .ftr-light .site-footer [class*='border-white'] { border-color: rgba(10,18,34,.12); }
-/* Admin → Design → Footer: background colour + image. Unlayered and more specific than .theme-dark,
-   which otherwise paints the footer plain navy and hides the chosen image/colour. */
-.site-footer.theme-dark { background: var(--ftr-img, none) center / cover no-repeat, var(--ftr-bg, var(--brand-ink)); }
 
 /* Button styles */
 .bs-solid .btn-gold { background: var(--brand-gold); }

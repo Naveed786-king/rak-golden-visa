@@ -32,7 +32,7 @@ export const FOOTER_DESIGN_FIELDS: Field[] = [
   { name: 'text', label: 'Text colour', type: 'color', half: true },
   { name: 'heading', label: 'Column title colour', type: 'color', half: true },
   { name: 'logoHeight', label: 'Logo height', type: 'range', min: 24, max: 140, step: 1, unit: 'px', half: true },
-  { name: 'bgImage', label: 'Background image (optional)', type: 'image' },
+  { name: 'bgImage', label: 'Watermark image (optional) — replaces the large emblem; empty = default emblem', type: 'image' },
   { name: 'watermark', label: 'Show large emblem watermark', type: 'boolean' },
 ];
 

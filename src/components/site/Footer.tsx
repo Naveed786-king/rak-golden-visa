@@ -7,12 +7,13 @@ import NewsletterForm from './NewsletterForm';
 import Reveal from '@/components/ui/Reveal';
 import T from '@/components/ui/T';
 
-export default function Footer({ site, footer }: { site: SiteSettings; footer: FooterSettings }) {
+// watermark = Admin → Design → Footer → image (replaces the default emblem watermark)
+export default function Footer({ site, footer, watermark }: { site: SiteSettings; footer: FooterSettings; watermark?: string }) {
   const year = new Date().getFullYear();
   return (
     <footer className="site-footer theme-dark relative overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/emblem.png" alt="" aria-hidden className="ftr-watermark" />
+      <img src={watermark || '/brand/emblem.png'} alt="" aria-hidden className="ftr-watermark" />
       <div className="pointer-events-none absolute inset-0 bg-pattern opacity-[0.05]" />
       <div className="pointer-events-none absolute -top-60 left-1/2 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-gold/10 blur-[140px]" />
 
