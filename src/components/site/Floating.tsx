@@ -83,7 +83,7 @@ export default function Floating({ site }: { site: SiteSettings }) {
       {site.showMobileBar && (
         <div className="fixed inset-x-0 bottom-0 z-40 md:hidden border-t border-white/10 bg-ink/95 backdrop-blur-xl px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => window.dispatchEvent(new Event('rgv:open-calculator'))} className="calc-anim btn btn-ghost-light btn-sm">
+            <button type="button" onClick={() => window.dispatchEvent(new Event('rgv:open-calculator'))} className="calc-anim relative btn btn-ghost-light btn-sm">
               <Calculator className="calc-nudge h-4 w-4 text-gold" /> {t('Cost calculator')}
             </button>
             <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-sm bg-[#25D366] text-white">

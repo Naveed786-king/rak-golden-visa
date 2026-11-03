@@ -626,7 +626,8 @@ main h1, main h2, main h3, main h4 { overflow-wrap: break-word; }
 }
 
 /* Cost calculator button — always-on "look here" animation (shine sweep, pulsing ring, icon nudge) */
-.calc-anim { position: relative; overflow: hidden; isolation: isolate; }
+/* no 'position' here: it would override the button's fixed position (Tailwind utilities are layered) */
+.calc-anim { overflow: hidden; isolation: isolate; }
 .calc-anim::after {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.55) 48%, transparent 66%);
