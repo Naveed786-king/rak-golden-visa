@@ -793,3 +793,26 @@ function Result({
     </div>
   );
 }
+
+/**
+ * Floating "Cost calculator" button shown on every page of the website.
+ * Opens the same calculator pop-up as the calculator section (settings: Admin → Calculator).
+ */
+export function CalculatorButton({ cfg }: { cfg: EstimateSettings }) {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  if (!(cfg.categories || []).some((c) => !c.hidden)) return null;
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={t('Cost calculator')}
+        className="fixed z-40 left-4 md:left-6 bottom-[9.25rem] md:bottom-[4.75rem] inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-light via-gold to-gold-deep px-4 py-2.5 text-[13px] font-extrabold text-ink shadow-[0_12px_30px_-10px_rgba(200,162,85,0.8)] ring-1 ring-white/30 transition-transform hover:scale-105"
+      >
+        <Calculator className="h-4 w-4" /> {t('Cost calculator')}
+      </button>
+      {open && <Wizard cfg={cfg} initialCategory="" onClose={() => setOpen(false)} />}
+    </>
+  );
+}

@@ -18,7 +18,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     model: 'page',
     search: ['title', 'slug'],
     orderBy: { updatedAt: 'desc' },
-    fields: { title: 'string', slug: 'string', metaTitle: 'string', metaDescription: 'string', ogImage: 'string', blocks: 'json', status: 'string', inMenu: 'bool' },
+    fields: { title: 'string', slug: 'string', metaTitle: 'string', metaDescription: 'string', ogImage: 'string', featuredImage: 'string', blocks: 'json', status: 'string', inMenu: 'bool' },
     required: ['title', 'slug'],
     unique: 'slug',
     filters: ['status'],

@@ -10,7 +10,7 @@ import { Btn, Card, Modal, api, toast, Toggle } from './ui';
 import { cn } from '@/lib/utils';
 import { LanguageTabs, PageTranslation } from './TranslationEditor';
 
-type PageData = { id: string; title: string; slug: string; status: string; metaTitle?: string; metaDescription?: string; ogImage?: string; blocks: Block[] };
+type PageData = { id: string; title: string; slug: string; status: string; metaTitle?: string; metaDescription?: string; ogImage?: string; featuredImage?: string; blocks: Block[] };
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -49,6 +49,7 @@ export default function PageEditor({ initial }: { initial: PageData }) {
         metaTitle: page.metaTitle,
         metaDescription: page.metaDescription,
         ogImage: page.ogImage,
+        featuredImage: page.featuredImage,
         blocks: page.blocks,
       });
       setPage((p) => ({ ...p, slug: d.item.slug }));
@@ -188,6 +189,10 @@ export default function PageEditor({ initial }: { initial: PageData }) {
                   Meta description <span className="font-normal text-gray-400">({(page.metaDescription || '').length}/160)</span>
                 </label>
                 <textarea className="admin-input min-h-[70px]" value={page.metaDescription || ''} onChange={(e) => update({ metaDescription: e.target.value })} />
+              </div>
+              <div>
+                <label className="admin-label">Featured image</label>
+                <ImageInput value={page.featuredImage} onChange={(v) => update({ featuredImage: v })} />
               </div>
               <div>
                 <label className="admin-label">Social share image</label>

@@ -44,6 +44,7 @@ model Page {
   metaTitle       String?
   metaDescription String? @db.Text
   ogImage         String? @db.Text
+  featuredImage   String? @db.Text
   blocks          String @db.LongText // JSON array of blocks
   status          String   @default("published") // published | draft
   inMenu          Boolean  @default(false)

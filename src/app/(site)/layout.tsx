@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { getLocalizedBundle, getSetting } from '@/lib/settings';
+import { getLocalizedBundle, getSetting, getLocalizedEstimate } from '@/lib/settings';
 import { getI18n } from '@/lib/i18n/server';
 import { SiteProvider } from '@/components/site/SiteProvider';
 import Header from '@/components/site/Header';
@@ -8,11 +8,12 @@ import Floating from '@/components/site/Floating';
 import Preloader from '@/components/site/Preloader';
 import InjectScripts from '@/components/site/InjectScripts';
 import DesignEffects from '@/components/site/DesignEffects';
+import { CalculatorButton } from '@/components/blocks/EstimateCalculator';
 import { designCss, designBodyClass, googleFontsUrl } from '@/lib/design';
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const { locale, dict } = await getI18n();
-  const [{ site, header, footer }, tr, design] = await Promise.all([getLocalizedBundle(locale), getSetting('translation'), getSetting('design')]);
+  const [{ site, header, footer }, tr, design, estimate] = await Promise.all([getLocalizedBundle(locale), getSetting('translation'), getSetting('design'), getLocalizedEstimate(locale)]);
   const languages = tr.showSwitcher ? tr.enabled : ['en'];
   // switching language: no loading screen, the page simply appears in the new language
   const switching = !!(await cookies()).get('rgv_switch');
@@ -27,6 +28,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main>{children}</main>
       <Footer site={site} footer={footer} watermark={design.footer?.bgImage || ''} />
       <Floating site={site} />
+      <CalculatorButton cfg={estimate} />
       <InjectScripts html={site.headScripts} target="head" />
       <InjectScripts html={site.bodyScripts} target="body" />
       <div className="h-16 md:hidden" />
