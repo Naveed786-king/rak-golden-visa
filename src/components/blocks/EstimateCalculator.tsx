@@ -798,7 +798,7 @@ function Result({
  * Floating "Cost calculator" button shown on every page of the website.
  * Opens the same calculator pop-up as the calculator section (settings: Admin → Calculator).
  */
-export function CalculatorButton({ cfg, mobileBar = false }: { cfg: EstimateSettings; mobileBar?: boolean }) {
+export function CalculatorButton({ cfg, mobileBar = false, whatsapp = true }: { cfg: EstimateSettings; mobileBar?: boolean; whatsapp?: boolean }) {
   const t = useT();
   const [open, setOpen] = useState(false);
   // the mobile bottom bar's "Cost calculator" button asks for the pop-up with this event
@@ -814,7 +814,7 @@ export function CalculatorButton({ cfg, mobileBar = false }: { cfg: EstimateSett
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t('Cost calculator')}
-        className={cn('fixed z-40 left-4 md:left-6 bottom-[9.25rem] md:bottom-[4.75rem] items-center', mobileBar ? 'hidden md:inline-flex' : 'inline-flex', ' gap-2 rounded-full bg-gradient-to-br from-gold-light via-gold to-gold-deep px-4 py-2.5 text-[13px] font-extrabold text-ink shadow-[0_12px_30px_-10px_rgba(200,162,85,0.8)] ring-1 ring-white/30 transition-transform hover:scale-105')}
+        className={cn('fixed z-40 left-4 bottom-[9.25rem] md:left-auto md:bottom-8 items-center', whatsapp ? 'md:right-[6.5rem]' : 'md:right-6', mobileBar ? 'hidden md:inline-flex' : 'inline-flex', ' gap-2 rounded-full bg-gradient-to-br from-gold-light via-gold to-gold-deep px-4 py-2.5 text-[13px] font-extrabold text-ink shadow-[0_12px_30px_-10px_rgba(200,162,85,0.8)] ring-1 ring-white/30 transition-transform hover:scale-105')}
       >
         <Calculator className="h-4 w-4" /> {t('Cost calculator')}
       </button>
