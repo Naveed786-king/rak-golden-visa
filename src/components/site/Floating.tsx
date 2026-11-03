@@ -7,7 +7,7 @@ import { SocialIcon } from '@/components/ui/Icon';
 import { resolveHref } from '@/components/ui/href';
 import { useT } from './SiteProvider';
 
-export default function Floating({ site, calculator = false }: { site: SiteSettings; calculator?: boolean }) {
+export default function Floating({ site }: { site: SiteSettings }) {
   const t = useT();
   const [show, setShow] = useState(false);
   const [bubble, setBubble] = useState(false);
@@ -59,15 +59,6 @@ export default function Floating({ site, calculator = false }: { site: SiteSetti
               </motion.div>
             )}
           </AnimatePresence>
-          {calculator && (
-            <button
-              type="button"
-              onClick={() => window.dispatchEvent(new Event('rgv:open-calculator'))}
-              className="hidden md:inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-light via-gold to-gold-deep px-4 py-2.5 text-[13px] font-extrabold text-ink shadow-[0_12px_30px_-10px_rgba(200,162,85,0.8)] ring-1 ring-white/30 transition-transform hover:scale-105"
-            >
-              <Calculator className="h-4 w-4" /> {t('Cost calculator')}
-            </button>
-          )}
           <a href={wa} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="pulse-ring relative isolate grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.7)] hover:scale-110 transition-transform">
             <SocialIcon name="whatsapp" className="h-7 w-7" />
           </a>
