@@ -28,7 +28,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main>{children}</main>
       <Footer site={site} footer={footer} watermark={design.footer?.bgImage || ''} />
       <Floating site={site} />
-      <CalculatorButton cfg={estimate} />
+      <CalculatorButton cfg={estimate} mobileBar={!!site.showMobileBar} />
       <InjectScripts html={site.headScripts} target="head" />
       <InjectScripts html={site.bodyScripts} target="body" />
       <div className="h-16 md:hidden" />

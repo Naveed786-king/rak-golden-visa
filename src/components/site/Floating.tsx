@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Phone, ArrowUp, X } from 'lucide-react';
+import { ArrowUp, X, Calculator } from 'lucide-react';
 import type { SiteSettings } from '@/lib/defaults';
 import { SocialIcon } from '@/components/ui/Icon';
 import { resolveHref } from '@/components/ui/href';
@@ -83,9 +83,9 @@ export default function Floating({ site }: { site: SiteSettings }) {
       {site.showMobileBar && (
         <div className="fixed inset-x-0 bottom-0 z-40 md:hidden border-t border-white/10 bg-ink/95 backdrop-blur-xl px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
           <div className="grid grid-cols-2 gap-2">
-            <a href={`tel:${site.phone}`} className="btn btn-ghost-light btn-sm">
-              <Phone className="h-4 w-4 text-gold" /> {t('Call now')}
-            </a>
+            <button type="button" onClick={() => window.dispatchEvent(new Event('rgv:open-calculator'))} className="btn btn-ghost-light btn-sm">
+              <Calculator className="h-4 w-4 text-gold" /> {t('Cost calculator')}
+            </button>
             <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-sm bg-[#25D366] text-white">
               <SocialIcon name="whatsapp" className="h-4 w-4" /> {t('WhatsApp')}
             </a>
