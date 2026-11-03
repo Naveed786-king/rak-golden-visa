@@ -27,7 +27,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Header site={site} header={header} />
       <main>{children}</main>
       <Footer site={site} footer={footer} watermark={design.footer?.bgImage || ''} />
-      <Floating site={site} />
+      <Floating site={site} calculator={(estimate.categories || []).some((c) => !c.hidden)} />
       <CalculatorButton cfg={estimate} mobileBar={!!site.showMobileBar} whatsapp={!!site.showWhatsappButton} />
       <InjectScripts html={site.headScripts} target="head" />
       <InjectScripts html={site.bodyScripts} target="body" />
