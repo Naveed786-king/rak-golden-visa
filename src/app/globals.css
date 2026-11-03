@@ -624,3 +624,27 @@ main h1, main h2, main h3, main h4 { overflow-wrap: break-word; }
     overflow-y: auto;
   }
 }
+
+/* Cost calculator button — always-on "look here" animation (shine sweep, pulsing ring, icon nudge) */
+.calc-anim { position: relative; overflow: hidden; isolation: isolate; }
+.calc-anim::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.55) 48%, transparent 66%);
+  transform: translateX(-120%); animation: calc-shine 3.2s ease-in-out infinite;
+}
+.calc-ring { position: relative; }
+.calc-ring::before {
+  content: ''; position: absolute; inset: -3px; border-radius: 999px; pointer-events: none;
+  border: 2px solid rgba(255,255,255,.75); animation: calc-ring 2.2s ease-out infinite;
+}
+.calc-nudge { animation: calc-nudge 4s ease-in-out infinite; transform-origin: 50% 60%; }
+@keyframes calc-shine { 0%, 45% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+@keyframes calc-ring { 0% { transform: scale(.9); opacity: .9; } 100% { transform: scale(1.55); opacity: 0; } }
+@keyframes calc-nudge {
+  0%, 78%, 100% { transform: rotate(0) scale(1); }
+  82% { transform: rotate(-14deg) scale(1.12); } 86% { transform: rotate(12deg) scale(1.12); }
+  90% { transform: rotate(-8deg) scale(1.06); } 94% { transform: rotate(4deg) scale(1.02); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .calc-anim::after, .calc-ring::before, .calc-nudge { animation: none; }
+}

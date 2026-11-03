@@ -816,9 +816,9 @@ export function CalculatorButton({ cfg, mobileBar = false, whatsapp = true }: { 
           type="button"
           onClick={() => setOpen(true)}
           aria-label={t('Cost calculator')}
-          className="fixed z-40 left-4 bottom-[9.25rem] inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-light via-gold to-gold-deep px-4 py-2.5 text-[13px] font-extrabold text-ink shadow-[0_12px_30px_-10px_rgba(200,162,85,0.8)] ring-1 ring-white/30 md:hidden"
+          className="calc-anim fixed z-40 left-4 bottom-[9.25rem] inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold-light via-gold to-gold-deep px-4 py-2.5 text-[13px] font-extrabold text-ink shadow-[0_12px_30px_-10px_rgba(200,162,85,0.8)] ring-1 ring-white/30 md:hidden"
         >
-          <Calculator className="h-4 w-4" /> {t('Cost calculator')}
+          <Calculator className="calc-nudge h-4 w-4" /> {t('Cost calculator')}
         </button>
       )}
       {/* desktop: tab on the right edge — icon only, slides open on hover */}
@@ -826,10 +826,10 @@ export function CalculatorButton({ cfg, mobileBar = false, whatsapp = true }: { 
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t('Cost calculator')}
-        className="calc-tab group fixed right-0 top-[58%] z-40 hidden md:flex items-center rounded-l-[1.4rem] bg-gradient-to-br from-gold-light via-gold to-gold-deep py-3 pl-3 pr-4 text-ink ring-1 ring-white/30 shadow-[0_18px_40px_-12px_rgba(200,162,85,0.75)] transition-[padding,box-shadow] duration-300 hover:pr-6 hover:shadow-[0_22px_50px_-10px_rgba(200,162,85,0.9)] focus-visible:pr-6 focus-visible:outline-none"
+        className="calc-tab calc-anim group fixed right-0 top-[58%] z-40 hidden md:flex items-center rounded-l-[1.4rem] bg-gradient-to-br from-gold-light via-gold to-gold-deep py-3 pl-3 pr-4 text-ink ring-1 ring-white/30 shadow-[0_18px_40px_-12px_rgba(200,162,85,0.75)] transition-[padding,box-shadow] duration-300 hover:pr-6 hover:shadow-[0_22px_50px_-10px_rgba(200,162,85,0.9)] focus-visible:pr-6 focus-visible:outline-none"
       >
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/25 ring-1 ring-white/50 shadow-[inset_0_1px_6px_rgba(255,255,255,0.35)] transition-transform duration-300 group-hover:scale-105">
-          <Calculator className="h-5 w-5" />
+        <span className="calc-ring grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/25 ring-1 ring-white/50 shadow-[inset_0_1px_6px_rgba(255,255,255,0.35)] transition-transform duration-300 group-hover:scale-105">
+          <Calculator className="calc-nudge h-5 w-5" />
         </span>
         <span className="max-w-0 overflow-hidden whitespace-nowrap text-start opacity-0 transition-all duration-300 group-hover:ms-3 group-hover:max-w-[13rem] group-hover:opacity-100 group-focus-visible:ms-3 group-focus-visible:max-w-[13rem] group-focus-visible:opacity-100">
           <span className="block text-[10px] font-extrabold uppercase tracking-[0.24em] text-ink/65">{t('Instant')}</span>
