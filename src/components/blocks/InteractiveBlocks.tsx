@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Minus, TriangleAlert, CircleCheck, Quote, Star, ArrowRight, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Minus, TriangleAlert, CircleCheck, Quote, Star, ArrowRight, Check, X, ChevronDown, ChevronUp, ShieldCheck, Lightbulb, MessageCircle } from 'lucide-react';
 import { Icon } from '@/components/ui/Icon';
 import SmartLink from '@/components/ui/SmartLink';
 import { cn } from '@/lib/utils';
@@ -65,35 +65,62 @@ export function RejectionsView({ items, dark }: { items: any[]; dark?: boolean }
   const [active, setActive] = useState(0);
   const cur = items[active];
   return (
-    <div>
-      <div className="flex flex-wrap justify-center gap-2">
+    <div className="rj">
+      {/* tabs: gold pills with a small warning icon */}
+      <div className="flex flex-wrap justify-center gap-2.5">
         {items.map((it, i) => (
           <button
             key={i}
             onClick={() => setActive(i)}
-            className={cn('rounded-full px-5 py-2.5 text-sm font-bold transition-all', active === i ? 'bg-ink text-gold shadow-lg' : dark ? 'bg-white/5 text-white/70 hover:bg-white/10' : 'bg-white text-ink/70 ring-1 ring-ink/10 hover:ring-gold')}
+            aria-pressed={active === i}
+            className={cn('rj-tab', active === i && 'is-on', dark && 'is-dark')}
           >
+            <span className="rj-tab-num">{String(i + 1).padStart(2, '0')}</span>
             {it.tab || it.title}
           </button>
         ))}
       </div>
       <AnimatePresence mode="wait">
         {cur && (
-          <motion.div key={active} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35 }} className="mx-auto mt-10 max-w-4xl">
+          <motion.div key={active} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35 }} className="mx-auto mt-10 max-w-5xl">
             <h3 className="text-center font-display text-3xl md:text-4xl font-semibold">{cur.title}</h3>
-            <div className="mt-8 grid gap-5 md:grid-cols-2">
-              <div className="rounded-3xl border border-red-500/20 bg-red-500/[0.06] p-7">
-                <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-red-500">
-                  <TriangleAlert className="h-5 w-5" /> {t('The issue')}
-                </p>
-                <p className="mt-3 leading-relaxed opacity-80">{cur.issue}</p>
-              </div>
-              <div className="rounded-3xl border border-emerald-500/25 bg-emerald-500/[0.07] p-7">
-                <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-emerald-600">
-                  <CircleCheck className="h-5 w-5" /> {t('How to avoid')}
-                </p>
-                <p className="mt-3 leading-relaxed opacity-80">{cur.solution}</p>
-              </div>
+            <div className="relative mt-9 grid gap-5 md:grid-cols-2 md:gap-14">
+              {/* the problem */}
+              <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, delay: 0.05 }} className="rj-card rj-issue card-lift">
+                <TriangleAlert className="rj-ghost" aria-hidden />
+                <div className="flex items-center gap-3">
+                  <span className="rj-icon"><TriangleAlert className="h-5 w-5" /></span>
+                  <div>
+                    <p className="rj-kicker">{t('The issue')}</p>
+                    <p className="rj-sub">{t('Why applications get delayed')}</p>
+                  </div>
+                </div>
+                <p className="rj-text">{cur.issue}</p>
+              </motion.div>
+
+              {/* gold arrow badge linking problem → solution */}
+              <span className="rj-link" aria-hidden><ArrowRight className="h-5 w-5" /></span>
+
+              {/* the solution */}
+              <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, delay: 0.15 }} className="rj-card rj-fix card-lift">
+                <ShieldCheck className="rj-ghost" aria-hidden />
+                <div className="flex items-center gap-3">
+                  <span className="rj-icon"><CircleCheck className="h-5 w-5" /></span>
+                  <div>
+                    <p className="rj-kicker">{t('How to avoid')}</p>
+                    <p className="rj-sub">{t('What our team does for you')}</p>
+                  </div>
+                </div>
+                <p className="rj-text">{cur.solution}</p>
+              </motion.div>
+            </div>
+            {/* help strip */}
+            <div className="rj-help">
+              <span className="rj-help-icon"><Lightbulb className="h-4 w-4" /></span>
+              <p className="flex-1">{t('Not sure your documents are ready? We check everything before submission.')}</p>
+              <SmartLink href="whatsapp" className="btn btn-gold btn-sm">
+                <MessageCircle className="h-4 w-4" /> {t('Talk to an expert')}
+              </SmartLink>
             </div>
           </motion.div>
         )}

@@ -613,3 +613,73 @@ img { image-rendering: auto; }
 .overflow-hidden:has(> img.object-cover) { transition: box-shadow .5s ease; }
 .overflow-hidden:has(> img.object-cover):hover { box-shadow: 0 0 0 1px color-mix(in oklab, var(--brand-gold) 55%, transparent), 0 30px 60px -30px color-mix(in oklab, var(--brand-gold) 70%, rgba(10,18,34,.4)); }
 @media (prefers-reduced-motion: reduce) { .btn { translate: none; } }
+
+/* =====================================================================
+   PROBLEMS & SOLUTIONS (RejectionsView) — issue → fix cards
+   ===================================================================== */
+.rj-tab {
+  display: inline-flex; align-items: center; gap: .55rem; border-radius: 999px; padding: .6rem 1.15rem .6rem .6rem;
+  font-size: .86rem; font-weight: 700; color: color-mix(in oklab, var(--brand-ink) 72%, transparent);
+  background: rgba(255,255,255,.75); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand-gold) 28%, transparent);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, background .3s, color .3s;
+}
+.rj-tab:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px var(--brand-gold), 0 12px 24px -16px color-mix(in oklab, var(--brand-gold) 80%, transparent); color: var(--brand-ink); }
+.rj-tab-num {
+  display: grid; place-items: center; height: 1.7rem; min-width: 1.7rem; padding-inline: .3rem; border-radius: 999px; font-size: .7rem; font-weight: 800;
+  background: color-mix(in oklab, var(--brand-gold-light) 45%, #fff); color: var(--lx-gold-text);
+}
+.rj-tab.is-on {
+  color: var(--brand-ink);
+  background: linear-gradient(120deg, #f6e8c3, var(--brand-gold-light) 30%, var(--brand-gold) 75%);
+  box-shadow: 0 14px 30px -14px color-mix(in oklab, var(--brand-gold) 90%, transparent), inset 0 1px 0 rgba(255,255,255,.7);
+}
+.rj-tab.is-on .rj-tab-num { background: var(--brand-ink); color: var(--brand-gold-light); }
+.rj-tab.is-dark:not(.is-on) { background: rgba(255,255,255,.06); color: rgba(255,255,255,.75); }
+
+.rj-card {
+  position: relative; overflow: hidden; border-radius: 28px; padding: 1.9rem 1.9rem 2rem; isolation: isolate;
+  background: linear-gradient(150deg, #fff 0%, #fffaf0 100%);
+  box-shadow: 0 30px 60px -36px rgba(10,18,34,.35), inset 0 0 0 1px color-mix(in oklab, var(--brand-gold) 24%, transparent);
+}
+.rj-card::before { /* coloured edge bar */
+  content: ''; position: absolute; inset-block: 22px; inset-inline-start: 0; width: 4px; border-radius: 0 4px 4px 0;
+}
+.rj-issue::before { background: linear-gradient(180deg, #f87171, #e11d48); }
+.rj-fix::before { background: linear-gradient(180deg, #34d399, #059669); }
+.rj-issue { background: linear-gradient(150deg, #fff 0%, #fff6f4 60%, #fdecea 100%); }
+.rj-fix { background: linear-gradient(150deg, #fff 0%, #f3fbf6 60%, #e5f6ec 100%); }
+.rj-ghost { position: absolute; right: -18px; bottom: -22px; width: 140px; height: 140px; z-index: -1; opacity: .07; stroke-width: 1.4; }
+[dir='rtl'] .rj-ghost { right: auto; left: -18px; }
+.rj-issue .rj-ghost { color: #e11d48; }
+.rj-fix .rj-ghost { color: #059669; }
+.rj-icon {
+  display: grid; place-items: center; height: 3rem; width: 3rem; border-radius: 16px; flex-shrink: 0; color: #fff;
+  box-shadow: 0 12px 24px -12px currentColor, inset 0 1px 0 rgba(255,255,255,.45);
+}
+.rj-issue .rj-icon { background: linear-gradient(140deg, #fb7185, #e11d48); box-shadow: 0 12px 24px -12px #e11d48, inset 0 1px 0 rgba(255,255,255,.45); }
+.rj-fix .rj-icon { background: linear-gradient(140deg, #34d399, #059669); box-shadow: 0 12px 24px -12px #059669, inset 0 1px 0 rgba(255,255,255,.45); }
+.rj-kicker { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
+.rj-issue .rj-kicker { color: #be123c; }
+.rj-fix .rj-kicker { color: #047857; }
+.rj-sub { margin-top: .15rem; font-size: .8rem; color: color-mix(in oklab, var(--brand-ink) 55%, transparent); }
+.rj-text { margin-top: 1.2rem; font-size: 1.02rem; line-height: 1.75; color: #2f3a4d; }
+.rj-link {
+  display: none; position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 3;
+  place-items: center; height: 3.1rem; width: 3.1rem; border-radius: 999px; color: var(--brand-ink);
+  background: linear-gradient(140deg, #f6e8c3, var(--brand-gold-light) 35%, var(--brand-gold));
+  box-shadow: 0 0 0 6px var(--lx-ivory), 0 14px 30px -10px color-mix(in oklab, var(--brand-gold) 90%, transparent);
+  animation: rj-nudge 2.4s ease-in-out infinite;
+}
+@media (min-width: 768px) { .rj-link { display: grid; } }
+[dir='rtl'] .rj-link svg { transform: scaleX(-1); }
+@keyframes rj-nudge { 0%, 100% { translate: -50% -50%; } 50% { translate: calc(-50% + 5px) -50%; } }
+[dir='rtl'] .rj-link { animation-name: rj-nudge-rtl; }
+@keyframes rj-nudge-rtl { 0%, 100% { translate: -50% -50%; } 50% { translate: calc(-50% - 5px) -50%; } }
+.rj-help {
+  margin-top: 1.6rem; display: flex; flex-wrap: wrap; align-items: center; gap: .9rem 1rem; border-radius: 22px; padding: 1rem 1rem 1rem 1.2rem;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--brand-gold-light) 30%, #fff), #fff);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand-gold) 30%, transparent);
+  font-size: .95rem; font-weight: 600; color: var(--brand-ink);
+}
+.rj-help-icon { display: grid; place-items: center; height: 2.2rem; width: 2.2rem; border-radius: 999px; background: var(--brand-ink); color: var(--brand-gold-light); flex-shrink: 0; }
+@media (prefers-reduced-motion: reduce) { .rj-link { animation: none; } }
