@@ -691,7 +691,7 @@ export function Pricing({ data }: P) {
                       <b>
                         <T>Processing time</T>
                       </b>
-                      <span>{p.time}</span>
+                      <span>{String(p.time).replace(/^\s*processing(\s*time)?\s*:\s*/i, '')}</span>
                     </span>
                   </div>
                 )}

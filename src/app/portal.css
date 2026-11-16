@@ -233,16 +233,16 @@ main .sec-head > p { color: var(--pt-muted); opacity: 1; }
   content: ''; position: absolute; top: 0; inset-inline-end: 0; z-index: -1; width: 160px; height: 120px; pointer-events: none;
   border-start-end-radius: inherit;
   background:
-    var(--pt-skyline) right 10px top 10px / 118px auto no-repeat,
+    var(--pt-skyline) right 12px top 12px / 96px auto no-repeat,
     radial-gradient(circle at 100% 0, color-mix(in oklab, var(--brand-gold) 16%, transparent), transparent 70%);
-  opacity: .8; transition: opacity .3s;
+  opacity: .5; transition: opacity .3s;
 }
 [dir='rtl'] .card-lift:not(.rounded-none, .bg-ink, [class*='from-ink'])::before {
   background:
-    var(--pt-skyline) left 10px top 10px / 118px auto no-repeat,
+    var(--pt-skyline) left 12px top 12px / 96px auto no-repeat,
     radial-gradient(circle at 0 0, color-mix(in oklab, var(--brand-gold) 16%, transparent), transparent 70%);
 }
-.card-lift:hover::before { opacity: 1; }
+.card-lift:hover::before { opacity: .85; }
 .vcard::before { display: none; }
 
 /* feature / package cards (pc-*) */
