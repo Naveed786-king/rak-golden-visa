@@ -526,3 +526,90 @@ img { image-rendering: auto; }
   .site-header .hdr-island, .site-header .glass-menu { animation: none !important; }
   .site-nav .nav-link:hover, .hdr-icon:hover, .hdr-cta:hover, .site-header .site-logo:hover img { transform: none; }
 }
+
+
+/* =====================================================================
+   ARABIC / URDU / HINDI / CHINESE SAFETY — no letter-spacing on joined scripts, stats never overflow
+   ===================================================================== */
+:is([dir='rtl'], :lang(hi), :lang(zh), :lang(zh-CN)) .btn-gold:hover { letter-spacing: 0; }
+:is([dir='rtl'], :lang(hi), :lang(zh), :lang(zh-CN)) .anim-flow main .eyebrow { animation-name: lx-para !important; letter-spacing: 0; }
+:is([dir='rtl'], :lang(hi)) .font-display { letter-spacing: 0; }
+/* hero / stat counters like "48 ساعة": wrap and shrink instead of spilling into the next column */
+.grid-cols-3 > div > .whitespace-nowrap.font-display { white-space: normal; overflow-wrap: anywhere; }
+:is([dir='rtl'], :lang(hi), :lang(de), :lang(de-AT), :lang(hu), :lang(pl), :lang(ru)) .grid-cols-3 > div > .whitespace-nowrap.font-display {
+  font-size: clamp(1.35rem, 5.4vw, 2.6rem); line-height: 1.15;
+}
+/* long words in headings and buttons never break the layout */
+:is(h1, h2, h3, h4) { overflow-wrap: break-word; hyphens: auto; }
+:is([dir='rtl']) :is(h1, h2, h3, h4) { hyphens: none; }
+@media (max-width: 480px) { .btn { white-space: normal; text-align: center; line-height: 1.3; } }
+
+/* =====================================================================
+   ADVANCED SECTION BACKGROUNDS
+   ===================================================================== */
+/* ivory sections: fine gold dot-grid + drifting gold glow */
+.theme-light {
+  background:
+    radial-gradient(48rem 26rem at var(--lx-gx, 85%) 0%, color-mix(in oklab, var(--brand-gold-light) 38%, transparent), transparent 70%),
+    radial-gradient(color-mix(in oklab, var(--brand-gold) 22%, transparent) 1px, transparent 1.4px) 0 0 / 26px 26px,
+    var(--lx-ivory);
+}
+/* champagne sections: silk diagonal lines + glow */
+.theme-sand {
+  background:
+    radial-gradient(60rem 26rem at 100% 0%, color-mix(in oklab, var(--brand-gold-light) 45%, transparent), transparent 70%),
+    radial-gradient(40rem 22rem at 0% 100%, color-mix(in oklab, var(--brand-gold) 14%, transparent), transparent 70%),
+    repeating-linear-gradient(135deg, color-mix(in oklab, var(--brand-gold) 7%, transparent) 0 1px, transparent 1px 22px),
+    linear-gradient(180deg, var(--lx-cream), var(--lx-champagne));
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* glows drift while the section passes (only repaints on scroll) */
+    .anim-flow .theme-light:is(.section, section) { animation: lx-glow-light linear both; animation-timeline: view(); animation-range: cover; }
+    .anim-flow .theme-sand:is(.section, section) { animation: lx-glow-sand linear both; animation-timeline: view(); animation-range: cover; }
+
+    /* every section after the hero unfolds from a rounded 3D panel to full width */
+    .anim-flow main > .blk:nth-of-type(n + 2) { perspective: 1800px; }
+    .anim-flow main > .blk:nth-of-type(n + 2) > :is(section, div):first-child {
+      transform-origin: 50% 0%;
+      animation: lx-unfold linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+  }
+}
+@keyframes lx-glow-light { from { background-position: 0 -80px, 0 0, 0 0; } to { background-position: 0 120px, 0 26px, 0 0; } }
+@keyframes lx-glow-sand { from { background-position: 0 -60px, 0 60px, 0 0, 0 0; } to { background-position: 0 80px, 0 -40px, 44px 0, 0 0; } }
+@keyframes lx-unfold {
+  from { clip-path: inset(2.5% 3.5% 0 3.5% round 44px); scale: .955; rotate: x 7deg; }
+  to { clip-path: inset(-300px -300px -300px -300px round 0); scale: 1; rotate: x 0deg; }
+}
+@media (max-width: 767px) {
+  @keyframes lx-unfold {
+    from { clip-path: inset(1.5% 2.5% 0 2.5% round 28px); scale: .97; rotate: x 4deg; }
+    to { clip-path: inset(-300px -300px -300px -300px round 0); scale: 1; rotate: x 0deg; }
+  }
+}
+
+/* =====================================================================
+   HOVER — gold spotlight on cards, magnetic buttons, photo zoom
+   ===================================================================== */
+/* the card's light layer follows the cursor (Tilt3D sets --cx/--cy) */
+.card-lift::after {
+  background:
+    radial-gradient(360px circle at var(--cx, 50%) var(--cy, 0%), color-mix(in oklab, var(--brand-gold-light) 42%, transparent), transparent 45%),
+    linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--brand-gold-light) 45%, transparent) 50%, transparent 65%);
+  background-size: 100% 100%, 250% 100%;
+  background-position: 0 0, 120% 0;
+  mix-blend-mode: soft-light;
+}
+.card-lift:hover::after { background-position: 0 0, -20% 0; }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .theme-light, .theme-sand) .card-lift::after { mix-blend-mode: normal; opacity: 0; }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .theme-light, .theme-sand) .card-lift:hover::after { opacity: .9; }
+/* magnetic buttons: pulled slightly towards the cursor (Tilt3D sets --bx/--by) */
+.btn { translate: var(--bx, 0px) var(--by, 0px); transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease, letter-spacing .3s ease, translate .25s cubic-bezier(.2,.8,.2,1), background-position .6s ease; }
+/* photos: soft zoom + gold edge on hover */
+.overflow-hidden:has(> img.object-cover):hover > img.object-cover { transform: scale(1.06); transition: transform 1.2s cubic-bezier(.2,.8,.2,1); }
+.overflow-hidden:has(> img.object-cover) { transition: box-shadow .5s ease; }
+.overflow-hidden:has(> img.object-cover):hover { box-shadow: 0 0 0 1px color-mix(in oklab, var(--brand-gold) 55%, transparent), 0 30px 60px -30px color-mix(in oklab, var(--brand-gold) 70%, rgba(10,18,34,.4)); }
+@media (prefers-reduced-motion: reduce) { .btn { translate: none; } }

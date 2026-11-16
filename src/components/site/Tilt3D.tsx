@@ -17,6 +17,22 @@ export default function Tilt3D() {
     const reset = (el: HTMLElement | null) => {
       el?.style.removeProperty('--lx-rx');
       el?.style.removeProperty('--lx-ry');
+      el?.style.removeProperty('--cx');
+      el?.style.removeProperty('--cy');
+    };
+    // magnetic buttons: a button within reach is pulled a few pixels towards the cursor
+    let btn: HTMLElement | null = null;
+    const magnet = (e: PointerEvent) => {
+      const b = (e.target as Element | null)?.closest?.('.btn') as HTMLElement | null;
+      if (btn && btn !== b) {
+        btn.style.removeProperty('--bx');
+        btn.style.removeProperty('--by');
+      }
+      btn = b;
+      if (!b) return;
+      const r = b.getBoundingClientRect();
+      b.style.setProperty('--bx', `${(((e.clientX - r.left) / r.width - 0.5) * 8).toFixed(1)}px`);
+      b.style.setProperty('--by', `${(((e.clientY - r.top) / r.height - 0.5) * 6).toFixed(1)}px`);
     };
     // hero card: the whole hero listens, the card leans towards the mouse
     let hero: HTMLElement | null = null;
@@ -47,6 +63,7 @@ export default function Tilt3D() {
         reset(card);
         card = el;
       }
+      magnet(e);
       if (!card) return;
       x = e.clientX;
       y = e.clientY;
@@ -59,11 +76,16 @@ export default function Tilt3D() {
         const py = (y - r.top) / r.height - 0.5;
         card.style.setProperty('--lx-ry', `${(px * 9).toFixed(2)}deg`);
         card.style.setProperty('--lx-rx', `${(-py * 9).toFixed(2)}deg`);
+        card.style.setProperty('--cx', `${((px + 0.5) * 100).toFixed(1)}%`);
+        card.style.setProperty('--cy', `${((py + 0.5) * 100).toFixed(1)}%`);
       });
     };
     const onLeave = () => {
       reset(card);
       card = null;
+      btn?.style.removeProperty('--bx');
+      btn?.style.removeProperty('--by');
+      btn = null;
     };
     document.addEventListener('pointermove', onMove, { passive: true });
     document.addEventListener('pointerleave', onLeave);
