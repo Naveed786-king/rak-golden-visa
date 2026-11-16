@@ -35,6 +35,8 @@ export default function ApplyWizard() {
       const match = SERVICE_OPTIONS.find((o) => o.toLowerCase().includes(s.toLowerCase().split(' ')[0]) || s.toLowerCase().includes(o.toLowerCase().split(' ')[0]));
       setService(SERVICE_OPTIONS.includes(s) ? s : match || s);
     }
+    const nat = sp.get('nationality');
+    if (nat) setForm((f) => ({ ...f, nationality: f.nationality || nat.slice(0, 60) }));
     fetch('/api/auth/me')
       .then((r) => r.json())
       .then((d) => {

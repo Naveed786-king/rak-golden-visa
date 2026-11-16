@@ -44,9 +44,9 @@ export function Heading({
 }) {
   if (!eyebrow && !title && !subtitle) return null;
   return (
-    <Reveal className={cn('mb-12 md:mb-16', align === 'center' ? 'text-center mx-auto max-w-3xl' : 'max-w-2xl', className)}>
+    <Reveal className={cn('sec-head mb-12 md:mb-16', align === 'center' ? 'text-center mx-auto max-w-3xl' : 'max-w-2xl', className)}>
       {eyebrow && <span className={cn('eyebrow', align === 'center' && 'justify-center')}>{eyebrow}</span>}
-      {title && <h2 className="font-display text-4xl md:text-5xl lg:text-[3.4rem] font-semibold leading-[1.08] mt-4 text-ink">{title}</h2>}
+      {title && <h2 className="sec-title font-display text-4xl md:text-5xl lg:text-[3.4rem] font-semibold leading-[1.08] mt-4 text-ink">{title}</h2>}
       {subtitle && <p className="mt-5 text-base md:text-lg leading-relaxed opacity-75 whitespace-pre-line">{subtitle}</p>}
     </Reveal>
   );

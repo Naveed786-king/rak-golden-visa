@@ -60,11 +60,11 @@ export const defaultDesign: DesignSettings = {
   glass: { enabled: true, blur: 18, opacity: 10, border: 18, orbs: true },
   animation: { enabled: true, style: 'none', duration: 800 },
   header: {
-    style: 'glass',
-    bg: '#0A1222',
-    opacity: 90,
+    style: 'solid',
+    bg: '#FFFFFF',
+    opacity: 100,
     blur: 22,
-    text: '#FFFFFF',
+    text: '#0A1222',
     height: 76,
     logoHeight: 46,
     sticky: true,
@@ -81,13 +81,21 @@ export const defaultDesign: DesignSettings = {
 
 /**
  * Light & Gold refresh (Nov 2026): settings that still hold the OLD built-in defaults move to the new
- * ones (fonts). The header keeps its original navy colours. Anything an admin picked themselves is kept.
+ * ones (fonts, white portal header). Anything an admin picked themselves is kept.
  */
 export function refreshDesign(d: DesignSettings): DesignSettings {
   const same = (a: any, b: string) => String(a || '').trim().toLowerCase() === b.toLowerCase();
   if (d.fonts) {
     if (same(d.fonts.heading, 'Cormorant Garamond') || same(d.fonts.heading, 'Playfair Display')) d.fonts.heading = 'Playfair Display Variable';
     if (same(d.fonts.body, 'Manrope Variable') || same(d.fonts.body, 'Inter')) d.fonts.body = 'Inter Variable';
+  }
+  // Portal refresh (Nov 2026): the old built-in navy header becomes the new white header.
+  // A colour an admin picked themselves is kept.
+  if (d.header && same(d.header.bg, '#0A1222') && (!d.header.text || same(d.header.text, '#FFFFFF') || same(d.header.text, '#fff'))) {
+    d.header.bg = '#FFFFFF';
+    d.header.text = '#0A1222';
+    d.header.style = 'solid';
+    d.header.opacity = 100;
   }
   return d;
 }

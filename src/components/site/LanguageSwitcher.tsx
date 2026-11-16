@@ -65,7 +65,7 @@ export default function LanguageSwitcher({ variant = 'header' }: { variant?: 'he
 
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen(!open)} className="flex h-[42px] items-center gap-1.5 rounded-[14px] bg-white/[0.05] px-3 text-sm font-semibold ring-1 ring-inset ring-white/10 transition hover:ring-gold/60" aria-label="Change language">
+      <button onClick={() => setOpen(!open)} className="lang-btn flex h-[42px] items-center gap-1.5 rounded-[14px] bg-white/[0.05] px-3 text-sm font-semibold ring-1 ring-inset ring-white/10 transition hover:ring-gold/60" aria-label="Change language">
         <Globe className="h-4 w-4 text-gold" />
         <span className="uppercase">{current.code}</span>
         <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />

@@ -13,6 +13,7 @@ import '@fontsource/noto-kufi-arabic/400.css';
 import '@fontsource/noto-kufi-arabic/600.css';
 import './globals.css';
 import './luxe.css';
+import './portal.css';
 import { getSetting, getLocalizedBundle } from '@/lib/settings';
 import { getLocale } from '@/lib/i18n/server';
 import { localeInfo } from '@/lib/i18n/config';

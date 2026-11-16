@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Menu, X, Phone, User, ArrowUpRight, Mail, Clock } from 'lucide-react';
+import { ChevronDown, Menu, X, Phone, User, ArrowUpRight, Mail, Clock, Home, Info, Layers, Newspaper, Headset, FileCheck2, HelpCircle, Sparkles, Zap } from 'lucide-react';
 import type { HeaderSettings, SiteSettings } from '@/lib/defaults';
 import { cn } from '@/lib/utils';
 import Logo from './Logo';
@@ -15,6 +15,19 @@ import SmartLink from '@/components/ui/SmartLink';
 import { Icon, SocialIcon } from '@/components/ui/Icon';
 
 type Me = { name: string; role: string } | null;
+
+/** small icon in front of each top menu item (portal style) */
+function navIcon(href: string, label: string) {
+  const k = (href + ' ' + label).toLowerCase();
+  if (href === '/' || /\bhome\b/.test(k)) return Home;
+  if (/about|who-we/.test(k)) return Info;
+  if (/service|visa/.test(k)) return Layers;
+  if (/blog|news|article/.test(k)) return Newspaper;
+  if (/contact/.test(k)) return Headset;
+  if (/apply|application/.test(k)) return FileCheck2;
+  if (/faq|help|question/.test(k)) return HelpCircle;
+  return Sparkles;
+}
 
 export default function Header({ site, header }: { site: SiteSettings; header: HeaderSettings }) {
   const fullPath = usePathname() || '/';
@@ -123,6 +136,10 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                   className="nav-link flex items-center gap-1 px-3 xl:px-4 py-2.5 font-semibold"
                   data-active={isActive(item.href) ? '' : undefined}
                 >
+                  {(() => {
+                    const I = navIcon(item.href, item.label);
+                    return <I className="nav-ic" aria-hidden />;
+                  })()}
                   {item.label}
                   {(!!item.children?.length || isMega(item.href)) && <ChevronDown className={cn('h-3.5 w-3.5 opacity-70 transition-transform', drop === i && 'rotate-180')} />}
                 </SmartLink>
@@ -174,9 +191,12 @@ export default function Header({ site, header }: { site: SiteSettings; header: H
                 <User className="h-4 w-4" />
               </Link>
             )}
+            <SmartLink href="whatsapp" className="hdr-wa hidden xl:inline-flex">
+              <SocialIcon name="whatsapp" className="h-4 w-4" /> {t('WhatsApp')}
+            </SmartLink>
             {header.cta.label && (
               <SmartLink href={header.cta.href} className="btn btn-gold btn-sm hdr-cta hidden sm:inline-flex">
-                {header.cta.label} <ArrowUpRight className="h-4 w-4" />
+                <Zap className="h-4 w-4" /> {header.cta.label}
               </SmartLink>
             )}
             <button onClick={() => setOpen(true)} className="hdr-icon hdr-menu-btn lg:!hidden" aria-label={t('Menu')} aria-expanded={open}>

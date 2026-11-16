@@ -375,26 +375,6 @@ main > .blk + .blk::before {
 @keyframes hx-spin3 { from { transform: rotateX(-58deg) rotateY(24deg) rotateZ(0deg); } to { transform: rotateX(-58deg) rotateY(24deg) rotateZ(360deg); } }
 
 /* =====================================================================
-   FLOATING 3D GOLD EMBLEMS — faint 8-point stars turning on alternating sides of sections
-   ===================================================================== */
-main > .blk:nth-of-type(n + 2)::after {
-  content: ''; position: absolute; top: 18%; width: clamp(110px, 14vw, 210px); aspect-ratio: 1; z-index: 2; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23C8A255' stroke-width='1.2'%3E%3Cpath d='M40 4l10 26 26 10-26 10-10 26-10-26-26-10 26-10z'/%3E%3Crect x='22' y='22' width='36' height='36' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='7'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
-  opacity: .12; mix-blend-mode: multiply;
-  animation: lx-emblem 22s linear infinite;
-}
-main > .blk:nth-of-type(odd)::after { right: -40px; }
-main > .blk:nth-of-type(even)::after { left: -40px; animation-direction: reverse; }
-@keyframes lx-emblem { from { transform: perspective(600px) rotateY(0deg) rotateZ(0deg); } to { transform: perspective(600px) rotateY(360deg) rotateZ(180deg); } }
-@media (max-width: 767px) { main > .blk:nth-of-type(n + 2)::after { width: 90px; opacity: .1; } }
-
-@media (prefers-reduced-motion: reduce) {
-  .hx-plane, .hx-ring, main > .blk::after { animation: none !important; }
-}
-.anim-off :is(.hx-plane, .hx-ring), .anim-off main > .blk::after { animation: none !important; }
-
-
-/* =====================================================================
    POLISH PASS — typography, cards, buttons, links, FAQ, tables, forms, details
    ===================================================================== */
 /* typography */
@@ -529,53 +509,6 @@ img { image-rendering: auto; }
 :is(h1, h2, h3, h4) { overflow-wrap: break-word; hyphens: auto; }
 :is([dir='rtl']) :is(h1, h2, h3, h4) { hyphens: none; }
 @media (max-width: 480px) { .btn { white-space: normal; text-align: center; line-height: 1.3; } }
-
-/* =====================================================================
-   ADVANCED SECTION BACKGROUNDS
-   ===================================================================== */
-/* ivory sections: fine gold dot-grid + drifting gold glow */
-.theme-light {
-  background:
-    radial-gradient(48rem 26rem at var(--lx-gx, 85%) 0%, color-mix(in oklab, var(--brand-gold-light) 38%, transparent), transparent 70%),
-    radial-gradient(color-mix(in oklab, var(--brand-gold) 22%, transparent) 1px, transparent 1.4px) 0 0 / 26px 26px,
-    var(--lx-ivory);
-}
-/* champagne sections: silk diagonal lines + glow */
-.theme-sand {
-  background:
-    radial-gradient(60rem 26rem at 100% 0%, color-mix(in oklab, var(--brand-gold-light) 45%, transparent), transparent 70%),
-    radial-gradient(40rem 22rem at 0% 100%, color-mix(in oklab, var(--brand-gold) 14%, transparent), transparent 70%),
-    repeating-linear-gradient(135deg, color-mix(in oklab, var(--brand-gold) 7%, transparent) 0 1px, transparent 1px 22px),
-    linear-gradient(180deg, var(--lx-cream), var(--lx-champagne));
-}
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* glows drift while the section passes (only repaints on scroll) */
-    .anim-flow .theme-light:is(.section, section) { animation: lx-glow-light linear both; animation-timeline: view(); animation-range: cover; }
-    .anim-flow .theme-sand:is(.section, section) { animation: lx-glow-sand linear both; animation-timeline: view(); animation-range: cover; }
-
-    /* every section after the hero unfolds from a rounded 3D panel to full width */
-    .anim-flow main > .blk:nth-of-type(n + 2) { perspective: 1800px; }
-    .anim-flow main > .blk:nth-of-type(n + 2) > :is(section, div):first-child {
-      transform-origin: 50% 0%;
-      animation: lx-unfold linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 90%;
-    }
-  }
-}
-@keyframes lx-glow-light { from { background-position: 0 -80px, 0 0, 0 0; } to { background-position: 0 120px, 0 26px, 0 0; } }
-@keyframes lx-glow-sand { from { background-position: 0 -60px, 0 60px, 0 0, 0 0; } to { background-position: 0 80px, 0 -40px, 44px 0, 0 0; } }
-@keyframes lx-unfold {
-  from { clip-path: inset(2.5% 3.5% 0 3.5% round 44px); scale: .955; rotate: x 7deg; }
-  to { clip-path: inset(-300px -300px -300px -300px round 0); scale: 1; rotate: x 0deg; }
-}
-@media (max-width: 767px) {
-  @keyframes lx-unfold {
-    from { clip-path: inset(1.5% 2.5% 0 2.5% round 28px); scale: .97; rotate: x 4deg; }
-    to { clip-path: inset(-300px -300px -300px -300px round 0); scale: 1; rotate: x 0deg; }
-  }
-}
 
 /* =====================================================================
    HOVER — gold spotlight on cards, magnetic buttons, photo zoom
