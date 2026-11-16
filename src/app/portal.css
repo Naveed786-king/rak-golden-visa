@@ -192,3 +192,29 @@ main .sec-head > p { color: var(--pt-muted); opacity: 1; }
   .hp-stat-ic { width: 38px; height: 38px; }
   .hp-stat-v { font-size: 1.3rem; }
 }
+
+/* ---------------------------------------------------------------- header drop-downs
+   The header is white now, so its menus (language list, dropdowns, Services mega menu)
+   get their own solid navy panel instead of taking the header colour. */
+.site-header .glass-menu,
+.site-header .mega.glass-menu {
+  background:
+    radial-gradient(40rem 18rem at 100% 0%, color-mix(in oklab, var(--brand-gold) 12%, transparent), transparent 70%),
+    #0c1629 !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  border: 1px solid color-mix(in oklab, var(--brand-gold) 28%, rgba(255, 255, 255, .08)) !important;
+  box-shadow: 0 30px 70px -24px rgba(10, 18, 34, .55), 0 0 0 1px rgba(255, 255, 255, .03) inset !important;
+  color: #fff;
+}
+.site-header .glass-menu::before {
+  content: ''; position: absolute; inset-inline: 18px; top: 0; height: 2px; border-radius: 2px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--brand-gold), transparent);
+}
+/* language list: clear rows, gold hover, gold active */
+.site-header .glass-menu > :is(a, button) {
+  display: flex; align-items: center; gap: .6rem; border-radius: 12px; color: rgba(255, 255, 255, .86);
+  transition: background .2s, color .2s, padding .2s;
+}
+.site-header .glass-menu > :is(a, button):hover { background: rgba(255, 255, 255, .07); color: var(--brand-gold-light); }
+.site-header .glass-menu > :is(a, button)[aria-current='true'],
+.site-header .glass-menu > :is(a, button).bg-gold { color: var(--brand-ink) !important; }
