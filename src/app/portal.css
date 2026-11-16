@@ -51,17 +51,16 @@ main .sec-head > p { color: var(--pt-muted); opacity: 1; }
 @media (hover: hover) and (pointer: fine) {
   .card-lift:hover { transform: translateY(-6px) !important; }
 }
-/* icon tiles: navy square with a gold icon; turns gold on hover */
-.card-lift :is([class*='h-12'], [class*='h-14'], [class*='h-11']):is([class*='rounded']):has(> svg.lucide):not([class*='bg-ink']) {
-  background: linear-gradient(145deg, #172748, var(--brand-ink)) !important;
-  color: var(--brand-gold-light) !important;
-  box-shadow: 0 12px 22px -14px rgba(10, 18, 34, .7) !important;
+/* icon tiles: round gold badge inside a thin gold ring (like the reference visa cards) */
+.card-lift :is([class*='h-12'], [class*='h-14'], [class*='h-11'], [class*='h-10']):is([class*='rounded']):has(> svg.lucide):not([class*='bg-ink']) {
+  border-radius: 50% !important;
+  background: linear-gradient(145deg, #f6e8c3, var(--brand-gold-light) 30%, var(--brand-gold) 65%, color-mix(in oklab, var(--brand-gold) 72%, black)) !important;
+  color: var(--brand-ink) !important;
+  box-shadow: 0 0 0 4px #fff, 0 0 0 5.5px color-mix(in oklab, var(--brand-gold) 55%, transparent), 0 12px 22px -12px var(--brand-gold) !important;
   --tw-ring-color: transparent;
 }
-.card-lift:hover :is([class*='h-12'], [class*='h-14'], [class*='h-11']):is([class*='rounded']):has(> svg.lucide):not([class*='bg-ink']) {
-  background: linear-gradient(145deg, var(--brand-gold-light), var(--brand-gold)) !important;
-  color: var(--brand-ink) !important;
-  transform: translateY(-2px) !important;
+.card-lift:hover :is([class*='h-12'], [class*='h-14'], [class*='h-11'], [class*='h-10']):is([class*='rounded']):has(> svg.lucide):not([class*='bg-ink']) {
+  transform: rotate(-8deg) scale(1.05) !important;
 }
 
 /* calmer scroll entrance: a simple fade-up, no 3D tilt */
@@ -220,3 +219,79 @@ main .sec-head > p { color: var(--pt-muted); opacity: 1; }
 .vcard-price { display: block; margin-top: .1rem; font-family: var(--font-sans) !important; font-size: 1.65rem; font-weight: 800; line-height: 1.1; white-space: nowrap; color: var(--brand-ink); font-variant-numeric: tabular-nums; }
 .vcard-go { flex-shrink: 0; }
 @media (max-width: 400px) { .vcard-badge { width: 70px; height: 70px; } .vcard-price { font-size: 1.4rem; } }
+
+/* =====================================================================
+   CARD SYSTEM — every card on the site follows the reference visa cards:
+   white, rounded, soft shadow, faint gold skyline in the top corner,
+   tag pill, gold title, round icon badge, bordered rows box, price + button at the bottom.
+   ===================================================================== */
+:root {
+  --pt-skyline: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 100'%3E%3Cg fill='none' stroke='%23C8A255' stroke-width='1' stroke-opacity='.55'%3E%3Cpath d='M8 100V72h12v28M24 100V56h11v44M39 100V42l6-12 6 12v58M55 100V63h13v37M72 100V22l5-20 5 20v78M88 100V50l7-7 7 7v50M106 100V66h12v34M122 100V58h10v42'/%3E%3Cpath d='M43 54h4M43 66h4M43 78h4M76 36h2M76 50h2M76 64h2M76 78h2M92 60h6M92 72h6M59 72h5M59 84h5'/%3E%3C/g%3E%3C/svg%3E");
+}
+.card-lift:not(.rounded-none, .bg-ink, [class*='from-ink']) { isolation: isolate; border-radius: 22px !important; }
+.card-lift:not(.rounded-none, .bg-ink, [class*='from-ink'])::before {
+  content: ''; position: absolute; top: 0; inset-inline-end: 0; z-index: -1; width: 160px; height: 120px; pointer-events: none;
+  border-start-end-radius: inherit;
+  background:
+    var(--pt-skyline) right 10px top 10px / 118px auto no-repeat,
+    radial-gradient(circle at 100% 0, color-mix(in oklab, var(--brand-gold) 16%, transparent), transparent 70%);
+  opacity: .8; transition: opacity .3s;
+}
+[dir='rtl'] .card-lift:not(.rounded-none, .bg-ink, [class*='from-ink'])::before {
+  background:
+    var(--pt-skyline) left 10px top 10px / 118px auto no-repeat,
+    radial-gradient(circle at 0 0, color-mix(in oklab, var(--brand-gold) 16%, transparent), transparent 70%);
+}
+.card-lift:hover::before { opacity: 1; }
+.vcard::before { display: none; }
+
+/* feature / package cards (pc-*) */
+.pc { position: relative; display: flex; flex-direction: column; height: 100%; overflow: hidden; padding: 1.4rem 1.4rem 1.35rem; }
+.pc-head { display: flex; align-items: center; gap: 1rem; padding-inline-end: 3.5rem; }
+.pc-badge { flex-shrink: 0; display: grid; place-items: center; width: 76px; height: 76px; padding: 5px; border-radius: 50%; border: 1.5px solid color-mix(in oklab, var(--brand-gold) 55%, transparent); background: #fff; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.pc-badge > span {
+  display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; color: var(--brand-ink);
+  background: linear-gradient(145deg, #f6e8c3, var(--brand-gold-light) 30%, var(--brand-gold) 65%, color-mix(in oklab, var(--brand-gold) 72%, black));
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .55), 0 12px 22px -12px var(--brand-gold);
+}
+.pc:hover .pc-badge { transform: rotate(-8deg) scale(1.05); }
+.pc-tag, .vcard-tag { display: inline-block; margin-bottom: .45rem; padding: .3rem .7rem; border-radius: 8px; background: var(--pt-soft); border: 1px solid var(--pt-line); font-size: .7rem; font-weight: 700; line-height: 1.2; color: #3b465c; }
+.pc-title { font-family: var(--font-sans) !important; font-size: 1.16rem; font-weight: 800; line-height: 1.3; letter-spacing: -.01em; color: var(--lx-gold-text) !important; }
+.pc-box { margin-top: 1.15rem; border: 1px solid var(--pt-line); border-radius: 14px; background: #fff; overflow: hidden; }
+.pc-text { padding: .85rem 1rem; font-size: .88rem; line-height: 1.65; color: var(--pt-muted); }
+.pc-text + .pc-rows { border-top: 1px solid var(--pt-line); }
+.pc-rows li { display: flex; align-items: flex-start; gap: .6rem; padding: .62rem .9rem; font-size: .86rem; line-height: 1.45; color: #364156; }
+.pc-rows li + li { border-top: 1px dashed var(--pt-line); }
+.pc-ri { flex-shrink: 0; display: grid; place-items: center; width: 24px; height: 24px; margin-top: -1px; border-radius: 50%; background: color-mix(in oklab, var(--brand-gold) 14%, #fff); color: var(--lx-gold-text); }
+.pc-time { display: flex; align-items: flex-start; gap: .6rem; padding: .7rem .9rem; background: color-mix(in oklab, var(--brand-gold) 6%, #fff); border-bottom: 1px solid var(--pt-line); }
+.pc-time b { display: block; font-size: .78rem; font-weight: 700; color: var(--brand-ink); }
+.pc-time b + span { display: block; font-size: .8rem; color: var(--pt-muted); }
+.pc-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; margin-top: auto; padding-top: 1.25rem; }
+.pc-plan .pc-box { margin-bottom: 0; }
+.pc-pl { display: block; font-size: .74rem; color: var(--pt-muted); }
+.pc-price { display: block; margin-top: .1rem; font-family: var(--font-sans) !important; font-size: 1.7rem; font-weight: 800; line-height: 1.1; white-space: nowrap; color: var(--brand-ink); font-variant-numeric: tabular-nums; }
+.pc-go { flex-shrink: 0; }
+.pc-featured { border: 1.5px solid var(--brand-gold) !important; box-shadow: 0 30px 60px -32px color-mix(in oklab, var(--brand-gold) 80%, rgba(10, 18, 34, .4)) !important; }
+.pc-featured .pc-tag { background: linear-gradient(140deg, var(--brand-gold-light), var(--brand-gold)); border-color: transparent; color: var(--brand-ink); }
+@media (max-width: 400px) { .pc-badge { width: 64px; height: 64px; } .pc-head { padding-inline-end: 0; } .pc-price { font-size: 1.4rem; } }
+
+/* other cards (testimonials, reviews, blog, contact): same soft white card */
+.card-lift :is(h3, h4):not(.pc-title, .vcard-title, .font-display) { color: var(--brand-ink); }
+
+/* ---------------------------------------------------------------- more polish */
+/* every section label in the page body becomes a gold pill (not in the hero) */
+main > .blk:not(:first-of-type) .eyebrow {
+  display: inline-flex; align-items: center; gap: .5rem; padding: .42rem .95rem; border-radius: 999px;
+  background: color-mix(in oklab, var(--brand-gold) 11%, #fff); border: 1px solid var(--lx-gold-line);
+  color: var(--lx-gold-text); font-size: .72rem;
+}
+main > .blk:not(:first-of-type) .eyebrow::before { width: 6px !important; height: 6px; border-radius: 50%; background: var(--brand-gold); animation: none !important; }
+/* boxes (tables, FAQ, notes) match the cards */
+:is(.theme-light, .theme-sand) .box:not(.bg-ink, .keep-dark), main > .blk:not(:first-of-type) .box:not(.bg-ink, .keep-dark) { border-radius: 20px !important; }
+main .box table thead tr, main .box table tr:first-child th { background: color-mix(in oklab, var(--brand-gold) 10%, #fff); }
+main .box table th { color: var(--brand-ink); font-weight: 700; }
+main .box table td, main .box table th { border-color: var(--pt-line) !important; }
+main .box table tbody tr:nth-child(even) { background: #fafbfd; }
+/* blog cards: image zoom stays, body gets the card look */
+.card-lift img { transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+.card-lift:hover img { transform: scale(1.04); }

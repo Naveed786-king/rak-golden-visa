@@ -272,31 +272,56 @@ export function Features({ data }: P) {
           const bullets = lines(it.bullets);
           return (
             <StaggerItem key={i}>
-              <div
-                className={cn(
-                  'card-lift group relative h-full overflow-hidden rounded-3xl p-7 md:p-8',
-                  style === 'glass' && 'glass text-white',
-                  style === 'cards' && 'bg-white ring-1 ring-ink/5 shadow-[0_20px_50px_-35px_rgba(10,18,34,0.35)]',
-                  style === 'minimal' && 'border-t-2 border-gold/60 rounded-none !p-0 !pt-7 hover:!translate-y-0 hover:!shadow-none'
-                )}
-              >
-                {style !== 'minimal' && <div className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-gold-light to-gold transition-transform duration-500 group-hover:scale-x-100" />}
-                <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gold/12 text-gold-deep ring-1 ring-gold/25 transition-all duration-500 group-hover:bg-gold group-hover:text-ink">
-                  <Icon name={it.icon} className="h-6 w-6" />
-                </span>
-                <h3 className="mt-6 font-display text-2xl font-semibold leading-snug">{it.title}</h3>
-                {it.subtitle && <p className="mt-1 text-xs font-bold uppercase tracking-wider text-gold-deep">{it.subtitle}</p>}
-                {it.text && <p className="mt-3 text-sm leading-relaxed opacity-70 whitespace-pre-line">{it.text}</p>}
-                {bullets.length > 0 && (
-                  <ul className="mt-5 space-y-2.5">
-                    {bullets.map((b, j) => (
-                      <li key={j} className="flex gap-2.5 text-sm opacity-80">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" strokeWidth={3} /> <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              {style === 'minimal' ? (
+                <div className="card-lift group relative h-full overflow-hidden border-t-2 border-gold/60 rounded-none !p-0 !pt-7 hover:!translate-y-0 hover:!shadow-none">
+                  <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gold/12 text-gold-deep ring-1 ring-gold/25">
+                    <Icon name={it.icon} className="h-6 w-6" />
+                  </span>
+                  <h3 className="mt-6 font-display text-2xl font-semibold leading-snug">{it.title}</h3>
+                  {it.subtitle && <p className="mt-1 text-xs font-bold uppercase tracking-wider text-gold-deep">{it.subtitle}</p>}
+                  {it.text && <p className="mt-3 text-sm leading-relaxed opacity-70 whitespace-pre-line">{it.text}</p>}
+                  {bullets.length > 0 && (
+                    <ul className="mt-5 space-y-2.5">
+                      {bullets.map((b, j) => (
+                        <li key={j} className="flex gap-2.5 text-sm opacity-80">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" strokeWidth={3} /> <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ) : (
+                <div className={cn('card-lift pc group', style === 'glass' && 'glass')}>
+                  <div className="pc-head">
+                    <span className="pc-badge">
+                      <span>
+                        <Icon name={it.icon} className="h-7 w-7" />
+                      </span>
+                    </span>
+                    <div className="min-w-0">
+                      {it.subtitle && <span className="pc-tag">{it.subtitle}</span>}
+                      <h3 className="pc-title">{it.title}</h3>
+                    </div>
+                  </div>
+                  {(it.text || bullets.length > 0) && (
+                    <div className="pc-box">
+                      {it.text && <p className="pc-text whitespace-pre-line">{it.text}</p>}
+                      {bullets.length > 0 && (
+                        <ul className="pc-rows">
+                          {bullets.map((b, j) => (
+                            <li key={j}>
+                              <span className="pc-ri">
+                                <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                              </span>
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </StaggerItem>
           );
         })}
@@ -646,37 +671,49 @@ export function Pricing({ data }: P) {
       <div className={cn('grid gap-6 items-stretch', plans.length >= 3 ? 'lg:grid-cols-3' : 'md:grid-cols-2 max-w-4xl mx-auto')}>
         {plans.map((p, i) => (
           <Reveal key={i} delay={i * 0.1} className={cn(p.featured && 'lg:-my-4')}>
-            <div className={cn('card-lift relative flex h-full flex-col overflow-hidden rounded-[2rem] p-8 md:p-9', p.featured ? 'bg-ink text-white shadow-[0_40px_80px_-30px_rgba(10,18,34,0.7)] ring-2 ring-gold' : 'bg-white ring-1 ring-ink/10')}>
-              {p.featured && (
-                <>
-                  <div className="absolute inset-0 bg-pattern opacity-[0.06]" />
-                  <div className="absolute -top-24 -end-24 h-56 w-56 rounded-full bg-gold/30 blur-3xl" />
-                  {/* in the flow (not floating) so a long plan name — or Arabic — never runs under it */}
-                  <span className="relative mb-4 inline-flex items-center gap-1 self-start rounded-full bg-gold px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-wider text-ink">
-                    <Crown className="h-3 w-3" /> <T>Most popular</T>
-                  </span>
-                </>
-              )}
-              <h3 className={cn('relative font-display text-3xl font-semibold', p.featured && '!text-white')}>{p.name}</h3>
-              <p className={cn('relative mt-4 font-display text-5xl font-bold', p.featured ? 'text-gold-gradient' : 'text-ink')}>{withDirham(p.price)}</p>
-              {p.time && (
-                <p className={cn('relative mt-3 inline-flex items-center gap-2 text-xs font-bold', p.featured ? 'text-gold-light' : 'text-gold-deep')}>
-                  <Clock className="h-4 w-4" /> {p.time}
-                </p>
-              )}
-              <div className={cn('relative my-7 h-px', p.featured ? 'bg-white/10' : 'bg-ink/10')} />
-              <ul className="relative flex-1 space-y-3">
-                {lines(p.features).map((f, j) => (
-                  <li key={j} className="flex gap-3 text-sm">
-                    <span className={cn('mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full', p.featured ? 'bg-gold text-ink' : 'bg-gold/15 text-gold-deep')}>
-                      <Check className="h-3 w-3" strokeWidth={3} />
+            <div className={cn('card-lift pc pc-plan', p.featured && 'pc-featured')}>
+              <div className="pc-head">
+                <span className="pc-badge">
+                  <span>{p.featured ? <Crown className="h-7 w-7" /> : <Sparkles className="h-7 w-7" />}</span>
+                </span>
+                <div className="min-w-0">
+                  <span className="pc-tag">{p.featured ? <T>Most popular</T> : <T>Package</T>}</span>
+                  <h3 className="pc-title">{p.name}</h3>
+                </div>
+              </div>
+              <div className="pc-box flex-1">
+                {p.time && (
+                  <div className="pc-time">
+                    <span className="pc-ri">
+                      <Clock className="h-3.5 w-3.5" />
                     </span>
-                    <span className={p.featured ? 'text-white/85' : 'text-ink/75'}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="relative mt-8">
-                <Cta link={p.cta?.label ? p.cta : { label: 'Get offer', href: 'whatsapp' }} className={cn('btn w-full', p.featured ? 'btn-gold' : 'btn-dark')} />
+                    <span>
+                      <b>
+                        <T>Processing time</T>
+                      </b>
+                      <span>{p.time}</span>
+                    </span>
+                  </div>
+                )}
+                <ul className="pc-rows">
+                  {lines(p.features).map((f, j) => (
+                    <li key={j}>
+                      <span className="pc-ri">
+                        <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                      </span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="pc-foot">
+                <div className="min-w-0">
+                  <span className="pc-pl">
+                    <T>Total price</T>
+                  </span>
+                  <span className="pc-price font-display">{withDirham(p.price)}</span>
+                </div>
+                <Cta link={p.cta?.label ? p.cta : { label: 'Get offer', href: 'whatsapp' }} className="btn btn-gold btn-sm pc-go" />
               </div>
             </div>
           </Reveal>
