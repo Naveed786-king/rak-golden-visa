@@ -294,7 +294,7 @@ main > .blk + .blk::before {
       animation-range: entry 0% cover 25%;
     }
     /* paragraphs follow a little later */
-    .anim-flow main section > .container-x p:not(main > :is(div, section, article, header):first-of-type *):not(.grid *) {
+    .anim-flow main section > .container-x p:not(main > :is(div, section, article, header):first-of-type *):not(.grid *, .rj-help *, .flex *) {
       animation: lx-para linear both;
       animation-timeline: view();
       animation-range: entry 10% cover 32%;
