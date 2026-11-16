@@ -70,7 +70,6 @@ body { background: #fff; color: #263044; }
 :is(.theme-light, .theme-sand) .bg-pattern { display: none; }
 main > .blk + .blk::before { display: none; }
 main > .blk > :is(section, div):first-child { animation: none !important; clip-path: none !important; }
-.hx-floor, .hx-plane, .hx-orbit, .hx-ring { display: none !important; }
 
 /* section headings: gold pill label, clear navy title */
 main .sec-head .eyebrow {

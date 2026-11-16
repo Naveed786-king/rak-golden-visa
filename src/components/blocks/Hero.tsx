@@ -1,14 +1,13 @@
 'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowRight, Award, Check, Clock, Globe2, Lock, ShieldCheck, Users, FileCheck2, Headset } from 'lucide-react';
+import { useRef } from 'react';
+import HeroDecor from '@/components/site/HeroDecor';
+import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import { ArrowRight, Check, ShieldCheck, Users, Zap } from 'lucide-react';
 import SmartLink from '@/components/ui/SmartLink';
 import Counter from '@/components/ui/Counter';
 import { SocialIcon } from '@/components/ui/Icon';
 import { lines } from '@/lib/utils';
-import { useT, useLocalize } from '@/components/site/SiteProvider';
-import { SERVICE_OPTIONS } from '@/lib/defaults';
-import { COUNTRIES } from '@/lib/countries';
+import { useT } from '@/components/site/SiteProvider';
 
 export function Skyline({ className }: { className?: string }) {
   return (
@@ -43,117 +42,179 @@ export function Skyline({ className }: { className?: string }) {
   );
 }
 
-/** Quick-apply card (portal style): pick nationality + visa type, then continue to the application form */
-function QuickApply({ title, subtitle }: { title?: string; subtitle?: string }) {
+function VisaCard({ title, subtitle }: { title?: string; subtitle?: string }) {
   const t = useT();
-  const L = useLocalize();
-  const router = useRouter();
-  const [nat, setNat] = useState('');
-  const [svc, setSvc] = useState(SERVICE_OPTIONS[0]);
-  function go(e: React.FormEvent) {
-    e.preventDefault();
-    const q = new URLSearchParams({ service: svc });
-    if (nat) q.set('nationality', nat);
-    router.push(L('/apply') + '?' + q.toString());
+  const ref = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [14, -14]), { stiffness: 150, damping: 15 });
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-18, 18]), { stiffness: 150, damping: 15 });
+  const glareX = useTransform(mx, [-0.5, 0.5], ['0%', '100%']);
+
+  function onMove(e: React.MouseEvent) {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top) / r.height - 0.5);
   }
+  function onLeave() {
+    mx.set(0);
+    my.set(0);
+  }
+
   return (
-    <form onSubmit={go} className="qa-card fx-pop" style={{ '--d': '0.35s' } as any}>
-      <div className="qa-head">
-        <span className="qa-badge">
-          <FileCheck2 className="h-5 w-5" />
-        </span>
-        <div className="min-w-0">
-          <p className="qa-title">{title || t('Apply for your visa')}</p>
-          <p className="qa-sub">{subtitle || t('Start online in 2 minutes')}</p>
+    <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave} className="relative mx-auto w-full max-w-[460px] [perspective:1200px]">
+      {/* Back card */}
+      <div className="absolute inset-0 translate-x-6 translate-y-8 rotate-6 rounded-[28px] glass" />
+      <motion.div
+        style={{ rotateX: rx, rotateY: ry }}
+        className="vc-3d relative aspect-[1.586] rounded-[28px] p-7 overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8)]"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-[#f3e2b3] via-gold to-[#7d5d22]" />
+        <div className="absolute inset-0 bg-pattern opacity-25 mix-blend-multiply" />
+        <motion.div style={{ left: glareX }} className="absolute -top-1/2 h-[200%] w-24 -translate-x-1/2 rotate-12 bg-white/35 blur-xl" />
+        <div className="vc-3d-in relative flex h-full flex-col justify-between text-ink">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-[0.62rem] font-extrabold tracking-[0.3em] opacity-70">{t('UNITED ARAB EMIRATES')}</p>
+              <p className="font-display text-2xl md:text-[1.7rem] font-bold leading-tight mt-1">{title || 'UAE Golden Residency'}</p>
+            </div>
+            <svg viewBox="0 0 24 24" className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round">
+              <path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5L3 8z" />
+              <path d="M5 21h14" />
+            </svg>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-14 rounded-md bg-gradient-to-br from-[#fff3cf] to-[#b8913f] ring-1 ring-black/10 grid grid-cols-3 gap-px p-1">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <span key={i} className="rounded-[2px] bg-black/10" />
+              ))}
+            </div>
+            <p className="font-arabic text-xl opacity-80" dir="rtl">
+              الإقامة الذهبية
+            </p>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-[0.6rem] font-bold tracking-[0.25em] opacity-60">{t('HOLDER')}</p>
+              <p className="font-semibold tracking-wider">{t('YOUR NAME HERE')}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[0.6rem] font-bold tracking-[0.25em] opacity-60">{t('VALIDITY')}</p>
+              <p className="font-semibold tracking-wider">{subtitle || '10 YEARS'}</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="fx-left absolute hidden sm:block -left-4 md:-left-12 -bottom-10" style={{ '--d': '1.1s' } as any}>
+        <div className="animate-float flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-2xl">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-emerald-500/15 text-emerald-600">
+            <Zap className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-xs text-ink/50">{t('Fast-track approval')}</p>
+            <p className="text-sm font-extrabold text-ink">{t('In 48 working hours')}</p>
+          </div>
         </div>
       </div>
-      <label className="qa-label">
-        <Globe2 className="h-4 w-4" /> {t('I am a citizen of')}
-      </label>
-      <select value={nat} onChange={(e) => setNat(e.target.value)} className="qa-field" aria-label={t('I am a citizen of')}>
-        <option value="">{t('Select your country')}</option>
-        {COUNTRIES.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
-      <label className="qa-label">
-        <ShieldCheck className="h-4 w-4" /> {t('Visa type')}
-      </label>
-      <select value={svc} onChange={(e) => setSvc(e.target.value)} className="qa-field" aria-label={t('Visa type')}>
-        {SERVICE_OPTIONS.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-      <button type="submit" className="btn btn-gold qa-go">
-        {t('Apply now')} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-      </button>
-      <div className="qa-foot">
-        <span>
-          <Lock className="h-3.5 w-3.5" /> {t('Secure & confidential')}
-        </span>
-        <SmartLink href="whatsapp" className="qa-wa">
-          <SocialIcon name="whatsapp" className="h-3.5 w-3.5" /> {t('Ask on WhatsApp')}
-        </SmartLink>
+      <div className="fx-right absolute hidden sm:block -right-2 md:-right-8 -top-8" style={{ '--d': '1.3s' } as any}>
+        <div className="animate-float [animation-delay:2s] flex items-center gap-3 rounded-2xl glass px-4 py-3 text-white">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-gold text-ink">
+            <Users className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-xs text-white/60">{t('Sponsor your')}</p>
+            <p className="text-sm font-bold">{t('Spouse, children & parents')}</p>
+          </div>
+        </div>
       </div>
-    </form>
+    </div>
   );
 }
 
-const STAT_ICONS = [Award, Clock, Users, Headset];
-
 export default function Hero({ data }: { data: any }) {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
   const words = String(data.title || '').split(' ');
   const badges = lines(data.badges);
   const stats: { value: string; label: string }[] = data.stats || [];
 
   return (
-    <section id={data.anchor || undefined} className="theme-dark hero-portal relative overflow-hidden">
-      <div className="hp-bg absolute inset-0" aria-hidden>
+    <section ref={ref} id={data.anchor || undefined} className="theme-dark relative overflow-hidden pt-16 pb-36 md:pt-24 md:pb-48">
+      <motion.div style={{ y: yBg }} className="hero-bg absolute inset-0">
         {data.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={data.image} alt="" className="hp-photo" fetchPriority="high" />
-        ) : (
-          <Skyline className="hp-sky" />
-        )}
-        <div className="hp-shade" />
-      </div>
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={data.image} alt="" className="h-full w-full object-cover opacity-30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/40" />
+          </>
+        ) : null}
+        <div className="absolute inset-0 bg-pattern opacity-[0.06]" />
+        <div className="absolute -top-40 right-0 h-[620px] w-[620px] rounded-full bg-gold/20 blur-[140px]" />
+        <div className="absolute bottom-0 -left-40 h-[420px] w-[420px] rounded-full bg-gold/10 blur-[120px]" />
+      </motion.div>
 
-      <div className="container-x relative grid items-center gap-10 lg:gap-14 pt-12 pb-10 md:pt-16 lg:grid-cols-[1.2fr_minmax(0,430px)] lg:pt-20 lg:pb-16">
+      {data.arabic && (
+        <p className="pointer-events-none absolute right-0 bottom-24 md:bottom-32 font-arabic text-[22vw] md:text-[13rem] leading-none text-gold/[0.05] select-none whitespace-nowrap" dir="rtl">
+          {data.arabic}
+        </p>
+      )}
+
+      <HeroDecor orbit />
+      <div className="container-x relative grid items-center gap-16 lg:grid-cols-[1.15fr_1fr]">
         <div className="hero-copy">
           {data.eyebrow && (
-            <span className="fx-up hp-eyebrow">
+            <span
+              className="fx-up inline-flex items-center gap-2.5 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-bold tracking-wide text-gold-light"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+              </span>
               <ShieldCheck className="h-4 w-4" /> {data.eyebrow}
             </span>
           )}
 
-          <h1 className="hp-title font-display">
+          <h1 className="mt-7 font-display text-[2.9rem] leading-[1.02] sm:text-6xl lg:text-[5.2rem] font-semibold text-white">
             {words.map((w, i) => (
-              <span key={i} className="fx-word inline-block me-[0.25em]" style={{ '--d': `${0.1 + i * 0.05}s` } as any}>
+              <span key={i} className="fx-word inline-block me-[0.25em]" style={{ '--d': `${0.15 + i * 0.06}s` } as any}>
                 {w}
               </span>
             ))}
             {data.highlight && (
-              <span className="fx-word inline-block text-gold-gradient" style={{ '--d': `${0.15 + words.length * 0.05}s` } as any}>
+              <span className="fx-word inline-block italic text-gold-gradient pe-2" style={{ '--d': `${0.2 + words.length * 0.06}s` } as any}>
                 {data.highlight}
               </span>
             )}
           </h1>
 
           {data.subtitle && (
-            <p style={{ '--d': '0.45s' } as any} className="fx-up hp-sub">
+            <p style={{ '--d': '0.6s' } as any} className="fx-up mt-7 max-w-xl text-base md:text-lg leading-relaxed text-white/70">
               {data.subtitle}
             </p>
           )}
 
+          <div style={{ '--d': '0.8s' } as any} className="fx-up mt-9 flex flex-wrap gap-3">
+            {data.primary?.label && (
+              <SmartLink href={data.primary.href} className="btn btn-gold">
+                {data.primary.label} <ArrowRight className="h-4 w-4" />
+              </SmartLink>
+            )}
+            {data.secondary?.label && (
+              <SmartLink href={data.secondary.href} className="btn btn-ghost-light">
+                {data.secondary.href === 'whatsapp' && <SocialIcon name="whatsapp" className="h-4 w-4 text-[#25D366]" />}
+                {data.secondary.label}
+              </SmartLink>
+            )}
+          </div>
+
           {badges.length > 0 && (
-            <ul style={{ '--d': '0.6s' } as any} className="fx-up hp-badges">
+            <ul style={{ '--d': '1s' } as any} className="fx-up mt-8 flex flex-wrap gap-x-6 gap-y-3">
               {badges.map((b, i) => (
-                <li key={i}>
-                  <span className="hp-tick">
+                <li key={i} className="flex items-center gap-2 text-sm text-white/75">
+                  <span className="grid h-5 w-5 place-items-center rounded-full bg-gold/20 text-gold">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>
                   {b}
@@ -162,44 +223,28 @@ export default function Hero({ data }: { data: any }) {
             </ul>
           )}
 
-          <div style={{ '--d': '0.7s' } as any} className="fx-up mt-8 flex flex-wrap gap-3">
-            {data.primary?.label && (
-              <SmartLink href={data.primary.href} className="btn btn-gold">
-                {data.primary.label} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-              </SmartLink>
-            )}
-            {data.secondary?.label && (
-              <SmartLink href={data.secondary.href} className={data.secondary.href === 'whatsapp' ? 'btn hp-wa' : 'btn btn-ghost-light'}>
-                {data.secondary.href === 'whatsapp' && <SocialIcon name="whatsapp" className="h-4 w-4" />}
-                {data.secondary.label}
-              </SmartLink>
-            )}
-          </div>
+          {stats.length > 0 && (
+            <div style={{ '--d': '1.1s' } as any} className="fx-up mt-12 grid grid-cols-3 max-w-lg divide-x divide-white/10 border-t border-white/10 pt-8">
+              {stats.slice(0, 3).map((s, i) => (
+                <div key={i} className="px-4 first:pl-0">
+                  <Counter value={s.value} className="block whitespace-nowrap font-display text-[1.85rem] sm:text-4xl md:text-5xl font-bold text-gold-gradient" />
+                  <span className="mt-1 block text-xs uppercase tracking-wider text-white/55">{s.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <QuickApply title={data.cardTitle} subtitle={data.cardSubtitle} />
+        <div style={{ '--d': '0.4s' } as any} className="hero-visual fx-pop relative px-6 md:px-10 py-10">
+          {/* 3D: follows the mouse on desktop (Tilt3D) */}
+          <div className="hero-tilt">
+            <VisaCard title={data.cardTitle} subtitle={data.cardSubtitle} />
+          </div>
+        </div>
       </div>
 
-      {stats.length > 0 && (
-        <div className="container-x relative pb-10 lg:pb-14">
-          <div className="hp-stats fx-up" style={{ '--d': '0.9s' } as any}>
-            {stats.slice(0, 4).map((s, i) => {
-              const I = STAT_ICONS[i % STAT_ICONS.length];
-              return (
-                <div key={i} className="hp-stat">
-                  <span className="hp-stat-ic">
-                    <I className="h-5 w-5" />
-                  </span>
-                  <span className="min-w-0">
-                    <Counter value={s.value} className="hp-stat-v" />
-                    <span className="hp-stat-l">{s.label}</span>
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <Skyline className="absolute bottom-0 left-0 w-full h-28 md:h-44 text-white/[0.04]" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
     </section>
   );
 }
