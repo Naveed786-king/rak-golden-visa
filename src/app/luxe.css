@@ -48,24 +48,24 @@ body { background: var(--lx-ivory); color: #232b3a; }
    Remap "white on navy" styles inside the light areas.
    Anything inside a navy box (:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)) keeps its original white-on-navy look.
    ===================================================================== */
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) :is(h1, h2, h3, h4):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--brand-ink); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) .text-white:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--brand-ink); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) [class*='text-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: color-mix(in oklab, var(--brand-ink) 70%, transparent); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) :is(h1, h2, h3, h4):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--brand-ink); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .text-white:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--brand-ink); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) [class*='text-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: color-mix(in oklab, var(--brand-ink) 70%, transparent); }
 /* very faint white (decorative watermarks/patterns) becomes very faint gold */
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) :is([class~='text-white/5'], [class~='text-white/10'], [class~='text-white/15'], [class~='text-white/20'], [class*='text-white/[0.']):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: color-mix(in oklab, var(--brand-gold) 16%, transparent); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) :is(.text-gold-light, .text-gold, [class~='text-gold-light/90'], [class~='text-gold-light/80'], [class~='text-gold-light/70'], [class~='text-gold/90'], [class~='text-gold/80']):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--lx-gold-text); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) [class*='bg-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { background-color: rgba(255, 255, 255, .66); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) [class*='ring-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { --tw-ring-color: var(--lx-gold-line); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) [class*='border-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { border-color: var(--lx-gold-line); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) [class*='divide-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) > :not(:last-child) { border-color: var(--lx-gold-line); }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .glass-menu, .glass-drawer) .rte:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: #3a4558; }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .glass-menu, .glass-drawer) .rte :is(h1, h2, h3, strong):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--brand-ink); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) :is([class~='text-white/5'], [class~='text-white/10'], [class~='text-white/15'], [class~='text-white/20'], [class*='text-white/[0.']):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: color-mix(in oklab, var(--brand-gold) 16%, transparent); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) :is(.text-gold-light, .text-gold, [class~='text-gold-light/90'], [class~='text-gold-light/80'], [class~='text-gold-light/70'], [class~='text-gold/90'], [class~='text-gold/80']):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--lx-gold-text); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) [class*='bg-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { background-color: rgba(255, 255, 255, .66); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) [class*='ring-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { --tw-ring-color: var(--lx-gold-line); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) [class*='border-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { border-color: var(--lx-gold-line); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) [class*='divide-white/']:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) > :not(:last-child) { border-color: var(--lx-gold-line); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .rte:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: #3a4558; }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .rte :is(h1, h2, h3, strong):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--brand-ink); }
 .theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer) .eyebrow { color: var(--lx-gold-text); }
 
 .theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer) .estimate-note { color: color-mix(in oklab, var(--brand-ink) 62%, transparent); }
 
 /* gold gradient text: deeper gold so it reads on cream */
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .theme-light, .theme-sand, .glass-menu, .glass-drawer) .text-gold-gradient:not(:is(.bg-ink, .keep-dark) *) {
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .theme-light, .theme-sand) .text-gold-gradient:not(:is(.bg-ink, .keep-dark) *) {
   background-image: linear-gradient(100deg,
     color-mix(in oklab, var(--brand-gold) 80%, #2a1d04) 0%, var(--brand-gold) 25%,
     color-mix(in oklab, var(--brand-gold) 70%, #2a1d04) 50%, var(--brand-gold) 75%,
@@ -87,11 +87,11 @@ body { background: var(--lx-ivory); color: #232b3a; }
 .card-lift:hover { box-shadow: 0 34px 70px -32px color-mix(in oklab, var(--brand-gold) 70%, rgba(10,18,34,.4)); }
 
 /* buttons */
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) .btn-ghost-light {
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .btn-ghost-light {
   color: var(--brand-ink); background: rgba(255,255,255,.7);
   border-color: color-mix(in oklab, var(--brand-gold) 45%, transparent);
 }
-:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .site-header, .glass-menu, .glass-drawer) .btn-ghost-light:hover { background: #fff; border-color: var(--brand-gold); }
+:is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .btn-ghost-light:hover { background: #fff; border-color: var(--brand-gold); }
 .btn-gold { box-shadow: 0 14px 32px -12px color-mix(in oklab, var(--brand-gold) 85%, transparent), inset 0 1px 0 rgba(255,255,255,.6); }
 
 /* form fields in light areas */
@@ -119,84 +119,8 @@ main > :is(div, section, article, header):first-of-type .theme-dark .text-gold-g
 main > :is(div, section, article, header):first-of-type .theme-dark :is(.glass, .box) { border-color: color-mix(in oklab, var(--brand-gold) 34%, rgba(255,255,255,.1)) !important; }
 
 /* =====================================================================
-   Header: ivory glass island on a cream band, gold top bar
+   Header keeps its original navy colours (globals.css) — only 3D motion is added (see HEADER 3D)
    ===================================================================== */
-.site-topbar {
-  background: linear-gradient(90deg, color-mix(in oklab, var(--top-bg, var(--brand-gold)) 92%, black), var(--top-bg, var(--brand-gold)) 30%, var(--brand-gold-light) 50%, var(--top-bg, var(--brand-gold)) 70%, color-mix(in oklab, var(--top-bg, var(--brand-gold)) 92%, black));
-  color: var(--top-text, #1d1607);
-  border-color: rgba(0,0,0,.08) !important;
-}
-.site-topbar :is(.text-gold, .text-gold-light) { color: color-mix(in oklab, var(--top-text, #1d1607) 85%, var(--brand-gold)) !important; }
-.site-topbar a:hover { color: #000 !important; }
-
-.site-header::before {
-  background:
-    radial-gradient(60rem 12rem at 20% 0%, color-mix(in oklab, var(--brand-gold-light) 45%, transparent), transparent 70%),
-    var(--hdr-bg-solid, var(--lx-ivory));
-}
-.site-header[data-scrolled]::before {
-  background:
-    radial-gradient(60rem 10rem at 15% 0%, color-mix(in oklab, var(--brand-gold-light) 35%, transparent), transparent 70%),
-    color-mix(in oklab, var(--hdr-bg-solid, var(--lx-ivory)) 82%, transparent);
-  box-shadow: 0 12px 30px -20px color-mix(in oklab, var(--brand-gold) 60%, rgba(10,18,34,.3)), inset 0 -1px 0 var(--lx-gold-line);
-}
-.hdr-island {
-  background:
-    radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.95), transparent 55%),
-    radial-gradient(80% 120% at 100% 100%, color-mix(in oklab, var(--brand-gold-light) 45%, transparent), transparent 60%),
-    var(--hdr-glass, rgba(255,253,248,.92));
-  backdrop-filter: blur(var(--hdr-blur, 22px)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--hdr-blur, 22px)) saturate(160%);
-  box-shadow:
-    0 18px 44px -24px color-mix(in oklab, var(--brand-gold) 70%, rgba(10,18,34,.35)),
-    0 2px 6px -3px rgba(10,18,34,.12),
-    inset 0 1px 0 #fff,
-    inset 0 -12px 24px -20px color-mix(in oklab, var(--brand-gold) 60%, transparent);
-}
-.hdr-island::before {
-  background: linear-gradient(120deg,
-    var(--brand-gold) 0%, color-mix(in oklab, var(--brand-gold-light) 80%, transparent) 25%,
-    color-mix(in oklab, var(--brand-gold) 20%, transparent) 50%,
-    color-mix(in oklab, var(--brand-gold-light) 80%, transparent) 75%, var(--brand-gold) 100%);
-}
-.site-header[data-scrolled] .hdr-island {
-  box-shadow:
-    0 24px 54px -26px color-mix(in oklab, var(--brand-gold) 75%, rgba(10,18,34,.4)),
-    0 2px 8px -3px rgba(10,18,34,.14),
-    inset 0 1px 0 #fff;
-}
-.hdr-sheen::before { background: linear-gradient(105deg, transparent, color-mix(in oklab, var(--brand-gold-light) 55%, transparent), transparent); }
-.site-nav .nav-link:hover { background: color-mix(in oklab, var(--brand-gold) 10%, transparent); box-shadow: inset 0 0 0 1px var(--lx-gold-line); color: var(--lx-gold-text); }
-.site-nav .nav-link[data-active] { color: var(--lx-gold-text); }
-.hdr-icon { background: color-mix(in oklab, var(--brand-gold-light) 22%, #fff); box-shadow: inset 0 0 0 1px var(--lx-gold-line); color: var(--brand-ink); }
-.hdr-icon:hover { color: var(--lx-gold-text); background: #fff; }
-
-/* menus & mobile drawer */
-.glass-menu {
-  background: rgba(255, 253, 248, .97);
-  border-color: var(--lx-gold-line);
-  box-shadow: 0 30px 80px -24px color-mix(in oklab, var(--brand-gold) 55%, rgba(10,18,34,.35)), inset 0 1px 0 #fff;
-  color: #232b3a;
-}
-.mega.glass-menu {
-  background:
-    radial-gradient(60rem 22rem at 100% 0%, color-mix(in oklab, var(--brand-gold-light) 35%, transparent), transparent 70%),
-    var(--lx-ivory);
-}
-.mega-intro {
-  background:
-    radial-gradient(120% 80% at 0% 0%, color-mix(in oklab, var(--brand-gold-light) 60%, transparent), transparent 65%),
-    var(--lx-cream);
-  border-inline-end-color: var(--lx-gold-line);
-}
-.glass-menu :is(a, button):hover:is([class*='hover:bg-white']) { background: color-mix(in oklab, var(--brand-gold) 10%, transparent) !important; }
-.glass-drawer {
-  background:
-    radial-gradient(40rem 30rem at 100% 0%, color-mix(in oklab, var(--brand-gold-light) 55%, transparent), transparent 65%),
-    linear-gradient(170deg, #fffcf5, var(--lx-champagne));
-  color: #232b3a;
-  box-shadow: -30px 0 80px -20px color-mix(in oklab, var(--brand-gold) 50%, rgba(10,18,34,.4));
-}
 
 /* footer stays navy for contrast (it also carries .theme-dark); gold hairline on top */
 .site-footer.theme-dark {
@@ -387,7 +311,7 @@ main > .blk + .blk::before {
 @keyframes lx-hero-visual { to { translate: 0 60px; rotate: x 14deg; scale: .94; } }
 @keyframes lx-title {
   from { opacity: 0; rotate: x -55deg; translate: 0 .6em; clip-path: inset(0 0 100% 0); }
-  to { opacity: 1; rotate: x 0deg; translate: 0 0; clip-path: inset(-20% -5% -20% -5%); }
+  to { opacity: 1; rotate: x 0deg; translate: 0 0; clip-path: inset(-40% -8% -70% -8%); }
 }
 @keyframes lx-track { from { letter-spacing: .02em; opacity: .2; } to { letter-spacing: .22em; opacity: 1; } }
 @keyframes lx-para { from { opacity: .15; translate: 0 26px; } to { opacity: 1; translate: 0 0; } }
@@ -468,3 +392,137 @@ main > .blk:nth-of-type(even)::after { left: -40px; animation-direction: reverse
   .hx-plane, .hx-ring, main > .blk::after { animation: none !important; }
 }
 .anim-off :is(.hx-plane, .hx-ring), .anim-off main > .blk::after { animation: none !important; }
+
+
+/* =====================================================================
+   POLISH PASS — typography, cards, buttons, links, FAQ, tables, forms, details
+   ===================================================================== */
+/* typography */
+:is(h1, h2, h3) { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+body { line-height: 1.65; }
+.font-display { font-optical-sizing: auto; }
+/* small gold ornament under centred section titles */
+.text-center > h2.font-display::after {
+  content: ''; display: block; width: 120px; height: 12px; margin: 1.1rem auto 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23C8A255' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23C8A255'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 6h48' stroke='url(%23g)' stroke-width='1.2'/%3E%3Cpath d='M120 6H72' stroke='url(%23g)' stroke-width='1.2'/%3E%3Cpath d='M60 0l6 6-6 6-6-6z' fill='%23C8A255'/%3E%3Ccircle cx='51' cy='6' r='1.6' fill='%23C8A255'/%3E%3Ccircle cx='69' cy='6' r='1.6' fill='%23C8A255'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* forced-white text (!text-white) in light sections → navy */
+.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer) .\!text-white:not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)) { color: var(--brand-ink) !important; }
+
+/* cards: inner gold hairline frame (luxury double border) on light sections */
+:is(.theme-light, .theme-sand, .theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .card-lift:not(.bg-ink, [class*='from-ink']) {
+  outline: 1px solid color-mix(in oklab, var(--brand-gold) 22%, transparent); outline-offset: -9px;
+  transition: transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease, border-color .3s, outline-color .3s, outline-offset .4s;
+}
+:is(.theme-light, .theme-sand, .theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .card-lift:not(.bg-ink, [class*='from-ink']):hover { outline-color: color-mix(in oklab, var(--brand-gold) 55%, transparent); outline-offset: -6px; }
+/* metallic gold icon tiles inside cards */
+.card-lift :is([class*='h-12'], [class*='h-14'], [class*='h-11']):is([class*='rounded']):has(> svg.lucide):not([class*='bg-ink']) {
+  background: linear-gradient(140deg, #f6e8c3 0%, var(--brand-gold-light) 30%, var(--brand-gold) 70%, color-mix(in oklab, var(--brand-gold) 75%, black) 100%) !important;
+  color: var(--brand-ink) !important;
+  box-shadow: 0 10px 24px -12px color-mix(in oklab, var(--brand-gold) 90%, transparent), inset 0 1px 0 rgba(255,255,255,.75), inset 0 -2px 6px rgba(0,0,0,.12);
+}
+
+/* buttons: metallic gold with a moving sheen */
+.btn-gold {
+  background: linear-gradient(120deg, #f6e8c3 0%, var(--brand-gold-light) 22%, var(--brand-gold) 48%, color-mix(in oklab, var(--brand-gold) 78%, black) 78%, var(--brand-gold-light) 100%);
+  background-size: 220% 100%; background-position: 0% 0;
+  border: 1px solid color-mix(in oklab, var(--brand-gold-light) 70%, white);
+  transition: transform .25s ease, box-shadow .25s ease, background-position .6s ease, letter-spacing .3s ease;
+}
+.btn-gold:hover { background-position: 100% 0; }
+:is(.theme-light, .theme-sand, .theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .btn-outline { border-color: color-mix(in oklab, var(--brand-gold) 50%, transparent); background: rgba(255,255,255,.7); }
+:is(.theme-light, .theme-sand, .theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer)) .btn-outline:hover { background: #fff; border-color: var(--brand-gold); }
+.btn:focus-visible { outline: 2px solid var(--brand-gold); outline-offset: 3px; }
+
+/* links in articles: gold underline that draws in */
+.rte a {
+  text-decoration: none; color: var(--lx-gold-text); font-weight: 600;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat,
+              linear-gradient(var(--brand-gold), var(--brand-gold)) 0 100% / 0 2px no-repeat;
+  transition: background-size .35s ease;
+}
+.rte a:hover { background-size: 100% 1px, 100% 2px; }
+.rte img { border-radius: 18px; box-shadow: 0 24px 50px -28px rgba(10,18,34,.45), 0 0 0 1px color-mix(in oklab, var(--brand-gold) 25%, transparent); }
+.rte blockquote { background: linear-gradient(90deg, color-mix(in oklab, var(--brand-gold-light) 25%, #fff), transparent); }
+
+/* tables: champagne header, gold rule, soft rows */
+.rte table { border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px color-mix(in oklab, var(--brand-gold) 25%, transparent); }
+.rte th { background: linear-gradient(180deg, #fbf3e0, #f3e6c8); border-bottom: 2px solid color-mix(in oklab, var(--brand-gold) 60%, transparent); font-weight: 800; }
+.rte tbody tr:nth-child(even) td { background: color-mix(in oklab, var(--brand-gold-light) 10%, #fff); }
+.rte tbody tr:hover td { background: color-mix(in oklab, var(--brand-gold-light) 22%, #fff); }
+
+/* FAQ: open question gets a gold edge and soft gold wash */
+.box:has(> button[aria-expanded='true']) {
+  box-shadow: inset 3px 0 0 var(--brand-gold), 0 20px 50px -30px color-mix(in oklab, var(--brand-gold) 60%, rgba(10,18,34,.35)) !important;
+  background-image: linear-gradient(90deg, color-mix(in oklab, var(--brand-gold-light) 18%, transparent), transparent 40%) !important;
+}
+[dir='rtl'] .box:has(> button[aria-expanded='true']) { box-shadow: inset -3px 0 0 var(--brand-gold), 0 20px 50px -30px color-mix(in oklab, var(--brand-gold) 60%, rgba(10,18,34,.35)) !important; }
+.box > button[aria-expanded]:hover > span:first-child { color: var(--lx-gold-text); }
+
+/* form fields */
+.field { background: #fffefa; border-color: #eadfc6; }
+.field:hover { border-color: color-mix(in oklab, var(--brand-gold) 55%, #eadfc6); }
+.field:focus { background: #fff; box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand-gold) 18%, transparent), 0 10px 26px -16px color-mix(in oklab, var(--brand-gold) 70%, transparent); }
+
+/* details */
+html { scrollbar-color: color-mix(in oklab, var(--brand-gold) 80%, transparent) var(--lx-ivory); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--lx-ivory); }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--brand-gold-light), var(--brand-gold)); border-radius: 10px; border: 2px solid var(--lx-ivory); }
+.to-top {
+  background: linear-gradient(140deg, var(--brand-gold-light), var(--brand-gold) 60%, color-mix(in oklab, var(--brand-gold) 75%, black)) !important;
+  color: var(--brand-ink) !important; box-shadow: 0 14px 30px -12px color-mix(in oklab, var(--brand-gold) 90%, transparent) !important;
+}
+.to-top:hover { transform: translateY(-3px); }
+.mobile-bar {
+  background: color-mix(in oklab, var(--lx-ivory) 92%, transparent) !important;
+  border-top: 1px solid color-mix(in oklab, var(--brand-gold) 40%, transparent) !important;
+  box-shadow: 0 -12px 30px -18px color-mix(in oklab, var(--brand-gold) 70%, rgba(10,18,34,.3));
+}
+.mobile-bar .btn-ghost-light { color: var(--brand-ink); background: #fff; border-color: color-mix(in oklab, var(--brand-gold) 50%, transparent); }
+.site-footer a:not(.btn):hover { color: var(--brand-gold-light) !important; }
+.site-footer :is(a[aria-label], [class*='rounded-full'][class*='h-9'], [class*='rounded-full'][class*='h-10']):hover { background: var(--brand-gold) !important; color: var(--brand-ink) !important; }
+img { image-rendering: auto; }
+
+
+/* =====================================================================
+   HEADER 3D MOTION (original navy colours kept)
+   ===================================================================== */
+/* real 3D depth for the island's scroll tilt (no fixed elements live inside .hdr-wrap) */
+.site-header .hdr-wrap { perspective: 1100px; }
+/* the glass island drops in with a 3D swing when the page opens */
+.site-header .hdr-island { animation: hdr-drop .75s cubic-bezier(.2,.8,.2,1) both; transform-origin: 50% 0; }
+@keyframes hdr-drop { from { opacity: .25; transform: perspective(900px) rotateX(-34deg) translateY(-14px); } to { opacity: 1; transform: none; } }
+/* logo leans in 3D on hover */
+.site-header .site-logo { perspective: 600px; display: inline-flex; }
+.site-header .site-logo img { transition: height .45s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1), filter .4s ease; transform-origin: 30% 50%; }
+.site-header .site-logo:hover img { transform: rotateY(-18deg) rotateX(6deg) scale(1.04); filter: drop-shadow(0 8px 14px color-mix(in oklab, var(--brand-gold) 55%, transparent)); }
+/* menu links lift forward in 3D */
+.site-nav > div { perspective: 700px; }
+.site-nav .nav-link { transform-style: preserve-3d; transition: opacity .25s, color .25s, background .25s, box-shadow .25s, transform .35s cubic-bezier(.2,.8,.2,1); }
+.site-nav .nav-link:hover { transform: translateZ(18px) rotateX(10deg); }
+/* dropdowns and the Services mega menu swing open from the top */
+.site-header .glass-menu { transform-origin: 50% 0; animation: hdr-swing .45s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes hdr-swing { from { rotate: x -22deg; } to { rotate: x 0deg; } }
+/* round icons and the CTA press in 3D */
+.hdr-icon { transition: box-shadow .25s, color .25s, background .25s, transform .35s cubic-bezier(.2,.8,.2,1); }
+.hdr-icon:hover { transform: perspective(400px) rotateY(16deg) translateZ(6px); }
+.hdr-cta { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, background-position .6s ease; }
+.hdr-cta:hover { transform: perspective(500px) rotateX(10deg) translateY(-2px); }
+/* while scrolling, the island tips back slightly and settles (scroll-linked) */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .anim-flow .site-header .hdr-island {
+      animation: hdr-drop .75s cubic-bezier(.2,.8,.2,1) both, hdr-tip linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 240px;
+    }
+  }
+}
+@keyframes hdr-tip { 0% { rotate: x 0deg; } 50% { rotate: x 7deg; } 100% { rotate: x 0deg; } }
+@media (prefers-reduced-motion: reduce) {
+  .site-header .hdr-island, .site-header .glass-menu { animation: none !important; }
+  .site-nav .nav-link:hover, .hdr-icon:hover, .hdr-cta:hover, .site-header .site-logo:hover img { transform: none; }
+}

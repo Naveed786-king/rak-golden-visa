@@ -61,17 +61,17 @@ export const defaultDesign: DesignSettings = {
   animation: { enabled: true, style: 'none', duration: 800 },
   header: {
     style: 'glass',
-    bg: '#FFFDF8',
+    bg: '#0A1222',
     opacity: 90,
     blur: 22,
-    text: '#0A1222',
+    text: '#FFFFFF',
     height: 76,
     logoHeight: 46,
     sticky: true,
     shrink: true,
     glow: true,
-    topbarBg: '#C8A255',
-    topbarText: '#1D1607',
+    topbarBg: '#070D19',
+    topbarText: '#C9CFDA',
     menuSize: 15,
     menuUppercase: false,
   },
@@ -81,20 +81,13 @@ export const defaultDesign: DesignSettings = {
 
 /**
  * Light & Gold refresh (Nov 2026): settings that still hold the OLD built-in defaults move to the new
- * ones (fonts, light header, gold top bar). Anything an admin picked themselves is kept.
+ * ones (fonts). The header keeps its original navy colours. Anything an admin picked themselves is kept.
  */
 export function refreshDesign(d: DesignSettings): DesignSettings {
   const same = (a: any, b: string) => String(a || '').trim().toLowerCase() === b.toLowerCase();
   if (d.fonts) {
     if (same(d.fonts.heading, 'Cormorant Garamond') || same(d.fonts.heading, 'Playfair Display')) d.fonts.heading = 'Playfair Display Variable';
     if (same(d.fonts.body, 'Manrope Variable') || same(d.fonts.body, 'Inter')) d.fonts.body = 'Inter Variable';
-  }
-  const h = d.header;
-  if (h) {
-    if (same(h.bg, '#0A1222')) h.bg = '#FFFDF8';
-    if (same(h.text, '#FFFFFF') || same(h.text, '#FFF')) h.text = '#0A1222';
-    if (same(h.topbarBg, '#070D19')) h.topbarBg = '#C8A255';
-    if (same(h.topbarText, '#C9CFDA')) h.topbarText = '#1D1607';
   }
   return d;
 }

@@ -72,7 +72,7 @@ export default function Floating({ site }: { site: SiteSettings }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.6 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed z-40 left-4 md:left-6 bottom-24 md:bottom-6 grid h-11 w-11 place-items-center rounded-full bg-ink text-gold ring-1 ring-gold/40 shadow-xl hover:bg-gold hover:text-ink transition-colors"
+            className="to-top fixed z-40 left-4 md:left-6 bottom-24 md:bottom-6 grid h-11 w-11 place-items-center rounded-full bg-ink text-gold ring-1 ring-gold/40 shadow-xl hover:bg-gold hover:text-ink transition-colors"
             aria-label="Back to top"
           >
             <ArrowUp className="h-5 w-5" />
@@ -81,7 +81,7 @@ export default function Floating({ site }: { site: SiteSettings }) {
       </AnimatePresence>
 
       {site.showMobileBar && (
-        <div className="fixed inset-x-0 bottom-0 z-40 md:hidden border-t border-white/10 bg-ink/95 backdrop-blur-xl px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
+        <div className="mobile-bar fixed inset-x-0 bottom-0 z-40 md:hidden border-t border-white/10 bg-ink/95 backdrop-blur-xl px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
           <div className="grid grid-cols-2 gap-2">
             <button type="button" onClick={() => window.dispatchEvent(new Event('rgv:open-calculator'))} className="calc-anim relative btn btn-ghost-light btn-sm">
               <Calculator className="calc-nudge h-4 w-4 text-gold" /> {t('Cost calculator')}
