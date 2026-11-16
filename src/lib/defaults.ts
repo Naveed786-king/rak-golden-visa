@@ -297,6 +297,6 @@ export const defaultTranslation: TranslationSettings = {
   geminiKey: process.env.GEMINI_API_KEY || '',
   geminiModel: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
   autoTranslate: true,
-  enabled: ['en', 'ar', 'ru', 'tr', 'zh', 'fr', 'de', 'es', 'ro', 'hi'],
+  enabled: ['en', 'ar', 'ru', 'tr', 'zh', 'fr', 'de', 'it', 'es', 'ro', 'pt', 'at', 'pl', 'hu', 'hr', 'sk', 'cs', 'hi', 'id', 'ur'],
   showSwitcher: true,
 };

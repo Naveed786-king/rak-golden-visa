@@ -77,12 +77,12 @@ export default function LanguageSwitcher({ variant = 'header' }: { variant?: 'he
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.18 }}
-            className="glass-menu absolute end-0 top-full mt-4 w-60 rounded-2xl p-1.5 z-50"
+            className={cn('glass-menu absolute end-0 top-full mt-4 rounded-2xl p-1.5 z-50 max-h-[70vh] overflow-y-auto', langs.length > 10 ? 'grid w-[26rem] max-w-[calc(100vw-2rem)] grid-cols-2 gap-0.5' : 'w-60')}
           >
             {langs.map((l) => (
               <button key={l.code} onClick={() => go(l.code)} className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start text-sm transition-colors', l.code === locale ? 'bg-gold/15 font-bold text-gold-light ring-1 ring-inset ring-gold/30' : 'text-white/80 hover:bg-white/[0.08] hover:text-white')}>
                 <span className="text-lg leading-none">{l.flag}</span>
-                <span className="flex-1">{l.native}</span>
+                <span className="flex-1 truncate">{l.native}</span>
                 {l.code === locale && <Check className="h-4 w-4 text-gold" />}
               </button>
             ))}

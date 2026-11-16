@@ -6,16 +6,16 @@ export type FontChoice = { name: string; family: string; google?: string; arabic
 
 /** Fonts admins can pick. Bundled ones load instantly; others load from Google Fonts. */
 export const FONTS: FontChoice[] = [
+  { name: 'Playfair Display (luxury serif)', family: 'Playfair Display Variable' },
+  { name: 'Inter (clean sans)', family: 'Inter Variable' },
   { name: 'Cormorant Garamond (luxury serif)', family: 'Cormorant Garamond' },
   { name: 'Manrope (modern sans)', family: 'Manrope Variable' },
-  { name: 'Playfair Display', family: 'Playfair Display', google: 'Playfair+Display:wght@400;500;600;700;800' },
   { name: 'Cinzel (classic capitals)', family: 'Cinzel', google: 'Cinzel:wght@400;500;600;700' },
   { name: 'Marcellus', family: 'Marcellus', google: 'Marcellus' },
   { name: 'Bodoni Moda', family: 'Bodoni Moda', google: 'Bodoni+Moda:wght@400;500;600;700' },
   { name: 'Lora', family: 'Lora', google: 'Lora:wght@400;500;600;700' },
   { name: 'Poppins', family: 'Poppins', google: 'Poppins:wght@300;400;500;600;700;800' },
   { name: 'Montserrat', family: 'Montserrat', google: 'Montserrat:wght@300;400;500;600;700;800' },
-  { name: 'Inter', family: 'Inter', google: 'Inter:wght@300;400;500;600;700;800' },
   { name: 'Outfit', family: 'Outfit', google: 'Outfit:wght@300;400;500;600;700;800' },
   { name: 'Plus Jakarta Sans', family: 'Plus Jakarta Sans', google: 'Plus+Jakarta+Sans:wght@300;400;500;600;700;800' },
   { name: 'Lato', family: 'Lato', google: 'Lato:wght@300;400;700;900' },
@@ -54,30 +54,50 @@ export type DesignSettings = {
 };
 
 export const defaultDesign: DesignSettings = {
-  fonts: { heading: 'Cormorant Garamond', body: 'Manrope Variable', arabic: 'Noto Kufi Arabic', headingWeight: 600, baseSize: 16 },
+  fonts: { heading: 'Playfair Display Variable', body: 'Inter Variable', arabic: 'Noto Kufi Arabic', headingWeight: 600, baseSize: 16 },
   radius: { card: 28, button: 999 },
   buttons: { style: 'gradient', uppercase: false },
   glass: { enabled: true, blur: 18, opacity: 10, border: 18, orbs: true },
   animation: { enabled: true, style: 'none', duration: 800 },
   header: {
     style: 'glass',
-    bg: '#0A1222',
+    bg: '#FFFDF8',
     opacity: 90,
     blur: 22,
-    text: '#FFFFFF',
+    text: '#0A1222',
     height: 76,
     logoHeight: 46,
     sticky: true,
     shrink: true,
     glow: true,
-    topbarBg: '#070D19',
-    topbarText: '#C9CFDA',
+    topbarBg: '#C8A255',
+    topbarText: '#1D1607',
     menuSize: 15,
     menuUppercase: false,
   },
   footer: { style: 'dark', bg: '#0A1222', text: '', heading: '', bgImage: '', logoHeight: 60, watermark: true },
   customCss: '',
 };
+
+/**
+ * Light & Gold refresh (Nov 2026): settings that still hold the OLD built-in defaults move to the new
+ * ones (fonts, light header, gold top bar). Anything an admin picked themselves is kept.
+ */
+export function refreshDesign(d: DesignSettings): DesignSettings {
+  const same = (a: any, b: string) => String(a || '').trim().toLowerCase() === b.toLowerCase();
+  if (d.fonts) {
+    if (same(d.fonts.heading, 'Cormorant Garamond') || same(d.fonts.heading, 'Playfair Display')) d.fonts.heading = 'Playfair Display Variable';
+    if (same(d.fonts.body, 'Manrope Variable') || same(d.fonts.body, 'Inter')) d.fonts.body = 'Inter Variable';
+  }
+  const h = d.header;
+  if (h) {
+    if (same(h.bg, '#0A1222')) h.bg = '#FFFDF8';
+    if (same(h.text, '#FFFFFF') || same(h.text, '#FFF')) h.text = '#0A1222';
+    if (same(h.topbarBg, '#070D19')) h.topbarBg = '#C8A255';
+    if (same(h.topbarText, '#C9CFDA')) h.topbarText = '#1D1607';
+  }
+  return d;
+}
 
 /* ------------------------------------------------------------------ sanitizers */
 const COLOR = /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%/]+\)|hsla?\([\d\s.,%/deg]+\)|[a-z]{3,20})$/i;
@@ -154,6 +174,8 @@ export function designBodyClass(d: DesignSettings) {
     d.header.shrink === false ? 'hdr-noshrink' : '',
     d.header.glow ? 'hdr-glow' : '',
     `ftr-${d.footer.style || 'dark'}`,
+    // scroll-linked 'flow' animation (light & gold refresh) — on unless animations are switched off
+    d.animation.enabled ? 'anim-flow' : '',
     d.footer.watermark ? 'ftr-mark' : '',
   ]
     .filter(Boolean)

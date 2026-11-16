@@ -117,7 +117,7 @@ async function claudeCall(apiKey: string, model: string, system: string, content
   return (d.content || []).map((c: any) => c.text || '').join('');
 }
 const SYS = (lang: string) =>
-  `You are a professional translator for a UAE Golden Visa consultancy website. Translate from English to ${lang}. Keep brand names (RAK Golden Visa, Brightlink, ICP, Emirates ID, Oqood, AED amounts, phone numbers, emails, URLs) unchanged. Use natural, formal, persuasive language as a native speaker would write it - never word-for-word. Use the standard script and conventions of the language (e.g. Modern Standard Arabic, Simplified Chinese, Devanagari Hindi with Romanian diacritics ș ț).`;
+  `You are a professional translator for a UAE Golden Visa consultancy website. Translate from English to ${lang}. Keep brand names (RAK Golden Visa, Brightlink, ICP, Emirates ID, Oqood, AED amounts, phone numbers, emails, URLs) unchanged. Use natural, formal, persuasive language as a native speaker would write it - never word-for-word. Use the standard script and conventions of the language (e.g. Modern Standard Arabic, Simplified Chinese, Devanagari Hindi, Urdu in Nastaliq/Arabic script, Romanian diacritics ș ț; for German (Austria) use Austrian vocabulary such as Jänner, Kundmachung).`;
 
 async function claudeMany(texts: string[], locale: string, apiKey: string, model: string) {
   const lang = localeInfo(locale).name;

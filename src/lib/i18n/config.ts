@@ -1,7 +1,9 @@
 // Website languages. English is the main language (URLs without prefix).
 // Other languages live under /ar, /ru, /tr ... e.g. /ar/about-us
 
-export type Locale = 'en' | 'ar' | 'ru' | 'tr' | 'zh' | 'fr' | 'de' | 'es' | 'ro' | 'hi';
+export type Locale =
+  | 'en' | 'ar' | 'ru' | 'tr' | 'zh' | 'fr' | 'de' | 'it' | 'es' | 'ro' | 'pt' | 'at'
+  | 'pl' | 'hu' | 'hr' | 'sk' | 'cs' | 'hi' | 'id' | 'ur';
 
 export const LOCALES: { code: Locale; name: string; native: string; dir: 'ltr' | 'rtl'; flag: string; google: string; deepl?: string; htmlLang: string }[] = [
   { code: 'en', name: 'English', native: 'English', dir: 'ltr', flag: '🇬🇧', google: 'en', deepl: 'EN-GB', htmlLang: 'en' },
@@ -11,9 +13,20 @@ export const LOCALES: { code: Locale; name: string; native: string; dir: 'ltr' |
   { code: 'zh', name: 'Chinese', native: '中文', dir: 'ltr', flag: '🇨🇳', google: 'zh-CN', deepl: 'ZH-HANS', htmlLang: 'zh-CN' },
   { code: 'fr', name: 'French', native: 'Français', dir: 'ltr', flag: '🇫🇷', google: 'fr', deepl: 'FR', htmlLang: 'fr' },
   { code: 'de', name: 'German', native: 'Deutsch', dir: 'ltr', flag: '🇩🇪', google: 'de', deepl: 'DE', htmlLang: 'de' },
+  { code: 'it', name: 'Italian', native: 'Italiano', dir: 'ltr', flag: '🇮🇹', google: 'it', deepl: 'IT', htmlLang: 'it' },
   { code: 'es', name: 'Spanish', native: 'Español', dir: 'ltr', flag: '🇪🇸', google: 'es', deepl: 'ES', htmlLang: 'es' },
   { code: 'ro', name: 'Romanian', native: 'Română', dir: 'ltr', flag: '🇷🇴', google: 'ro', deepl: 'RO', htmlLang: 'ro' },
+  { code: 'pt', name: 'Portuguese', native: 'Português', dir: 'ltr', flag: '🇵🇹', google: 'pt-PT', deepl: 'PT-PT', htmlLang: 'pt' },
+  // Austrian German: own address (/at); translators get "German (Austria)"
+  { code: 'at', name: 'German (Austria)', native: 'Deutsch (Österreich)', dir: 'ltr', flag: '🇦🇹', google: 'de', deepl: 'DE', htmlLang: 'de-AT' },
+  { code: 'pl', name: 'Polish', native: 'Polski', dir: 'ltr', flag: '🇵🇱', google: 'pl', deepl: 'PL', htmlLang: 'pl' },
+  { code: 'hu', name: 'Hungarian', native: 'Magyar', dir: 'ltr', flag: '🇭🇺', google: 'hu', deepl: 'HU', htmlLang: 'hu' },
+  { code: 'hr', name: 'Croatian', native: 'Hrvatski', dir: 'ltr', flag: '🇭🇷', google: 'hr', htmlLang: 'hr' },
+  { code: 'sk', name: 'Slovak', native: 'Slovenčina', dir: 'ltr', flag: '🇸🇰', google: 'sk', deepl: 'SK', htmlLang: 'sk' },
+  { code: 'cs', name: 'Czech', native: 'Čeština', dir: 'ltr', flag: '🇨🇿', google: 'cs', deepl: 'CS', htmlLang: 'cs' },
   { code: 'hi', name: 'Hindi', native: 'हिन्दी', dir: 'ltr', flag: '🇮🇳', google: 'hi', htmlLang: 'hi' },
+  { code: 'id', name: 'Indonesian', native: 'Bahasa Indonesia', dir: 'ltr', flag: '🇮🇩', google: 'id', deepl: 'ID', htmlLang: 'id' },
+  { code: 'ur', name: 'Urdu', native: 'اردو', dir: 'rtl', flag: '🇵🇰', google: 'ur', htmlLang: 'ur' },
 ];
 
 export const DEFAULT_LOCALE: Locale = 'en';

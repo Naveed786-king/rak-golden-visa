@@ -188,7 +188,7 @@ function Wizard({ cfg, initialCategory, onClose }: { cfg: EstimateSettings; init
   const idx = steps.indexOf(step);
   const typ = types.find((x) => x.id === type);
   const result = useMemo(() => calculate(cfg, { category, type, location, adults, children: kids, medical, sponsor: withFamily ? sponsor : '' }), [cfg, category, type, location, adults, kids, medical, withFamily, sponsor]);
-  const fmtLocale = locale === 'ar' ? 'ar-AE' : locale === 'hi' ? 'en-IN' : 'en-US';
+  const fmtLocale = locale === 'ar' || locale === 'ur' ? 'ar-AE' : locale === 'hi' ? 'en-IN' : 'en-US';
   const cur = cfg.currency || 'AED';
   const fmtN = (n: number) => n.toLocaleString(fmtLocale, { maximumFractionDigits: 2 });
   const fmt = (n: number) => money(n, cur, fmtLocale);

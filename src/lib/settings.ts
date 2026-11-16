@@ -1,3 +1,4 @@
+import { refreshDesign } from './design';
 import { prisma } from './db';
 import {
   defaultSite,
@@ -43,6 +44,7 @@ export async function getSetting<K extends keyof Map>(key: K): Promise<Map[K]> {
       if (t.provider === 'claude' && !t.apiKey && t.geminiKey) t.provider = 'gemini';
       if (!t.geminiKey && process.env.GEMINI_API_KEY) t.geminiKey = process.env.GEMINI_API_KEY;
     }
+    if (key === 'design') return refreshDesign(v as any) as any;
     return v;
   } catch {
     return DEFAULTS[key];

@@ -8,6 +8,7 @@ import Floating from '@/components/site/Floating';
 import Preloader from '@/components/site/Preloader';
 import InjectScripts from '@/components/site/InjectScripts';
 import DesignEffects from '@/components/site/DesignEffects';
+import Tilt3D from '@/components/site/Tilt3D';
 import { CalculatorButton } from '@/components/blocks/EstimateCalculator';
 import { designCss, designBodyClass, googleFontsUrl } from '@/lib/design';
 
@@ -28,6 +29,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main>{children}</main>
       <Footer site={site} footer={footer} watermark={design.footer?.bgImage || ''} />
       <Floating site={site} />
+      <Tilt3D />
       <CalculatorButton cfg={estimate} mobileBar={!!site.showMobileBar} whatsapp={!!site.showWhatsappButton} />
       <InjectScripts html={site.headScripts} target="head" />
       <InjectScripts html={site.bodyScripts} target="body" />
