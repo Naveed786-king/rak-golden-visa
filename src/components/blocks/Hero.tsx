@@ -161,8 +161,9 @@ export default function Hero({ data }: { data: any }) {
         </p>
       )}
 
+      <div className="hero-particles" aria-hidden />
       <div className="container-x relative grid items-center gap-16 lg:grid-cols-[1.15fr_1fr]">
-        <div>
+        <div className="hero-copy">
           {data.eyebrow && (
             <span
               className="fx-up inline-flex items-center gap-2.5 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-bold tracking-wide text-gold-light"
@@ -233,8 +234,11 @@ export default function Hero({ data }: { data: any }) {
           )}
         </div>
 
-        <div style={{ '--d': '0.4s' } as any} className="fx-pop relative px-6 md:px-10 py-10">
-          <VisaCard title={data.cardTitle} subtitle={data.cardSubtitle} />
+        <div style={{ '--d': '0.4s' } as any} className="hero-visual fx-pop relative px-6 md:px-10 py-10">
+          {/* 3D: follows the mouse on desktop (Tilt3D) */}
+          <div className="hero-tilt">
+            <VisaCard title={data.cardTitle} subtitle={data.cardSubtitle} />
+          </div>
         </div>
       </div>
 

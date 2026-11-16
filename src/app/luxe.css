@@ -62,6 +62,8 @@ body { background: var(--lx-ivory); color: #232b3a; }
 :is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .glass-menu, .glass-drawer) .rte :is(h1, h2, h3, strong):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer)):not(:is(.bg-ink, [class*='bg-ink/9'], [class*='bg-ink/8'], [class*='from-ink'], .keep-dark, .btn-dark, .site-footer) *) { color: var(--brand-ink); }
 .theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer) .eyebrow { color: var(--lx-gold-text); }
 
+.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer) .estimate-note { color: color-mix(in oklab, var(--brand-ink) 62%, transparent); }
+
 /* gold gradient text: deeper gold so it reads on cream */
 :is(.theme-dark:not(main > :is(div, section, article, header):first-of-type, main > :is(div, section, article, header):first-of-type *, .site-footer), .theme-light, .theme-sand, .glass-menu, .glass-drawer) .text-gold-gradient:not(:is(.bg-ink, .keep-dark) *) {
   background-image: linear-gradient(100deg,
@@ -285,9 +287,115 @@ main > .blk + .blk::before {
     }
   }
 }
-@keyframes lx-rise { from { opacity: .3; translate: 0 48px; } to { opacity: 1; translate: 0 0; } }
+@keyframes lx-rise { from { opacity: .3; translate: 0 56px; rotate: x 10deg; } to { opacity: 1; translate: 0 0; rotate: x 0deg; } }
 @keyframes lx-card { from { opacity: .2; translate: 0 70px; scale: .95; rotate: x 22deg; } to { opacity: 1; translate: 0 0; scale: 1; rotate: x 0deg; } }
 @keyframes lx-zoom { from { scale: 1.12; } to { scale: 1; } }
 @keyframes lx-line { from { width: 0; } to { width: 28px; } }
 @keyframes lx-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes lx-glow { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 -60px, 0 40px, 0 0; } }
+
+/* =====================================================================
+   FULL 3D · MOTION · TEXT ANIMATION
+   ===================================================================== */
+/* --- hero: 3D card that follows the mouse, depth while scrolling --- */
+.hero-tilt {
+  transform: perspective(1200px) rotateX(var(--hx, 0deg)) rotateY(var(--hy, 0deg));
+  transform-style: preserve-3d;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+  will-change: transform;
+}
+
+/* hero headline: words flip up in 3D on load */
+.hero-copy h1 { perspective: 900px; }
+.hero-copy h1 .fx-word { transform-origin: 50% 100%; animation-name: lx-word3d; animation-duration: .95s; }
+@keyframes lx-word3d {
+  from { opacity: 0; transform: rotateX(-85deg) translate3d(0, .35em, 0); filter: blur(4px); }
+  60% { opacity: 1; filter: blur(0); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+/* floating gold particles in the hero (two layers, different speeds) */
+.hero-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.hero-particles::before, .hero-particles::after {
+  content: ''; position: absolute; inset: -50% 0 0 0;
+  background-image:
+    radial-gradient(2px 2px at 8% 20%, var(--brand-gold-light), transparent 60%),
+    radial-gradient(1.5px 1.5px at 22% 70%, var(--brand-gold), transparent 60%),
+    radial-gradient(2.5px 2.5px at 38% 40%, var(--brand-gold-light), transparent 60%),
+    radial-gradient(1.5px 1.5px at 55% 85%, var(--brand-gold), transparent 60%),
+    radial-gradient(2px 2px at 68% 30%, var(--brand-gold-light), transparent 60%),
+    radial-gradient(1.5px 1.5px at 82% 60%, var(--brand-gold), transparent 60%),
+    radial-gradient(2.5px 2.5px at 94% 15%, var(--brand-gold-light), transparent 60%);
+  background-size: 100% 50%;
+  opacity: .55; animation: lx-drift 26s linear infinite;
+}
+.hero-particles::after { background-size: 60% 38%; opacity: .35; animation-duration: 40s; filter: blur(.4px); }
+@keyframes lx-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, 50%, 0); } }
+
+/* --- motion: icons and buttons react --- */
+.card-lift :is(svg.lucide, [class*='rounded-'] > svg.lucide) { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+.card-lift:hover :is([class*='h-12'], [class*='h-14'], [class*='h-11'], [class*='h-10']):has(> svg.lucide) { transform: translateZ(30px) rotate(-8deg) scale(1.08); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+.btn { transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease, letter-spacing .3s ease; }
+.btn-gold:hover { letter-spacing: .03em; }
+.btn :is(.lucide-arrow-right, .lucide-arrow-up-right) { transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.btn:hover .lucide-arrow-right { transform: translateX(4px); }
+.btn:hover .lucide-arrow-up-right { transform: translate(3px, -3px); }
+[dir='rtl'] .btn:hover .lucide-arrow-right { transform: scaleX(-1) translateX(4px); }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* hero parallax: text drifts up and fades, card sinks slower and tilts back — depth while scrolling */
+    .anim-flow .hero-copy { animation: lx-hero-copy linear both; animation-timeline: scroll(root); animation-range: 0 110vh; }
+    /* keep the card's pop-in entrance (fx-pop) and add the scroll depth on top */
+    .anim-flow .hero-visual {
+      animation: fx-pop .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s) both, lx-hero-visual linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 85vh;
+    }
+    .anim-flow .hero-particles { animation: lx-hero-copy linear both; animation-timeline: scroll(root); animation-range: 0 85vh; }
+
+    /* sections swing up from a slight 3D angle */
+    .anim-flow main section > .container-x { perspective: 1600px; }
+    /* section headings: 3D flip-up with a mask reveal */
+    .anim-flow main section :is(h2, h3.font-display):not(main > :is(div, section, article, header):first-of-type *) {
+      transform-origin: 50% 100%;
+      animation: lx-title linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 30%;
+    }
+    /* eyebrows: letters spread in */
+    .anim-flow main .eyebrow:not(main > :is(div, section, article, header):first-of-type *) {
+      animation: lx-track linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+    /* paragraphs follow a little later */
+    .anim-flow main section > .container-x p:not(main > :is(div, section, article, header):first-of-type *):not(.grid *) {
+      animation: lx-para linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 32%;
+    }
+    /* photos tilt in */
+    .anim-flow main .overflow-hidden:has(> img.object-cover):not(main > :is(div, section, article, header):first-of-type *) {
+      animation: lx-photo linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+}
+@keyframes lx-hero-copy { to { translate: 0 -110px; opacity: .45; } }
+@keyframes lx-hero-visual { to { translate: 0 60px; rotate: x 14deg; scale: .94; } }
+@keyframes lx-title {
+  from { opacity: 0; rotate: x -55deg; translate: 0 .6em; clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; rotate: x 0deg; translate: 0 0; clip-path: inset(-20% -5% -20% -5%); }
+}
+@keyframes lx-track { from { letter-spacing: .02em; opacity: .2; } to { letter-spacing: .22em; opacity: 1; } }
+@keyframes lx-para { from { opacity: .15; translate: 0 26px; } to { opacity: 1; translate: 0 0; } }
+@keyframes lx-photo { from { rotate: x 16deg; scale: .9; opacity: .4; } to { rotate: x 0deg; scale: 1; opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-particles::before, .hero-particles::after { animation: none; }
+  .hero-tilt { transform: none; }
+  .hero-copy h1 .fx-word { animation-name: fx-up; }
+}
+.anim-off .hero-copy h1 .fx-word { animation: none; }
