@@ -14,52 +14,6 @@
 }
 body { background: #fff; color: #263044; }
 
-/* ---------------------------------------------------------------- header */
-.site-header { padding-block: 0 !important; }
-.site-header::before,
-.site-header[data-scrolled]::before {
-  background: var(--hdr-bg-solid, #fff) !important;
-  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  box-shadow: 0 1px 0 var(--pt-line) !important;
-}
-.site-header[data-scrolled]::before { box-shadow: 0 12px 30px -22px rgba(10, 18, 34, .45), 0 1px 0 var(--pt-line) !important; }
-.site-header .hdr-island,
-.site-header[data-scrolled] .hdr-island {
-  background: transparent !important; box-shadow: none !important;
-  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  border-radius: 0; padding-inline: 0; animation: none;
-}
-.site-header[data-scrolled] .hdr-island { height: calc(var(--hdr-h, 76px) - 10px); }
-.site-header .hdr-island::before, .site-header .hdr-sheen, .hdr-glow .hdr-island::after { display: none; }
-.site-header .hdr-progress { inset-inline: 0; }
-.site-header .site-logo:hover img { transform: none; filter: none; }
-
-.site-nav .nav-link { opacity: 1; gap: .45rem; color: var(--hdr-text, #0a1222); font-weight: 600; }
-.site-nav .nav-link:hover { background: color-mix(in oklab, var(--hdr-text, #0a1222) 5%, transparent); box-shadow: none; transform: none; color: var(--lx-gold-text); }
-.site-nav .nav-link[data-active] { color: var(--lx-gold-text); background: color-mix(in oklab, var(--brand-gold) 11%, transparent); box-shadow: none; }
-.site-nav .nav-link::after { bottom: 2px; }
-.nav-ic { width: 17px; height: 17px; flex-shrink: 0; color: var(--brand-gold); stroke-width: 2; }
-@media (max-width: 1279px) { .nav-ic { display: none; } }
-
-.site-header .hdr-icon,
-.site-header .lang-btn {
-  background: color-mix(in oklab, var(--hdr-text, #0a1222) 5%, transparent) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--hdr-text, #0a1222) 11%, transparent);
-  --tw-ring-color: color-mix(in oklab, var(--hdr-text, #0a1222) 11%, transparent);
-  color: var(--hdr-text, #0a1222);
-}
-.site-header .hdr-icon:hover, .site-header .lang-btn:hover { transform: none; color: var(--lx-gold-text); --tw-ring-color: var(--brand-gold); box-shadow: inset 0 0 0 1px var(--brand-gold); }
-.site-header .hdr-phone .hdr-icon { background: color-mix(in oklab, var(--brand-gold) 14%, transparent) !important; }
-
-.hdr-wa {
-  align-items: center; gap: .45rem; height: 42px; padding: 0 1.05rem; border-radius: 999px;
-  background: #25d366; color: #fff; font-weight: 700; font-size: .86rem; white-space: nowrap;
-  box-shadow: 0 10px 20px -12px #25d366; transition: background .2s, transform .2s;
-}
-.hdr-wa:hover { background: #1fbd59; transform: translateY(-1px); }
-.site-header .hdr-cta { height: 42px; border-radius: 999px !important; padding: 0 1.15rem !important; gap: .4rem; }
-.site-header .hdr-cta:hover { transform: translateY(-1px); }
-
 /* ---------------------------------------------------------------- calm sections */
 .theme-light { background: #fff !important; animation: none !important; }
 .theme-sand { background: var(--pt-soft) !important; animation: none !important; }
@@ -193,28 +147,76 @@ main .sec-head > p { color: var(--pt-muted); opacity: 1; }
   .hp-stat-v { font-size: 1.3rem; }
 }
 
-/* ---------------------------------------------------------------- header drop-downs
-   The header is white now, so its menus (language list, dropdowns, Services mega menu)
-   get their own solid navy panel instead of taking the header colour. */
-.site-header .glass-menu,
-.site-header .mega.glass-menu {
-  background:
-    radial-gradient(40rem 18rem at 100% 0%, color-mix(in oklab, var(--brand-gold) 12%, transparent), transparent 70%),
-    #0c1629 !important;
-  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  border: 1px solid color-mix(in oklab, var(--brand-gold) 28%, rgba(255, 255, 255, .08)) !important;
-  box-shadow: 0 30px 70px -24px rgba(10, 18, 34, .55), 0 0 0 1px rgba(255, 255, 255, .03) inset !important;
-  color: #fff;
+/* ---------------------------------------------------------------- process journey (Steps block)
+   round icon pins on a dashed gold flight path, each pointing down at its card */
+.journey { --pin: 104px; }
+.journey-path, .journey-plane { display: none; }
+@media (min-width: 1024px) {
+  .journey-path { display: block; position: absolute; inset-inline: 0; top: -8px; width: 100%; height: 120px; z-index: 0; overflow: visible; }
+  .journey-path path {
+    fill: none; stroke: var(--brand-gold); stroke-width: 2; stroke-dasharray: 7 7; stroke-linecap: round;
+    vector-effect: non-scaling-stroke; opacity: .9; animation: journey-dash 40s linear infinite;
+  }
+  .journey-plane {
+    display: block; position: absolute; inset-inline-end: -10px; top: -14px; width: 30px; height: 30px; z-index: 1;
+    color: var(--lx-gold-text); rotate: -12deg; animation: journey-fly 2.8s ease-in-out infinite alternate;
+  }
+  [dir='rtl'] .journey-path { transform: scaleX(-1); }
+  [dir='rtl'] .journey-plane { rotate: 192deg; }
 }
-.site-header .glass-menu::before {
-  content: ''; position: absolute; inset-inline: 18px; top: 0; height: 2px; border-radius: 2px; pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--brand-gold), transparent);
+@keyframes journey-dash { to { stroke-dashoffset: -420; } }
+@keyframes journey-fly { to { translate: 5px -5px; } }
+.journey-step { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; height: 100%; }
+.journey-pin {
+  position: relative; display: grid; place-items: center; width: var(--pin); height: var(--pin); margin-bottom: 22px; flex-shrink: 0;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 18px 36px -20px rgba(10, 18, 34, .5), 0 0 0 8px rgba(255, 255, 255, .75);
 }
-/* language list: clear rows, gold hover, gold active */
-.site-header .glass-menu > :is(a, button) {
-  display: flex; align-items: center; gap: .6rem; border-radius: 12px; color: rgba(255, 255, 255, .86);
-  transition: background .2s, color .2s, padding .2s;
+.journey-pin::before { content: ''; position: absolute; inset: 7px; border-radius: 50%; border: 1.5px solid color-mix(in oklab, var(--brand-gold) 70%, transparent); }
+.journey-pin::after {
+  content: ''; position: absolute; left: 50%; bottom: -15px; translate: -50% 0;
+  border-inline: 12px solid transparent; border-top: 15px solid #fff;
+  filter: drop-shadow(0 5px 4px rgba(10, 18, 34, .08));
 }
-.site-header .glass-menu > :is(a, button):hover { background: rgba(255, 255, 255, .07); color: var(--brand-gold-light); }
-.site-header .glass-menu > :is(a, button)[aria-current='true'],
-.site-header .glass-menu > :is(a, button).bg-gold { color: var(--brand-ink) !important; }
+.journey-ic { display: grid; place-items: center; color: var(--lx-gold-text); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+.journey-step:hover .journey-ic { transform: scale(1.12) rotate(-6deg); }
+.journey-no {
+  position: absolute; top: 0; inset-inline-end: 0; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  font-size: .8rem; font-weight: 800; color: var(--brand-ink);
+  background: linear-gradient(140deg, var(--brand-gold-light), var(--brand-gold));
+  box-shadow: 0 6px 14px -6px var(--brand-gold), 0 0 0 3px #fff;
+}
+.journey-card { width: 100%; flex: 1; border-radius: 22px; padding: 1.6rem 1.5rem 1.75rem; text-align: center; }
+.journey-label { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--lx-gold-text); }
+:is([dir='rtl'], :lang(hi), :lang(zh)) .journey-label { letter-spacing: 0; }
+
+/* ---------------------------------------------------------------- visa cards (visaCards block) */
+.vcard { position: relative; display: flex; flex-direction: column; height: 100%; overflow: hidden; border-radius: 22px; padding: 1.4rem 1.4rem 1.35rem; }
+.vcard::before {
+  content: ''; position: absolute; top: 0; inset-inline-end: 0; width: 150px; height: 150px; pointer-events: none;
+  background: radial-gradient(circle at 100% 0, color-mix(in oklab, var(--brand-gold) 20%, transparent), transparent 70%);
+}
+[dir='rtl'] .vcard::before { background: radial-gradient(circle at 0 0, color-mix(in oklab, var(--brand-gold) 20%, transparent), transparent 70%); }
+.vcard-wm { position: absolute; top: 16px; inset-inline-end: 16px; width: 60px; height: 60px; color: var(--brand-gold); opacity: .14; pointer-events: none; transition: opacity .3s, transform .6s cubic-bezier(.2, .8, .2, 1); }
+.vcard:hover .vcard-wm { opacity: .26; transform: rotate(-10deg) scale(1.1); }
+.vcard-tag { position: relative; align-self: flex-start; padding: .32rem .7rem; border-radius: 8px; background: var(--pt-soft); border: 1px solid var(--pt-line); font-size: .72rem; font-weight: 700; color: #3b465c; }
+.vcard-title { position: relative; margin-top: .85rem; padding-inline-end: 3.75rem; font-family: var(--font-sans) !important; font-size: 1.22rem; font-weight: 800; line-height: 1.28; letter-spacing: -.01em; color: var(--lx-gold-text) !important; }
+.vcard-body { position: relative; display: flex; align-items: center; gap: 1rem; margin-top: 1.2rem; }
+.vcard-badge { flex-shrink: 0; display: grid; place-items: center; width: 86px; height: 86px; padding: 6px; border-radius: 50%; border: 1.5px solid color-mix(in oklab, var(--brand-gold) 55%, transparent); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.vcard-badge > span {
+  display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; color: var(--brand-ink);
+  background: linear-gradient(145deg, #f6e8c3, var(--brand-gold-light) 30%, var(--brand-gold) 65%, color-mix(in oklab, var(--brand-gold) 72%, black));
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .55), 0 12px 22px -12px var(--brand-gold);
+}
+.vcard:hover .vcard-badge { transform: rotate(-8deg) scale(1.05); }
+.vcard-rows { flex: 1; min-width: 0; border: 1px solid var(--pt-line); border-radius: 14px; background: #fff; }
+.vcard-rows li { display: flex; align-items: flex-start; gap: .6rem; padding: .7rem .8rem; }
+.vcard-rows li + li { border-top: 1px solid var(--pt-line); }
+.vcard-ri { flex-shrink: 0; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: color-mix(in oklab, var(--brand-gold) 13%, #fff); color: var(--lx-gold-text); }
+.vcard-rows b { display: block; font-size: .78rem; font-weight: 700; color: var(--brand-ink); }
+.vcard-rows b + span { display: block; font-size: .78rem; line-height: 1.4; color: var(--pt-muted); }
+.vcard-foot { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; margin-top: auto; padding-top: 1.3rem; }
+.vcard-pl { display: block; font-size: .74rem; color: var(--pt-muted); }
+.vcard-price { display: block; margin-top: .1rem; font-family: var(--font-sans) !important; font-size: 1.65rem; font-weight: 800; line-height: 1.1; white-space: nowrap; color: var(--brand-ink); font-variant-numeric: tabular-nums; }
+.vcard-go { flex-shrink: 0; }
+@media (max-width: 400px) { .vcard-badge { width: 70px; height: 70px; } .vcard-price { font-size: 1.4rem; } }

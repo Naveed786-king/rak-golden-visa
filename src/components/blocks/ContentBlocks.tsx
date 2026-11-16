@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Clock, MapPin, Phone, Mail, Calendar, Crown, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, Check, Clock, MapPin, Phone, Mail, Calendar, Crown, Sparkles, Star, Plane, CalendarCheck } from 'lucide-react';
 import HeroDecor from '@/components/site/HeroDecor';
 import { Section, Heading } from '@/components/ui/Section';
 import Reveal, { Stagger, StaggerItem } from '@/components/ui/Reveal';
@@ -150,26 +150,111 @@ export function Steps({ data }: P) {
       </Section>
     );
   }
+  // journey: round icon pins on a dashed flight path, each pointing at its card
+  const cols = items.length >= 4 ? 'lg:grid-cols-4' : items.length === 3 ? 'lg:grid-cols-3' : '';
   return (
     <Section theme={data.theme} anchor={data.anchor}>
       <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
-      <Stagger className={cn('grid gap-6 md:grid-cols-2', items.length >= 4 ? 'lg:grid-cols-4' : items.length === 3 ? 'lg:grid-cols-3' : '')}>
-        {items.map((it, i) => (
-          <StaggerItem key={i} className="relative">
-            <div className={cn('card-lift group relative h-full overflow-hidden rounded-3xl p-7', dark ? 'glass' : 'bg-white shadow-[0_20px_50px_-35px_rgba(10,18,34,0.4)] ring-1 ring-ink/5')}>
-              <span className="absolute -right-3 -top-6 font-display text-[7rem] font-bold leading-none text-gold/10 transition-colors group-hover:text-gold/20">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <span className="relative grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-gold-light to-gold text-ink shadow-lg shadow-gold/30 transition-transform duration-500 group-hover:rotate-[8deg] group-hover:scale-110">
-                <Icon name={it.icon} className="h-6 w-6" />
-              </span>
-              <h3 className="relative mt-6 font-display text-2xl font-semibold leading-snug">{it.title}</h3>
-              {it.text && <p className="relative mt-3 text-sm leading-relaxed opacity-70">{it.text}</p>}
-            </div>
-            {i < items.length - 1 && <ArrowRight className="hidden lg:block absolute -right-5 top-1/2 z-10 h-5 w-5 text-gold" />}
-          </StaggerItem>
-        ))}
+      <div className={cn('journey relative', dark && 'journey-dark')}>
+        <svg className="journey-path" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden>
+          <path d="M40 96 C 220 10, 430 6, 600 62 S 960 118, 1150 26" />
+        </svg>
+        <Plane className="journey-plane" aria-hidden />
+        <Stagger className={cn('relative grid gap-x-6 gap-y-12 md:grid-cols-2', cols)}>
+          {items.map((it, i) => (
+            <StaggerItem key={i} className="journey-step">
+              <div className="journey-pin">
+                <span className="journey-ic">
+                  <Icon name={it.icon} className="h-9 w-9" />
+                </span>
+                <span className="journey-no">{i + 1}</span>
+              </div>
+              <div className="card-lift journey-card group">
+                <span className="journey-label">
+                  <T>Step</T> {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className="mt-2 font-display text-[1.45rem] font-semibold leading-snug">{it.title}</h3>
+                {it.text && <p className="mt-3 text-sm leading-relaxed opacity-70">{it.text}</p>}
+              </div>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </div>
+    </Section>
+  );
+}
+
+/* ---------------- Visa cards (portal style: tag, title, icon, processing, validity, price, apply) ---------------- */
+export function VisaCards({ data }: P) {
+  const items: any[] = data.items || [];
+  return (
+    <Section theme={data.theme} anchor={data.anchor}>
+      <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
+      <Stagger className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {items.map((it, i) => {
+          const href = it.ctaHref || `/apply?service=${encodeURIComponent(it.title || '')}`;
+          return (
+            <StaggerItem key={i}>
+              <article className="card-lift vcard group">
+                <span className="vcard-wm" aria-hidden>
+                  <Icon name={it.icon || 'stamp'} className="h-full w-full" />
+                </span>
+                {it.tag && <span className="vcard-tag">{it.tag}</span>}
+                <h3 className="vcard-title">{it.title}</h3>
+                <div className="vcard-body">
+                  <span className="vcard-badge">
+                    <span>
+                      <Icon name={it.icon || 'stamp'} className="h-8 w-8" />
+                    </span>
+                  </span>
+                  <ul className="vcard-rows">
+                    {it.processing && (
+                      <li>
+                        <span className="vcard-ri">
+                          <Clock className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0">
+                          <b>
+                            <T>Processing time</T>
+                          </b>
+                          <span>{it.processing}</span>
+                        </span>
+                      </li>
+                    )}
+                    {it.validity && (
+                      <li>
+                        <span className="vcard-ri">
+                          <CalendarCheck className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0">
+                          <b>
+                            <T>Validity</T>
+                          </b>
+                          <span className="whitespace-pre-line">{it.validity}</span>
+                        </span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+                <div className="vcard-foot">
+                  <div className="min-w-0">
+                    <span className="vcard-pl">{it.priceLabel || <T>Total price</T>}</span>
+                    <span className="vcard-price font-display">{it.price ? withDirham(it.price) : <T>On request</T>}</span>
+                  </div>
+                  <SmartLink href={href} className="btn btn-gold btn-sm vcard-go">
+                    {it.ctaLabel || <T>Apply now</T>} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                  </SmartLink>
+                </div>
+              </article>
+            </StaggerItem>
+          );
+        })}
       </Stagger>
+      {data.cta?.label && (
+        <div className="mt-12 text-center">
+          <Cta link={data.cta} />
+        </div>
+      )}
     </Section>
   );
 }
