@@ -490,8 +490,6 @@ img { image-rendering: auto; }
 /* =====================================================================
    HEADER 3D MOTION (original navy colours kept)
    ===================================================================== */
-/* real 3D depth for the island's scroll tilt (no fixed elements live inside .hdr-wrap) */
-.site-header .hdr-wrap { perspective: 1100px; }
 /* the glass island drops in with a 3D swing when the page opens */
 .site-header .hdr-island { animation: hdr-drop .75s cubic-bezier(.2,.8,.2,1) both; transform-origin: 50% 0; }
 @keyframes hdr-drop { from { opacity: .25; transform: perspective(900px) rotateX(-34deg) translateY(-14px); } to { opacity: 1; transform: none; } }
@@ -500,9 +498,8 @@ img { image-rendering: auto; }
 .site-header .site-logo img { transition: height .45s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1), filter .4s ease; transform-origin: 30% 50%; }
 .site-header .site-logo:hover img { transform: rotateY(-18deg) rotateX(6deg) scale(1.04); filter: drop-shadow(0 8px 14px color-mix(in oklab, var(--brand-gold) 55%, transparent)); }
 /* menu links lift forward in 3D */
-.site-nav > div { perspective: 700px; }
 .site-nav .nav-link { transform-style: preserve-3d; transition: opacity .25s, color .25s, background .25s, box-shadow .25s, transform .35s cubic-bezier(.2,.8,.2,1); }
-.site-nav .nav-link:hover { transform: translateZ(18px) rotateX(10deg); }
+.site-nav .nav-link:hover { transform: perspective(700px) translateZ(14px) rotateX(8deg); }
 /* dropdowns and the Services mega menu swing open from the top */
 .site-header .glass-menu { transform-origin: 50% 0; animation: hdr-swing .45s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes hdr-swing { from { rotate: x -22deg; } to { rotate: x 0deg; } }
@@ -511,17 +508,6 @@ img { image-rendering: auto; }
 .hdr-icon:hover { transform: perspective(400px) rotateY(16deg) translateZ(6px); }
 .hdr-cta { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, background-position .6s ease; }
 .hdr-cta:hover { transform: perspective(500px) rotateX(10deg) translateY(-2px); }
-/* while scrolling, the island tips back slightly and settles (scroll-linked) */
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .anim-flow .site-header .hdr-island {
-      animation: hdr-drop .75s cubic-bezier(.2,.8,.2,1) both, hdr-tip linear both;
-      animation-timeline: auto, scroll(root);
-      animation-range: normal, 0 240px;
-    }
-  }
-}
-@keyframes hdr-tip { 0% { rotate: x 0deg; } 50% { rotate: x 7deg; } 100% { rotate: x 0deg; } }
 @media (prefers-reduced-motion: reduce) {
   .site-header .hdr-island, .site-header .glass-menu { animation: none !important; }
   .site-nav .nav-link:hover, .hdr-icon:hover, .hdr-cta:hover, .site-header .site-logo:hover img { transform: none; }
@@ -683,3 +669,29 @@ img { image-rendering: auto; }
 }
 .rj-help-icon { display: grid; place-items: center; height: 2.2rem; width: 2.2rem; border-radius: 999px; background: var(--brand-ink); color: var(--brand-gold-light); flex-shrink: 0; }
 @media (prefers-reduced-motion: reduce) { .rj-link { animation: none; } }
+
+
+/* =====================================================================
+   PHONES & TOUCH: keep it fast — only a light fade-up, no heavy 3D/scroll effects
+   ===================================================================== */
+@media (max-width: 1023px), (hover: none) {
+  .anim-flow main > .blk { perspective: none !important; }
+  .anim-flow main > .blk > :first-child { animation: none !important; clip-path: none !important; }
+  .anim-flow main :is(.theme-light, .theme-sand, .theme-dark):is(.section, section) { animation: none !important; }
+  .anim-flow main section > .container-x, .anim-flow main .container-x .grid { perspective: none !important; }
+  .anim-flow main .container-x .grid > * { animation-name: lx-rise-m !important; }
+  .anim-flow main section > .container-x > * { animation-name: lx-rise-m !important; }
+  .anim-flow main section :is(h2, h3.font-display), .anim-flow main .eyebrow,
+  .anim-flow main section > .container-x p,
+  .anim-flow main .overflow-hidden:has(> img.object-cover),
+  .anim-flow main .overflow-hidden > img { animation: none !important; }
+  .anim-flow .hero-copy, .anim-flow .hero-particles { animation: none !important; }
+  .anim-flow .hero-visual { animation: fx-pop .9s cubic-bezier(.2,.8,.2,1) var(--d, 0s) both !important; animation-timeline: auto !important; }
+  .hx-plane { animation: none !important; }
+  .hx-spot, .hero-particles, main > .blk::after { display: none !important; }
+  main > .blk + .blk::before { animation: none !important; }
+  .card-lift::after { display: none !important; }
+  .hero-copy h1 .fx-word { animation-name: fx-up !important; }
+  .hdr-island { animation: none !important; }
+}
+@keyframes lx-rise-m { from { opacity: .4; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
