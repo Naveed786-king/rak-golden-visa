@@ -1,4 +1,5 @@
 import { getI18n } from '@/lib/i18n/server';
+import HeroDecor from '@/components/site/HeroDecor';
 import { seoAlternates } from '@/lib/i18n/config';
 import { Suspense } from 'react';
 import ApplyWizard from '@/components/portal/ApplyWizard';
@@ -18,6 +19,7 @@ export default function ApplyPage() {
   return (
     <>
       <section className="theme-dark relative overflow-hidden pt-16 pb-40 md:pt-20">
+        <HeroDecor />
         <div className="absolute inset-0 bg-pattern opacity-[0.06]" />
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-[480px] w-[900px] rounded-full bg-gold/15 blur-[130px]" />
         <div className="container-x relative text-center">

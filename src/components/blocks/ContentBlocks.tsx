@@ -1,4 +1,5 @@
 import { ArrowRight, Check, Clock, MapPin, Phone, Mail, Calendar, Crown, Sparkles, Star } from 'lucide-react';
+import HeroDecor from '@/components/site/HeroDecor';
 import { Section, Heading } from '@/components/ui/Section';
 import Reveal, { Stagger, StaggerItem } from '@/components/ui/Reveal';
 import SmartLink from '@/components/ui/SmartLink';
@@ -25,6 +26,7 @@ function Cta({ link, className = 'btn btn-gold', icon = true }: { link?: { label
 export function PageHeader({ data }: P) {
   return (
     <section id={data.anchor || undefined} className="theme-dark relative overflow-hidden pt-20 pb-28 md:pt-28 md:pb-36">
+      <HeroDecor />
       {data.image && (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element */}

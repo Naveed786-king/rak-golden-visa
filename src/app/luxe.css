@@ -399,3 +399,72 @@ main > .blk + .blk::before {
   .hero-copy h1 .fx-word { animation-name: fx-up; }
 }
 .anim-off .hero-copy h1 .fx-word { animation: none; }
+
+/* =====================================================================
+   HERO 3D LAYER (HeroDecor) — on every page-top hero
+   ===================================================================== */
+.hx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+/* hero content always above the effects layer */
+.hx ~ .container-x { position: relative; z-index: 2; }
+
+/* gold spotlight following the mouse */
+.hx-spot {
+  position: absolute; inset: 0;
+  background: radial-gradient(34rem 26rem at var(--mx, 70%) var(--my, 30%), color-mix(in oklab, var(--brand-gold) 22%, transparent), transparent 65%);
+  transition: background .25s ease;
+  mix-blend-mode: screen;
+}
+
+/* 3D gold grid floor flowing towards the viewer */
+.hx-floor { position: absolute; inset-inline: -20%; bottom: -2px; height: 46%; perspective: 520px; perspective-origin: 50% 0%; opacity: .55; }
+.hx-plane {
+  position: absolute; inset: 0 0 -60% 0; transform-origin: 50% 0; transform: rotateX(72deg);
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--brand-gold) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--brand-gold) 55%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 35%, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 35%, #000 70%, transparent 100%);
+  animation: hx-run 3.2s linear infinite;
+}
+@keyframes hx-run { from { background-position: 0 0; } to { background-position: 0 64px; } }
+@media (max-width: 767px) { .hx-floor { height: 30%; opacity: .4; } }
+
+/* orbiting gold rings behind the hero visual (desktop) */
+.hx-orbit { position: absolute; right: 4%; top: 50%; width: 560px; height: 560px; translate: 0 -46%; perspective: 1100px; display: none; }
+@media (min-width: 1024px) { .hx-orbit { display: block; } }
+.hx-ring {
+  position: absolute; inset: 0; border-radius: 50%; transform-style: preserve-3d;
+  border: 1px solid color-mix(in oklab, var(--brand-gold) 40%, transparent);
+  box-shadow: 0 0 30px -10px color-mix(in oklab, var(--brand-gold) 60%, transparent), inset 0 0 30px -12px color-mix(in oklab, var(--brand-gold) 50%, transparent);
+}
+.hx-ring i {
+  position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%;
+  background: radial-gradient(circle, #fff, var(--brand-gold-light) 40%, var(--brand-gold) 70%);
+  box-shadow: 0 0 14px 4px color-mix(in oklab, var(--brand-gold) 80%, transparent);
+}
+.hx-ring-1 { animation: hx-spin1 18s linear infinite; }
+.hx-ring-2 { inset: 9%; border-style: dashed; opacity: .7; animation: hx-spin2 26s linear infinite; }
+.hx-ring-3 { inset: 20%; opacity: .55; animation: hx-spin3 14s linear infinite reverse; }
+@keyframes hx-spin1 { from { transform: rotateX(68deg) rotateZ(0deg); } to { transform: rotateX(68deg) rotateZ(360deg); } }
+@keyframes hx-spin2 { from { transform: rotateY(62deg) rotateZ(0deg); } to { transform: rotateY(62deg) rotateZ(360deg); } }
+@keyframes hx-spin3 { from { transform: rotateX(-58deg) rotateY(24deg) rotateZ(0deg); } to { transform: rotateX(-58deg) rotateY(24deg) rotateZ(360deg); } }
+
+/* =====================================================================
+   FLOATING 3D GOLD EMBLEMS — faint 8-point stars turning on alternating sides of sections
+   ===================================================================== */
+main > .blk:nth-of-type(n + 2)::after {
+  content: ''; position: absolute; top: 18%; width: clamp(110px, 14vw, 210px); aspect-ratio: 1; z-index: 2; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23C8A255' stroke-width='1.2'%3E%3Cpath d='M40 4l10 26 26 10-26 10-10 26-10-26-26-10 26-10z'/%3E%3Crect x='22' y='22' width='36' height='36' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='7'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: .12; mix-blend-mode: multiply;
+  animation: lx-emblem 22s linear infinite;
+}
+main > .blk:nth-of-type(odd)::after { right: -40px; }
+main > .blk:nth-of-type(even)::after { left: -40px; animation-direction: reverse; }
+@keyframes lx-emblem { from { transform: perspective(600px) rotateY(0deg) rotateZ(0deg); } to { transform: perspective(600px) rotateY(360deg) rotateZ(180deg); } }
+@media (max-width: 767px) { main > .blk:nth-of-type(n + 2)::after { width: 90px; opacity: .1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-plane, .hx-ring, main > .blk::after { animation: none !important; }
+}
+.anim-off :is(.hx-plane, .hx-ring), .anim-off main > .blk::after { animation: none !important; }

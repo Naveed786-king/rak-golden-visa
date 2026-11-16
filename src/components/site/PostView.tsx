@@ -1,4 +1,5 @@
 import { CalendarDays, Clock, ChevronRight, User, Phone } from 'lucide-react';
+import HeroDecor from '@/components/site/HeroDecor';
 import type { SiteSettings } from '@/lib/defaults';
 import { formatDate, readingTime } from '@/lib/utils';
 import PostCard from '@/components/blocks/PostCard';
@@ -45,6 +46,7 @@ export default function PostView({ post, related, site, lang = 'en-GB', url }: {
     <article>
       <ViewPing id={post.id} />
       <header className="theme-dark relative overflow-hidden pt-16 pb-28 md:pt-24 md:pb-36">
+        <HeroDecor />
         {post.cover && (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}

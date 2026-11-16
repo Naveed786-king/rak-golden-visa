@@ -1,5 +1,6 @@
 'use client';
 import { useRef } from 'react';
+import HeroDecor from '@/components/site/HeroDecor';
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
 import { ArrowRight, Check, ShieldCheck, Users, Zap } from 'lucide-react';
 import SmartLink from '@/components/ui/SmartLink';
@@ -161,7 +162,7 @@ export default function Hero({ data }: { data: any }) {
         </p>
       )}
 
-      <div className="hero-particles" aria-hidden />
+      <HeroDecor orbit />
       <div className="container-x relative grid items-center gap-16 lg:grid-cols-[1.15fr_1fr]">
         <div className="hero-copy">
           {data.eyebrow && (
