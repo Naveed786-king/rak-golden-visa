@@ -574,3 +574,4 @@ main > .blk:nth-of-type(3n) .sec-dust { animation-delay: -3s; }
 @keyframes sand-glow-light { 0% { opacity: .1; } 55% { opacity: .8; } 100% { opacity: .2; } }
 .cta-stamp { color: #5b1414; opacity: .62; }
 .ph-stamp { opacity: .85; }
+.bg-ink > .cta-stamp { color: var(--brand-gold-light); mix-blend-mode: normal; opacity: .5; }
