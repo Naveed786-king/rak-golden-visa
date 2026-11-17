@@ -331,6 +331,7 @@ export function TestimonialsSlider({ items, image, statValue, statLabel }: { ite
   const track = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(items.length);
+  const [open, setOpen] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const el = track.current;
@@ -383,7 +384,12 @@ export function TestimonialsSlider({ items, image, statValue, statLabel }: { ite
           {items.map((r, k) => (
             <figure key={r.id ?? k} className="tm-card">
               <Quote className="tm-q" />
-              <blockquote className="tm-text">{r.text}</blockquote>
+              <blockquote className={cn('tm-text', open[k] && 'is-open')}>{r.text}</blockquote>
+              {String(r.text || '').length > 260 && (
+                <button type="button" className="tm-more" onClick={() => setOpen((o) => ({ ...o, [k]: !o[k] }))}>
+                  {open[k] ? t('Show less') : t('Read more')}
+                </button>
+              )}
               <figcaption className="tm-foot">
                 {r.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element

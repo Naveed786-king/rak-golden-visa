@@ -373,3 +373,10 @@ main .box table tbody tr:nth-child(even) { background: #fafbfd; }
 .tm-btn:disabled { opacity: .4; cursor: default; }
 .tm-count { font-variant-numeric: tabular-nums; color: var(--lx-gold-text); font-size: 1.4rem; font-weight: 300; }
 .tm-count b { font-size: 2.6rem; font-weight: 300; line-height: 1; }
+.tm-text:not(.is-open) { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; }
+.tm-text { flex: 0 1 auto; }
+.tm-card .tm-foot { margin-top: auto; }
+.tm-more { align-self: flex-start; margin: .5rem 0 1rem; font-size: .82rem; font-weight: 700; color: var(--lx-gold-text); text-decoration: underline; text-underline-offset: 3px; }
+.tm-card { gap: 0; }
+.tm-text + .tm-foot { margin-top: auto; padding-top: 1rem; }
+.tm-card > .tm-text { margin-bottom: 1.2rem; }
