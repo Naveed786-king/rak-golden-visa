@@ -9,6 +9,7 @@ import { cn, lines } from '@/lib/utils';
 import type { SiteSettings } from '@/lib/defaults';
 import { Skyline } from './Hero';
 import T from '@/components/ui/T';
+import PassportArt from '@/components/ui/PassportArt';
 import { Dirham, dirhamHtml, withDirham } from '@/components/ui/Dirham';
 
 type P = { data: any; site: SiteSettings };
@@ -51,6 +52,11 @@ export function PageHeader({ data }: P) {
           )}
         </Reveal>
       </div>
+      {!data.image && <PassportArt id="ph" className="ph-art" />}
+      <span className="ph-stamp" aria-hidden>
+        <span>RAK</span>
+        <small>GOLDEN VISA</small>
+      </span>
       <Skyline className="absolute bottom-0 left-0 w-full h-20 md:h-28 text-white/[0.04]" />
       <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
     </section>
@@ -648,6 +654,11 @@ export function CtaBanner({ data }: P) {
         <div className={cn('relative overflow-hidden rounded-[2.5rem] px-8 py-14 md:px-16 md:py-20 text-center', gold ? 'bg-gradient-to-br from-gold-light via-gold to-gold-deep text-ink' : 'bg-ink text-white')}>
           <div className={cn('absolute inset-0 bg-pattern', gold ? 'opacity-20 mix-blend-multiply' : 'opacity-[0.07]')} />
           <div className="absolute -left-20 -bottom-20 h-72 w-72 rounded-full bg-white/20 blur-3xl" />
+          <PassportArt id="cta" className="cta-art" />
+          <span className="cta-stamp" aria-hidden>
+            <span>APPROVED</span>
+            <small>10 YEARS</small>
+          </span>
           <div className="relative mx-auto max-w-3xl">
             <h2 className={cn('font-display text-4xl md:text-6xl font-semibold leading-[1.05]', gold ? '!text-ink' : '!text-white')}>{data.title}</h2>
             {data.text && <p className={cn('mt-5 text-base md:text-lg', gold ? 'text-ink/75' : 'text-white/70')}>{data.text}</p>}

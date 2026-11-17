@@ -24,7 +24,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       {fonts && <link rel="stylesheet" href={fonts} precedence="default" />}
       <style dangerouslySetInnerHTML={{ __html: designCss(design) }} />
       <div className={designBodyClass(design)}>
-      {site.showPreloader && !switching && <Preloader />}
+      {site.showPreloader && !switching && <Preloader icon={site.favicon && !/\.ico(\?|$)/i.test(site.favicon) ? site.favicon : undefined} />}
       <Header site={site} header={header} />
       <main>{children}</main>
       <Footer site={site} footer={footer} watermark={design.footer?.bgImage || ''} />
