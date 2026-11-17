@@ -559,3 +559,18 @@ main > .blk:nth-of-type(3n) .sec-dust { animation-delay: -3s; }
   70% { scale: .94; }
   100% { scale: 1; }
 }
+/* sparkle tuning: finer glitter on light sections, stronger stamp ink */
+:is(.theme-light, .theme-sand) .sec-dust {
+  mix-blend-mode: normal; filter: none;
+  background-image:
+    radial-gradient(circle at 8% 14%, #e9c873 0 .7px, color-mix(in oklab, var(--brand-gold) 45%, transparent) 1.1px, transparent 2.6px),
+    radial-gradient(circle at 27% 63%, #d8b25a 0 .6px, transparent 2px),
+    radial-gradient(circle at 46% 28%, #e9c873 0 .8px, color-mix(in oklab, var(--brand-gold) 45%, transparent) 1.2px, transparent 2.8px),
+    radial-gradient(circle at 63% 82%, #d8b25a 0 .6px, transparent 2px),
+    radial-gradient(circle at 81% 41%, #e9c873 0 .7px, color-mix(in oklab, var(--brand-gold) 45%, transparent) 1.1px, transparent 2.6px),
+    radial-gradient(circle at 93% 90%, #d8b25a 0 .6px, transparent 2px);
+}
+:is(.theme-light, .theme-sand) .sec-dust { animation-name: sand-glow-light; }
+@keyframes sand-glow-light { 0% { opacity: .1; } 55% { opacity: .8; } 100% { opacity: .2; } }
+.cta-stamp { color: #5b1414; opacity: .62; }
+.ph-stamp { opacity: .85; }

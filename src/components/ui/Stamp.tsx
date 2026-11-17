@@ -8,7 +8,7 @@ export default function Stamp({ top = 'APPROVED', bottom = '10 YEARS', center = 
         <path id={`${id}-bot`} d="M 40 100 A 60 60 0 0 0 160 100" />
         <filter id={`${id}-ink`} x="-10%" y="-10%" width="120%" height="120%">
           <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n" />
-          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.45" result="holes" />
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.75" result="holes" />
           <feComposite in="SourceGraphic" in2="holes" operator="in" result="worn" />
           <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="w" />
           <feDisplacementMap in="worn" in2="w" scale="2.2" />
