@@ -380,3 +380,6 @@ main .box table tbody tr:nth-child(even) { background: #fafbfd; }
 .tm-card { gap: 0; }
 .tm-text + .tm-foot { margin-top: auto; padding-top: 1rem; }
 .tm-card > .tm-text { margin-bottom: 1.2rem; }
+@media (max-width: 1023px) { .tm-visual { max-width: 270px; } .tm-stat { min-width: 8rem; padding: .7rem 1rem; } .tm-stat b { font-size: 1.5rem; } }
+.tm-name-row { display: block; }
+.tm-role { display: block; padding: 0; border: 0; }
