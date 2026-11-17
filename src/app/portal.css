@@ -500,3 +500,8 @@ main > .blk:nth-of-type(3n) .sec-dust { animation-delay: -3s; }
   .hero-home .hero-copy > p { font-size: 1.08rem; max-width: 34rem; }
 }
 @keyframes halo { from { opacity: .55; scale: .92; } to { opacity: 1; scale: 1.06; } }
+@media (min-width: 1024px) {
+  .hero-home .container-x.grid { align-items: start; }
+  .hero-home .hero-visual { margin-top: 4.25rem; }
+}
+.sec-sky { opacity: .045; height: 110px; background-size: 420px 110px; }
