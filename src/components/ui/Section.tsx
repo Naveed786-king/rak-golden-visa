@@ -24,13 +24,12 @@ export function Section({
           <div className="pointer-events-none absolute -bottom-52 -left-40 h-[460px] w-[460px] rounded-full bg-gold/10 blur-[120px]" />
         </>
       )}
-      {theme !== 'dark' && (
-        <div className="sec-fx" aria-hidden>
-          <span className="sec-glow" />
-          <span className="sec-dust" />
-          {theme === 'sand' && <span className="sec-sky" />}
-        </div>
-      )}
+      <div className="sec-fx" aria-hidden>
+        {theme !== 'dark' && <span className="sec-glow" />}
+        <span className="sec-dust" />
+        <span className="sec-dust sec-dust-2" />
+        {theme === 'sand' && <span className="sec-sky" />}
+      </div>
       <div className="container-x relative">{children}</div>
     </section>
   );

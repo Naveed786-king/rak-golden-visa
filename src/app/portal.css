@@ -405,22 +405,12 @@ main .box table tbody tr:nth-child(even) { background: #fafbfd; }
   }
 }
 @keyframes cta-float { from { rotate: -3deg; } to { rotate: 3deg; } }
-.ph-stamp, .cta-stamp {
-  display: none; position: absolute; place-items: center; align-content: center; width: 116px; height: 116px; border-radius: 50%;
-  border: 3px double currentColor; rotate: -16deg; font-weight: 800; letter-spacing: .12em; text-align: center; pointer-events: none;
-}
-.ph-stamp span, .cta-stamp span { font-size: 1.15rem; line-height: 1; }
-.ph-stamp small, .cta-stamp small { margin-top: .35rem; font-size: .55rem; letter-spacing: .18em; }
-@media (min-width: 1200px) {
-  .ph-stamp { display: grid; inset-inline-start: 4%; top: 90px; color: color-mix(in oklab, var(--brand-gold) 55%, transparent); }
-  .cta-stamp { display: grid; inset-inline-start: 4%; bottom: 36px; color: color-mix(in oklab, var(--brand-ink) 35%, transparent); }
-}
+
 @media (min-width: 1200px) {
   section:has(> .ph-art) h1 { max-width: 46rem; margin-inline: auto; }
   .cta-art { width: 170px; height: 190px; inset-inline-end: 1.5%; }
-  .cta-stamp { width: 96px; height: 96px; inset-inline-start: 2%; }
 }
-@media (max-width: 1365px) { .cta-art, .cta-stamp { display: none; } }
+@media (max-width: 1365px) { .cta-art { display: none; } }
 
 /* =====================================================================
    LIVING BACKGROUNDS — gold stars that light up after a moment, shooting stars,
@@ -505,3 +495,67 @@ main > .blk:nth-of-type(3n) .sec-dust { animation-delay: -3s; }
   .hero-home .hero-visual { margin-top: 4.25rem; }
 }
 .sec-sky { opacity: .045; height: 110px; background-size: 420px 110px; }
+
+/* =====================================================================
+   GOLD SAND SPARKLE — across every section of the site: tiny gold grains that
+   slowly brighten and fade in turns (two layers, offset), like sand catching light.
+   ===================================================================== */
+.sec-dust {
+  inset: 0; opacity: .2; animation: sand-glow 5.5s ease-in-out infinite alternate;
+  background-image:
+    radial-gradient(circle at 8% 14%, #fff7dc 0 1px, color-mix(in oklab, var(--brand-gold) 70%, transparent) 1.6px, transparent 4px),
+    radial-gradient(circle at 27% 63%, #fff7dc 0 .8px, color-mix(in oklab, var(--brand-gold) 60%, transparent) 1.3px, transparent 3.5px),
+    radial-gradient(circle at 46% 28%, #fff7dc 0 1.2px, color-mix(in oklab, var(--brand-gold) 70%, transparent) 1.8px, transparent 4.5px),
+    radial-gradient(circle at 63% 82%, #fff7dc 0 .8px, color-mix(in oklab, var(--brand-gold) 60%, transparent) 1.3px, transparent 3.5px),
+    radial-gradient(circle at 81% 41%, #fff7dc 0 1px, color-mix(in oklab, var(--brand-gold) 70%, transparent) 1.6px, transparent 4px),
+    radial-gradient(circle at 93% 90%, #fff7dc 0 .8px, color-mix(in oklab, var(--brand-gold) 60%, transparent) 1.3px, transparent 3.5px);
+  background-size: 380px 300px;
+}
+.sec-dust-2 {
+  animation-duration: 7s; animation-delay: -3.5s; background-size: 520px 410px; background-position: 120px 60px;
+}
+@keyframes sand-glow {
+  0% { opacity: .12; }
+  55% { opacity: .95; }
+  100% { opacity: .3; }
+}
+:is(.theme-light, .theme-sand) .sec-dust { mix-blend-mode: multiply; filter: saturate(1.4) brightness(.92); }
+:is(.theme-light, .theme-sand) .sec-dust { opacity: .15; }
+/* footer gets the same sparkle */
+.site-footer { position: relative; }
+.site-footer::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: .2;
+  background-image:
+    radial-gradient(circle at 12% 20%, #fff7dc 0 1px, color-mix(in oklab, var(--brand-gold) 70%, transparent) 1.6px, transparent 4px),
+    radial-gradient(circle at 52% 70%, #fff7dc 0 .8px, color-mix(in oklab, var(--brand-gold) 60%, transparent) 1.3px, transparent 3.5px),
+    radial-gradient(circle at 86% 35%, #fff7dc 0 1.2px, color-mix(in oklab, var(--brand-gold) 70%, transparent) 1.8px, transparent 4.5px);
+  background-size: 360px 260px; animation: sand-glow 6s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) { .sec-dust, .site-footer::after, .hx-stars i, .hx-shoot { animation: none !important; } }
+
+/* =====================================================================
+   RUBBER STAMPS — page headers and the gold CTA banner; they "stamp" in when seen.
+   ===================================================================== */
+.stamp { position: absolute; pointer-events: none; z-index: 1; overflow: visible; }
+.stamp text { text-rendering: geometricPrecision; }
+.ph-stamp {
+  width: 128px; height: 128px; inset-inline-start: 4%; top: 84px; rotate: -14deg;
+  color: color-mix(in oklab, var(--brand-gold-light) 75%, transparent); opacity: .75;
+  filter: drop-shadow(0 0 12px color-mix(in oklab, var(--brand-gold) 35%, transparent));
+}
+.cta-stamp {
+  width: 120px; height: 120px; inset-inline-start: 3.5%; bottom: 30px; rotate: -16deg;
+  color: #7a1f1f; opacity: .55; mix-blend-mode: multiply;
+}
+@media (max-width: 1199px) {
+  .ph-stamp { width: 84px; height: 84px; top: 18px; inset-inline-start: auto; inset-inline-end: 14px; opacity: .45; }
+  .cta-stamp { width: 78px; height: 78px; top: 14px; bottom: auto; inset-inline-start: auto; inset-inline-end: 14px; opacity: .45; }
+}
+@supports (animation-timeline: view()) {
+  .stamp { animation: stamp-in linear both; animation-timeline: view(); animation-range: entry 10% cover 35%; }
+}
+@keyframes stamp-in {
+  0% { opacity: 0; scale: 1.8; }
+  70% { scale: .94; }
+  100% { scale: 1; }
+}
