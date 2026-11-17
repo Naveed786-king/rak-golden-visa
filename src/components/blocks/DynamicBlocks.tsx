@@ -6,7 +6,7 @@ import { Icon, SocialIcon } from '@/components/ui/Icon';
 import { cn, formatDate, readingTime } from '@/lib/utils';
 import { getFaqs, getPartners, getPosts, getServices, getTestimonials } from '@/lib/data';
 import type { SiteSettings } from '@/lib/defaults';
-import { TabsView, RejectionsView, AccordionView, TestimonialsView, Calculator } from './InteractiveBlocks';
+import { TabsView, RejectionsView, AccordionView, TestimonialsView, TestimonialsSlider, Calculator } from './InteractiveBlocks';
 import LeadForm from './LeadForm';
 import LoadMorePosts from './LoadMorePosts';
 import PostCard from './PostCard';
@@ -92,7 +92,11 @@ export async function Testimonials({ data }: P) {
     <Section theme={data.theme} anchor={data.anchor}>
       <Heading eyebrow={data.eyebrow} title={data.title} subtitle={data.subtitle} />
       {!data.hideGoogle && <GoogleBadge data={data} dark={data.theme === 'dark'} />}
-      <TestimonialsView items={JSON.parse(JSON.stringify(items))} dark={data.theme === 'dark'} limit={Number(data.limit) > 0 ? Number(data.limit) : 5} />
+      {data.layout === 'grid' ? (
+        <TestimonialsView items={JSON.parse(JSON.stringify(items))} dark={data.theme === 'dark'} limit={Number(data.limit) > 0 ? Number(data.limit) : 5} />
+      ) : (
+        <TestimonialsSlider items={JSON.parse(JSON.stringify(items))} image={data.image} statValue={data.statValue} statLabel={data.statLabel} />
+      )}
     </Section>
   );
 }

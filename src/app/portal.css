@@ -295,3 +295,81 @@ main .box table tbody tr:nth-child(even) { background: #fafbfd; }
 /* blog cards: image zoom stays, body gets the card look */
 .card-lift img { transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
 .card-lift:hover img { transform: scale(1.04); }
+
+/* ---------------------------------------------------------------- fixes */
+/* scroll entrance only for real layout grids (with a gap) — never for icons inside small tiles/buttons */
+.anim-flow main .container-x .grid:not([class*='gap']) > *,
+.anim-flow main .container-x :is(button, a) .grid > *,
+.anim-flow main .container-x .grid > svg { animation: none !important; translate: none !important; opacity: 1 !important; scale: none !important; rotate: none !important; }
+
+/* narrow cards (4 per row): badge on top, title underneath, no broken words */
+.pc { container-type: inline-size; }
+.pc-title, .vcard-title, .journey-card h3 { hyphens: manual; overflow-wrap: normal; word-break: normal; text-wrap: balance; }
+@container (max-width: 330px) {
+  .pc-head { flex-direction: column; align-items: flex-start; gap: .85rem; padding-inline-end: 0; }
+  .pc-badge { width: 66px; height: 66px; }
+  .pc-title { font-size: 1.08rem; }
+}
+
+/* ---------------------------------------------------------------- testimonials: photo + slider */
+.tm { display: grid; gap: 2.5rem; align-items: center; }
+@media (min-width: 1024px) { .tm { grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 3.5rem; } }
+.tm-visual { position: relative; width: 100%; max-width: 360px; margin-inline: auto; aspect-ratio: 9 / 10; isolation: isolate; }
+.tm-arch {
+  position: absolute; inset: 14% 4% 0 0; z-index: -1; border-radius: 180px 180px 28px 28px;
+  background:
+    radial-gradient(70% 60% at 30% 20%, rgba(255, 255, 255, .35), transparent 70%),
+    linear-gradient(160deg, var(--brand-gold-light), var(--brand-gold) 55%, color-mix(in oklab, var(--brand-gold) 70%, black));
+  box-shadow: 0 40px 70px -40px color-mix(in oklab, var(--brand-gold) 90%, black);
+}
+.tm-arch::after { content: ''; position: absolute; inset: 14px; border-radius: inherit; border: 1.5px dashed rgba(255, 255, 255, .55); }
+.tm-photo { position: absolute; inset: 0 4% 0 0; width: 96%; height: 100%; object-fit: cover; object-position: top; border-radius: 180px 180px 28px 28px; }
+.tm-art { position: absolute; inset: 4% 4% 4% 0; width: 96%; height: 92%; filter: drop-shadow(0 24px 30px rgba(10, 18, 34, .35)); animation: tm-float 6s ease-in-out infinite alternate; }
+@keyframes tm-float { to { translate: 0 -10px; } }
+.tm-stat {
+  position: absolute; bottom: -14px; inset-inline-end: -6px; display: grid; justify-items: center; min-width: 9.5rem; padding: .9rem 1.2rem;
+  border-radius: 18px; background: #fff; border: 1px solid var(--pt-line); box-shadow: 0 22px 40px -22px rgba(10, 18, 34, .45); text-align: center;
+}
+.tm-stat b { font-size: 1.9rem; font-weight: 800; line-height: 1; color: var(--lx-gold-text); font-variant-numeric: tabular-nums; }
+.tm-stat span { margin-top: .25rem; font-size: .82rem; font-weight: 600; color: var(--brand-ink); }
+
+.tm-track {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; padding: 6px 4px 22px; margin: -6px -4px 0; overscroll-behavior-x: contain;
+}
+.tm-track::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) { .tm-track { grid-auto-columns: calc(50% - 12px); } }
+.tm-card {
+  position: relative; display: flex; flex-direction: column; scroll-snap-align: start; min-height: 100%;
+  padding: 1.6rem 1.5rem 1.3rem 1.8rem; background: #fff;
+  border-radius: 40px 14px 14px 40px;
+  border: 1.5px solid var(--pt-line); border-inline-start-color: var(--brand-gold); border-top-color: var(--brand-gold);
+  box-shadow: 0 22px 44px -32px rgba(10, 18, 34, .4);
+  transition: transform .35s, box-shadow .35s;
+}
+[dir='rtl'] .tm-card { border-radius: 14px 40px 40px 14px; }
+.tm-card:hover { transform: translateY(-4px); box-shadow: 0 30px 54px -32px rgba(10, 18, 34, .5); }
+.tm-q { position: absolute; top: 1.1rem; inset-inline-end: 1.2rem; width: 34px; height: 34px; color: var(--brand-gold); opacity: .25; }
+.tm-text { flex: 1; padding-inline-end: 1.8rem; font-size: .95rem; line-height: 1.75; color: #3b465c; }
+.tm-foot { display: flex; align-items: center; gap: .75rem; margin-top: 1.3rem; padding-top: 1rem; border-top: 1px solid var(--pt-line); }
+.tm-av { flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px color-mix(in oklab, var(--brand-gold) 60%, transparent); }
+.tm-av-x { display: grid; place-items: center; font-weight: 800; font-size: 1.1rem; color: var(--brand-ink); background: linear-gradient(140deg, var(--brand-gold-light), var(--brand-gold)); }
+.tm-name-row { display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .6rem; }
+.tm-name { font-weight: 800; color: var(--brand-ink); }
+.tm-role { padding-inline-start: .6rem; border-inline-start: 1px solid var(--pt-line); font-size: .8rem; color: var(--pt-muted); }
+.tm-loc { display: flex; align-items: center; gap: .3rem; margin-top: .15rem; font-size: .78rem; color: var(--pt-muted); }
+.tm-loc svg { color: var(--lx-gold-text); }
+.tm-stars { display: flex; flex-shrink: 0; gap: 2px; color: #f5b301; }
+@media (max-width: 480px) { .tm-foot { flex-wrap: wrap; } .tm-stars { order: -1; width: 100%; } }
+
+.tm-nav { display: flex; align-items: center; justify-content: center; gap: 1.25rem; margin-top: 1.25rem; }
+@media (min-width: 1024px) { .tm-nav { justify-content: flex-start; } }
+.tm-btn {
+  display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; color: var(--brand-ink);
+  background: #fff; border: 1.5px solid var(--lx-gold-line); transition: background .2s, transform .2s, opacity .2s;
+}
+.tm-btn-next, .tm-btn:hover:not(:disabled) { background: linear-gradient(140deg, var(--brand-gold-light), var(--brand-gold)); border-color: transparent; }
+.tm-btn:hover:not(:disabled) { transform: scale(1.06); }
+.tm-btn:disabled { opacity: .4; cursor: default; }
+.tm-count { font-variant-numeric: tabular-nums; color: var(--lx-gold-text); font-size: 1.4rem; font-weight: 300; }
+.tm-count b { font-size: 2.6rem; font-weight: 300; line-height: 1; }

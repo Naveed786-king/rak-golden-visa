@@ -378,7 +378,11 @@ export const BLOCKS: BlockSchema[] = [
     group: 'Dynamic',
     fields: [
       eyebrow, title, subtitle,
-      { name: 'limit', label: 'Reviews shown before "Show more" (default 5)', type: 'number' },
+      { name: 'layout', label: 'Layout', type: 'select', options: [{ value: 'slider', label: 'Photo + slider (default)' }, { value: 'grid', label: 'Grid with "Show more"' }] },
+      { name: 'image', label: 'Photo beside the reviews (slider layout — empty = drawn passport art)', type: 'image' },
+      { name: 'statValue', label: 'Badge number (e.g. 5,000+)', type: 'text', half: true },
+      { name: 'statLabel', label: 'Badge text (e.g. Happy clients)', type: 'text', half: true },
+      { name: 'limit', label: 'Reviews shown before "Show more" (grid layout, default 5)', type: 'number' },
       { name: 'hideGoogle', label: 'Hide the Google rating badge', type: 'boolean' },
       { name: 'googleRating', label: 'Google rating (default 4.8)', type: 'text', half: true },
       { name: 'googleCount', label: 'Number of Google reviews (default 37)', type: 'number', half: true },
