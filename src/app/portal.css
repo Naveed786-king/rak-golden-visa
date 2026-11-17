@@ -421,3 +421,82 @@ main .box table tbody tr:nth-child(even) { background: #fafbfd; }
   .cta-stamp { width: 96px; height: 96px; inset-inline-start: 2%; }
 }
 @media (max-width: 1365px) { .cta-art, .cta-stamp { display: none; } }
+
+/* =====================================================================
+   LIVING BACKGROUNDS — gold stars that light up after a moment, shooting stars,
+   soft glows, gold dust and a faint skyline in the body sections.
+   ===================================================================== */
+.hx-stars { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0; animation: stars-on 1.6s ease 1.2s forwards; }
+.hx-stars i {
+  position: absolute; border-radius: 50%; background: #fff3cf;
+  box-shadow: 0 0 6px 1px color-mix(in oklab, var(--brand-gold-light) 80%, transparent), 0 0 14px 3px color-mix(in oklab, var(--brand-gold) 35%, transparent);
+  opacity: .15; animation: star-twinkle 4.2s ease-in-out infinite;
+}
+.hx-stars i:nth-child(3n) { animation-duration: 5.6s; }
+.hx-stars i:nth-child(4n + 1) { animation-duration: 3.4s; }
+@keyframes stars-on { to { opacity: 1; } }
+@keyframes star-twinkle {
+  0%, 100% { opacity: .15; transform: scale(.6); }
+  45% { opacity: 1; transform: scale(1.35); }
+  60% { opacity: .75; transform: scale(1); }
+}
+.hx-shoot {
+  position: absolute; top: 14%; left: 62%; width: 140px; height: 1.5px; border-radius: 2px; opacity: 0; rotate: -28deg;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--brand-gold-light) 90%, white));
+  animation: shoot 9s ease-in 3s infinite;
+}
+.hx-shoot-2 { top: 34%; left: 30%; width: 100px; animation-delay: 7.5s; animation-duration: 12s; }
+@keyframes shoot {
+  0% { opacity: 0; translate: 0 0; }
+  2% { opacity: 1; }
+  9% { opacity: 0; translate: -260px 140px; }
+  100% { opacity: 0; translate: -260px 140px; }
+}
+@media (max-width: 1023px), (hover: none) {
+  .hx-stars i:nth-child(n + 15) { display: none; }
+  .hx-shoot-2 { display: none; }
+}
+
+/* body sections: soft corner glow, gold dust that brightens slowly, skyline line art on sand sections */
+.sec-fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.sec-glow {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(38rem 26rem at 100% 0%, color-mix(in oklab, var(--brand-gold) 10%, transparent), transparent 70%),
+    radial-gradient(30rem 22rem at 0% 100%, color-mix(in oklab, var(--brand-gold) 7%, transparent), transparent 70%);
+}
+main > .blk:nth-of-type(even) .sec-glow {
+  background:
+    radial-gradient(38rem 26rem at 0% 0%, color-mix(in oklab, var(--brand-gold) 10%, transparent), transparent 70%),
+    radial-gradient(30rem 22rem at 100% 100%, color-mix(in oklab, var(--brand-gold) 7%, transparent), transparent 70%);
+}
+.sec-dust {
+  position: absolute; inset: 0; opacity: .25; animation: dust-glow 7s ease-in-out infinite alternate;
+  background-image:
+    radial-gradient(2px 2px at 7% 22%, var(--brand-gold), transparent 70%),
+    radial-gradient(1.5px 1.5px at 18% 78%, var(--brand-gold), transparent 70%),
+    radial-gradient(2.5px 2.5px at 31% 12%, var(--brand-gold-light), transparent 70%),
+    radial-gradient(1.5px 1.5px at 46% 88%, var(--brand-gold), transparent 70%),
+    radial-gradient(2px 2px at 63% 18%, var(--brand-gold), transparent 70%),
+    radial-gradient(2.5px 2.5px at 79% 70%, var(--brand-gold-light), transparent 70%),
+    radial-gradient(1.5px 1.5px at 91% 30%, var(--brand-gold), transparent 70%),
+    radial-gradient(2px 2px at 96% 86%, var(--brand-gold), transparent 70%);
+}
+main > .blk:nth-of-type(3n) .sec-dust { animation-delay: -3s; }
+@keyframes dust-glow { from { opacity: .18; } to { opacity: .85; } }
+.sec-sky {
+  position: absolute; inset-inline: 0; bottom: 0; height: 130px; opacity: .07;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 130'%3E%3Cg fill='none' stroke='%230A1222' stroke-width='1.2'%3E%3Cpath d='M0 130V96h26v34M34 130V70h22v60M64 130V44l12-26 12 26v86M96 130V84h28v46M132 130V22l9-22 9 22v108M158 130V60l14-14 14 14v70M194 130V90h24v40M226 130V74h20v56M254 130V36h8V20h6v16h8v94M284 130V88h30v42M322 130V56l12-10 12 10v74M354 130V98h22v32M384 130V66h26v64M418 130V30l10-18 10 18v100M446 130V82h34v48'/%3E%3Cpath d='M70 60h12M70 76h12M70 92h12M137 40h8M137 58h8M137 76h8M137 94h8M164 74h16M164 90h16M260 50h8M260 66h8M260 82h8M424 46h8M424 62h8M424 78h8'/%3E%3C/g%3E%3C/svg%3E") repeat-x bottom / 480px 130px;
+}
+.section > .container-x { z-index: 1; }
+
+/* ---------------------------------------------------------------- desktop hero polish */
+@media (min-width: 1024px) {
+  .hero-home .hero-visual::before {
+    content: ''; position: absolute; inset: 8% 4%; z-index: -1; border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--brand-gold) 34%, transparent), transparent 75%);
+    filter: blur(20px); animation: halo 5s ease-in-out infinite alternate;
+  }
+  .hero-home .hero-copy > p { font-size: 1.08rem; max-width: 34rem; }
+}
+@keyframes halo { from { opacity: .55; scale: .92; } to { opacity: 1; scale: 1.06; } }

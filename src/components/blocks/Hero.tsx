@@ -142,7 +142,7 @@ export default function Hero({ data }: { data: any }) {
   const stats: { value: string; label: string }[] = data.stats || [];
 
   return (
-    <section ref={ref} id={data.anchor || undefined} className="theme-dark relative overflow-hidden pt-16 pb-36 md:pt-24 md:pb-48">
+    <section ref={ref} id={data.anchor || undefined} className="theme-dark hero-home relative overflow-hidden pt-16 pb-36 md:pt-24 md:pb-48 lg:pt-16 lg:pb-32">
       <motion.div style={{ y: yBg }} className="hero-bg absolute inset-0">
         {data.image ? (
           <>
@@ -163,7 +163,7 @@ export default function Hero({ data }: { data: any }) {
       )}
 
       <HeroDecor orbit />
-      <div className="container-x relative grid items-center gap-16 lg:grid-cols-[1.15fr_1fr]">
+      <div className="container-x relative grid items-center gap-16 lg:gap-10 lg:grid-cols-[1.1fr_1fr]">
         <div className="hero-copy">
           {data.eyebrow && (
             <span
@@ -177,7 +177,7 @@ export default function Hero({ data }: { data: any }) {
             </span>
           )}
 
-          <h1 className="mt-7 font-display text-[2.9rem] leading-[1.02] sm:text-6xl lg:text-[5.2rem] font-semibold text-white">
+          <h1 className="mt-7 font-display text-[2.9rem] leading-[1.02] sm:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-semibold text-white">
             {words.map((w, i) => (
               <span key={i} className="fx-word inline-block me-[0.25em]" style={{ '--d': `${0.15 + i * 0.06}s` } as any}>
                 {w}
