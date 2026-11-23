@@ -27,8 +27,8 @@ export async function POST(req: Request) {
     if (password.length < 8) return fail('Password must be at least 8 characters');
     const exists = await prisma.user.findUnique({ where: { email } });
     if (exists) {
-      // staff accounts and accounts with two-step login only ever sign in on the login page
-      if (isStaff(exists.role) || exists.totpEnabled) return fail('An account with this email already exists. Please sign in first, then apply.');
+      // staff accounts only ever sign in on the login page
+      if (isStaff(exists.role)) return fail('An account with this email already exists. Please sign in first, then apply.');
       // returning client: the right password signs them in and the application goes to their account
       if (!exists.active || !(await checkPassword(password, exists.passwordHash))) {
         return fail('An account with this email already exists. Enter its password, or sign in first.');
