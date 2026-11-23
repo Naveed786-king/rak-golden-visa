@@ -14,9 +14,51 @@ import {
 } from './defaults';
 import { defaultDesign, DesignSettings } from './design';
 import { defaultEstimate, EstimateSettings } from './estimate';
+import {
+  defaultPayments,
+  defaultWhatsApp,
+  defaultClientMail,
+  defaultPdf,
+  defaultSteps,
+  defaultPortal,
+  type PaymentSettings,
+  type WhatsAppSettings,
+  type ClientMailSettings,
+  type PdfSettings,
+  type StepSettings,
+  type PortalSettings,
+} from './portal/config';
 
-type Map = { site: SiteSettings; header: HeaderSettings; footer: FooterSettings; smtp: SmtpSettings; translation: TranslationSettings; design: DesignSettings; estimate: EstimateSettings };
-const DEFAULTS: Map = { site: defaultSite, header: defaultHeader, footer: defaultFooter, smtp: defaultSmtp, translation: defaultTranslation, design: defaultDesign, estimate: defaultEstimate };
+type Map = {
+  site: SiteSettings;
+  header: HeaderSettings;
+  footer: FooterSettings;
+  smtp: SmtpSettings;
+  translation: TranslationSettings;
+  design: DesignSettings;
+  estimate: EstimateSettings;
+  payments: PaymentSettings;
+  whatsapp: WhatsAppSettings;
+  clientMail: ClientMailSettings;
+  pdf: PdfSettings;
+  steps: StepSettings;
+  portal: PortalSettings;
+};
+const DEFAULTS: Map = {
+  site: defaultSite,
+  header: defaultHeader,
+  footer: defaultFooter,
+  smtp: defaultSmtp,
+  translation: defaultTranslation,
+  design: defaultDesign,
+  estimate: defaultEstimate,
+  payments: defaultPayments,
+  whatsapp: defaultWhatsApp,
+  clientMail: defaultClientMail,
+  pdf: defaultPdf,
+  steps: defaultSteps,
+  portal: defaultPortal,
+};
 
 function deepMerge<T>(base: T, over: any): T {
   if (Array.isArray(base)) return (Array.isArray(over) ? over : base) as T;

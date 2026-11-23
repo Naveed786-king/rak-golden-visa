@@ -24,6 +24,8 @@ jobs:
           node-version: 22
       - name: Install
         run: npm install --no-audit --no-fund
+      - name: Type check (information)
+        run: npx prisma generate >/dev/null 2>&1; npx tsc --noEmit -p . 2>&1 | tee tsc.log | tail -60 || true
       - name: Build
         run: |
           set -o pipefail
@@ -49,10 +51,15 @@ jobs:
           check /contact-us 200
           check /latest-news-blogs 200
           check /ras-al-khaimah-golden-visa-guide-2026 200
-          check /apply 200
-          check /login 200
+          check /apply 307
+          check /login 307
           check /admin/login 200
           check /sitemap.xml 200
+          # customer dashboard on its own address (app.rakgoldenvisa.com)
+          code=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: app.rakgoldenvisa.com" http://localhost:3000/login); echo "dashboard /login -> $code"; [ "$code" = "200" ]
+          curl -s -H "Host: app.rakgoldenvisa.com" http://localhost:3000/login | grep -q 'class="auth' || { echo "::error title=Check failed::dashboard sign-in page"; exit 1; }
+          code=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: app.rakgoldenvisa.com" http://localhost:3000/apply); echo "dashboard /apply -> $code"; [ "$code" = "200" ]
+          curl -s -o /dev/null -w "%{redirect_url}\n" http://localhost:3000/login | grep -q "app.rakgoldenvisa.com/login" || { echo "::error title=Check failed::website sign-in goes to the dashboard address"; exit 1; }
           check /does-not-exist 404
           curl -sf -X POST http://localhost:3000/api/leads -H 'Content-Type: application/json' -d '{"name":"CI Test","phone":"+971500000000","service":"RAK Retirement Visa"}'
           echo
@@ -61,6 +68,10 @@ jobs:
           curl -sf -b cookies.txt http://localhost:3000/api/admin/leads | grep -q "CI Test"
           curl -sf -b cookies.txt http://localhost:3000/api/admin/pages | grep -q "about-us"
           code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://localhost:3000/admin); echo "/admin -> $code"; [ "$code" = "200" ]
+          for pth in /admin/applications /admin/applications/new /admin/steps /admin/payments /admin/whatsapp /admin/documents; do code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://localhost:3000$pth); echo "$pth -> $code"; [ "$code" = "200" ]; done
+          for k in payments whatsapp clientMail pdf steps portal; do curl -sf -b cookies.txt http://localhost:3000/api/admin/settings/$k >/dev/null || { echo "::error title=Check failed::settings $k"; exit 1; }; done
+          curl -sf -b cookies.txt http://localhost:3000/api/admin/client-system/step-counts >/dev/null && echo "Application steps counts OK"
+          code=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt "http://localhost:3000/api/admin/client-system/preview?kind=quote"); echo "quote PDF preview -> $code"; [ "$code" = "200" ]
           # --- design system & cost calculator ---
           curl -s http://localhost:3000/ | grep -q 'estimate-card' || { echo "::error title=Check failed::Cost calculator on home page"; exit 1; }; echo "Cost calculator on home page"
           curl -s http://localhost:3000/ | grep -q '/brand/logo-sm.webp' || { echo "::error title=Check failed::Brand logo in header"; exit 1; }; echo "Brand logo in header"

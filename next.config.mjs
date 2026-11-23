@@ -23,7 +23,7 @@ const nextConfig = {
   async rewrites() {
     return { beforeFiles: [{ source: '/.well-known/acme-challenge/:token', destination: '/api/acme-challenge/:token' }] };
   },
-  serverExternalPackages: ['@prisma/client', 'bcryptjs', 'nodemailer'],
+  serverExternalPackages: ['@prisma/client', 'bcryptjs', 'nodemailer', 'sharp'],
   experimental: {
     serverActions: { bodySizeLimit: '20mb' },
   },
