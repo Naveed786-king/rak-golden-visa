@@ -4,7 +4,7 @@ import { deepMerge, maskSecrets, unmaskSecrets } from '@/lib/autopublisher/pure'
 import type { ProviderId } from '@/lib/autopublisher/config';
 
 export const GREETINGS: Record<string, string> = {
-  en: 'Hi, I'm Sara from RAK Golden Visa 👋 Ask me anything about the Golden Visa, family visas, costs or documents.',
+  en: 'Hello 👋 Ask me anything about the RAK Golden Visa, family visas, costs or documents. How can I help?',
   ar: 'مرحبًا! يمكنني الإجابة عن أسئلتك حول الإقامة الذهبية في الإمارات وتأشيرات العائلة والتكاليف والمستندات. كيف أساعدك؟',
   ru: 'Здравствуйте! Я отвечу на вопросы о Золотой визе ОАЭ, семейных визах, стоимости и документах. Чем помочь?',
   tr: 'Merhaba! BAE Altın Vizesi, aile vizeleri, maliyetler ve belgeler hakkındaki sorularınızı yanıtlayabilirim. Nasıl yardımcı olabilirim?',
