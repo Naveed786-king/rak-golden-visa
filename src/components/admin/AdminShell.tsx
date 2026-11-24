@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  Bot,
+  Sparkles,
   LayoutDashboard,
   FileText,
   Newspaper,
@@ -53,6 +55,7 @@ const NAV = [
       { href: '/admin/payments', label: 'Online payments', icon: Wallet, adminOnly: true },
       { href: '/admin/whatsapp', label: 'WhatsApp', icon: MessageCircle, adminOnly: true },
       { href: '/admin/documents', label: 'Emails & PDFs', icon: FileStack, adminOnly: true },
+      { href: '/admin/chatbot', label: 'Website chat', icon: Bot, adminOnly: true },
       { href: '/admin/subscribers', label: 'Subscribers', icon: Mail },
     ],
   },
@@ -67,6 +70,7 @@ const NAV = [
       { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquareQuote },
       { href: '/admin/partners', label: 'Partner logos', icon: Building },
       { href: '/admin/media', label: 'Media library', icon: ImageIcon },
+      { href: '/admin/autopublisher', label: 'Auto Publisher', icon: Sparkles, adminOnly: true },
     ],
   },
   {

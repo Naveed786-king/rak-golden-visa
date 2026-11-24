@@ -36,7 +36,8 @@
     "prisma": "^6.16.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "sanitize-html": "2.18.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
@@ -45,7 +46,8 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "tailwindcss": "^4.1.13",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "@types/sanitize-html": "2.16.0"
   },
   "engines": {
     "node": ">=18.18.0"

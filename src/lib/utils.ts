@@ -77,3 +77,9 @@ export function makeRef() {
 export function isExternal(href?: string) {
   return !!href && /^(https?:|mailto:|tel:|\/\/)/.test(href);
 }
+
+/** Blog posts live at the site root: /<slug> */
+export const POST_BASE = '';
+export function postPath(slug: string) {
+  return `${POST_BASE}/${slug}`;
+}

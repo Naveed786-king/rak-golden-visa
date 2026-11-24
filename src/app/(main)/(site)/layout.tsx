@@ -10,11 +10,13 @@ import InjectScripts from '@/components/site/InjectScripts';
 import DesignEffects from '@/components/site/DesignEffects';
 import Tilt3D from '@/components/site/Tilt3D';
 import { CalculatorButton } from '@/components/blocks/EstimateCalculator';
+import ChatLoader from '@/components/site/chat/ChatLoader';
+import { getChatConfig, widgetConfig } from '@/lib/chatbot/config';
 import { designCss, designBodyClass, googleFontsUrl } from '@/lib/design';
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const { locale, dict } = await getI18n();
-  const [{ site, header, footer }, tr, design, estimate] = await Promise.all([getLocalizedBundle(locale), getSetting('translation'), getSetting('design'), getLocalizedEstimate(locale)]);
+  const [{ site, header, footer }, tr, design, estimate, chat] = await Promise.all([getLocalizedBundle(locale), getSetting('translation'), getSetting('design'), getLocalizedEstimate(locale), getChatConfig()]);
   const languages = tr.showSwitcher ? tr.enabled : ['en'];
   // switching language: no loading screen, the page simply appears in the new language
   const switching = !!(await cookies()).get('rgv_switch');
@@ -30,6 +32,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Footer site={site} footer={footer} watermark={design.footer?.bgImage || ''} />
       <Floating site={site} />
       <Tilt3D />
+      {chat.enabled && <ChatLoader cfg={widgetConfig(chat, locale)} />}
       <CalculatorButton cfg={estimate} mobileBar={!!site.showMobileBar} whatsapp={!!site.showWhatsappButton} />
       <InjectScripts html={site.headScripts} target="head" />
       <InjectScripts html={site.bodyScripts} target="body" />

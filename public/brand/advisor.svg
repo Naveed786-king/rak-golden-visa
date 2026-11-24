@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Advisor">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="25%" r="85%">
+      <stop offset="0" stop-color="#f6ecd6"/>
+      <stop offset=".6" stop-color="#e2cc9b"/>
+      <stop offset="1" stop-color="#c8a255"/>
+    </radialGradient>
+    <linearGradient id="scarf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2d4d"/>
+      <stop offset="1" stop-color="#0a1222"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f1c9a5"/>
+      <stop offset="1" stop-color="#e2ae86"/>
+    </linearGradient>
+    <linearGradient id="abaya" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16233b"/>
+      <stop offset="1" stop-color="#0a1222"/>
+    </linearGradient>
+    <clipPath id="c"><circle cx="80" cy="80" r="80"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <rect width="160" height="160" fill="url(#bg)"/>
+    <!-- shoulders -->
+    <path d="M18 168c4-34 28-52 62-52s58 18 62 52z" fill="url(#abaya)"/>
+    <path d="M62 118c6 10 12 16 18 16s12-6 18-16" fill="none" stroke="#c8a255" stroke-width="3" stroke-linecap="round"/>
+    <!-- scarf back -->
+    <path d="M38 84c0-30 18-50 42-50s42 20 42 50c0 22-8 38-16 46H54c-8-8-16-24-16-46z" fill="url(#scarf)"/>
+    <!-- neck -->
+    <path d="M70 104h20v16c-4 4-16 4-20 0z" fill="#dca581"/>
+    <!-- face -->
+    <ellipse cx="80" cy="80" rx="23" ry="27" fill="url(#skin)"/>
+    <!-- scarf front framing the face -->
+    <path d="M52 78c0-22 12-36 28-36s28 14 28 36c0-4-2-9-4-12-4-10-13-17-24-17s-20 7-24 17c-2 3-4 8-4 12z" fill="#0f1a2e"/>
+    <path d="M57 72c2-14 11-24 23-24s21 10 23 24" fill="none" stroke="#c8a255" stroke-width="2" opacity=".9"/>
+    <path d="M54 82c-2 16 2 30 12 38 4 3 10 5 14 5s10-2 14-5c10-8 14-22 12-38" fill="none" stroke="#0f1a2e" stroke-width="7"/>
+    <!-- brows -->
+    <path d="M66 72q5-3 10 0M84 72q5-3 10 0" fill="none" stroke="#3a2a20" stroke-width="2.2" stroke-linecap="round"/>
+    <!-- eyes -->
+    <path d="M67 80q4-3.5 8 0" fill="none" stroke="#2a1d16" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M85 80q4-3.5 8 0" fill="none" stroke="#2a1d16" stroke-width="2.6" stroke-linecap="round"/>
+    <!-- cheeks -->
+    <ellipse cx="66" cy="90" rx="5" ry="3" fill="#e8907a" opacity=".35"/>
+    <ellipse cx="94" cy="90" rx="5" ry="3" fill="#e8907a" opacity=".35"/>
+    <!-- nose and smile -->
+    <path d="M80 82v7l-2.5 1.5" fill="none" stroke="#c98c6a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M71 96q9 8 18 0" fill="#fff" stroke="#b5574a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- small gold pin -->
+    <circle cx="104" cy="122" r="4" fill="#e9d5a6" stroke="#c8a255" stroke-width="1.5"/>
+  </g>
+</svg>
