@@ -16,7 +16,7 @@ export async function loadSite(): Promise<PublicSite> {
     email: s.emailVisa || s.emailGeneral || '',
     url,
     hours: [s.hours, s.hoursClosed].filter(Boolean).join(' · '),
-    brand: { logo: s.logo || '/brand/logo.png', coin: '/brand/emblem-192.png' },
+    brand: { logo: '/brand/rak-logo.png', coin: '/brand/rak-emblem-192.png' },
   };
   globalThis.__GV_PORTAL_SITE = site;
   return site;

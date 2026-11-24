@@ -15,7 +15,7 @@ export default async function Forgot() {
   const { t, lang } = await T();
   return (
     <AuthShell eyebrow={t.leftEyebrow} title={t.resetTitle} text={t.leftText} ticks={[t.tick1, t.tick2, t.tick3]}
-      top={<div className="auth-top"><a href={`${SITE.url}/`} className="auth-logo"><img decoding="async" src={SITE.brand?.logo || `${BRAND_DIR}/logo.png`} alt={SITE.name} /></a><a href={`${SITE.url}/`} className="auth-back">‹ {t.backToSite}</a><LangSelect action={setLang} current={lang.code} back={`${base}/forgot/`} label={t.language} /></div>}>
+      top={<div className="auth-top"><a href={`${SITE.url}/`} className="auth-logo"><img decoding="async" src={SITE.brand?.logo || `${BRAND_DIR}/rak-logo.png`} alt={SITE.name} /></a><a href={`${SITE.url}/`} className="auth-back">‹ {t.backToSite}</a><LangSelect action={setLang} current={lang.code} back={`${base}/forgot/`} label={t.language} /></div>}>
       <h2>{t.resetTitle}</h2>
       <p className="muted">{t.resetText}</p>
       <ActionForm action={sendResetCode} className="stack">

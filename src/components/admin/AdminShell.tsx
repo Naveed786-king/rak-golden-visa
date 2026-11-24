@@ -173,7 +173,7 @@ export default function AdminShell({ user, siteName, children }: { user: { name:
     <div className="flex h-full flex-col bg-ink text-white">
       <div className="flex items-center gap-3 px-5 py-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/emblem-64.png" alt="" className="h-11 w-11 shrink-0 object-contain drop-shadow-[0_6px_14px_rgba(200,162,85,0.35)]" />
+        <img src="/brand/rak-emblem-64.png" alt="" className="h-11 w-11 shrink-0 object-contain drop-shadow-[0_6px_14px_rgba(200,162,85,0.35)]" />
         <div className="min-w-0">
           <p className="truncate text-sm font-extrabold">{siteName}</p>
           <p className="text-[0.65rem] uppercase tracking-[0.2em] text-gold">Admin panel</p>

@@ -35,7 +35,7 @@ export default async function Statement({ searchParams }: { searchParams: Promis
         <div className="panel">
           <div className="panel-h">
             <div><p className="eyebrow">{t.statement}</p><h1 style={{ margin: '6px 0 2px' }}>{me.name}</h1><p className="muted small">{me.email} · {me.phone} · {d(new Date().toISOString())}</p></div>
-            <img decoding="async" src={SITE.brand?.logo || `${BRAND_DIR}/logo.png`} alt={SITE.name} style={{ height: 44, width: 'auto' }} />
+            <img decoding="async" src={SITE.brand?.logo || `${BRAND_DIR}/rak-logo.png`} alt={SITE.name} style={{ height: 44, width: 'auto' }} />
           </div>
           <p className="muted small">{t.statementIntro}</p>
           <div className="grid4" style={{ margin: '14px 0' }}>

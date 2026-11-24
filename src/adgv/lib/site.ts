@@ -12,7 +12,7 @@ declare global {
 const FALLBACK: PublicSite = {
   name: 'RAK Golden Visa', operator: 'Brightlink Management Consultancy LLC', licence: '1053387', whatsapp: '971566556645', whatsappDisplay: '+971 56 655 6645',
   office: 'Crystal Tower, Business Bay, Dubai', email: 'info@rakgoldenvisa.com', url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://rakgoldenvisa.com').replace(/\/+$/, ''), hours: '',
-  brand: { logo: '/brand/logo.png', coin: '/brand/emblem-192.png' },
+  brand: { logo: '/brand/rak-logo.png', coin: '/brand/rak-emblem-192.png' },
 };
 function current(): PublicSite {
   if (typeof window !== 'undefined') return window.__GV_PORTAL_SITE ?? FALLBACK;

@@ -54,7 +54,7 @@ export default async function PortalApply() {
   return (
     <div className="apply-public">
       <div className="auth-top">
-        <a href={`${SITE.url}/`} className="auth-logo"><img decoding="async" src={SITE.brand?.logo || `${BRAND_DIR}/logo.png`} alt={SITE.name} /></a>
+        <a href={`${SITE.url}/`} className="auth-logo"><img decoding="async" src={SITE.brand?.logo || `${BRAND_DIR}/rak-logo.png`} alt={SITE.name} /></a>
         <a href={`${SITE.url}/`} className="auth-back">‹ {t.backToSite}</a>
         <LangSelect action={setLang} current={lang.code} back={`${base}/apply`} label={t.language} />
       </div>

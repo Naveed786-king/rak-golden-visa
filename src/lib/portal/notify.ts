@@ -34,7 +34,7 @@ export function emailHtml(text: string, signOff: string, buttonLabel: string) {
     }
     flush();
     if (/^https?:\/\/\S+$/.test(line)) {
-      out.push(`<p style="margin:18px 0"><a href="${escapeHtml(line)}" style="display:inline-block;background:#b8901f;color:#fff;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:999px">${escapeHtml(buttonLabel)}</a></p>`);
+      out.push(`<p style="margin:18px 0"><a href="${escapeHtml(line)}" style="display:inline-block;background:#b8934a;color:#fff;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:999px">${escapeHtml(buttonLabel)}</a></p>`);
     } else if (line) out.push(`<p style="margin:0 0 10px">${escapeHtml(line)}</p>`);
   }
   flush();

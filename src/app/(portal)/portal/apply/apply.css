@@ -1,12 +1,12 @@
 /* Online application styles for the client portal (copied from the website styles). */
-.papply { --navy: #0d0d0d; --navy-soft: #4a4a4a; }
-.papply .btn-red { background: linear-gradient(135deg, #f2d27a, #c9961a); color: #111; border: 0; }
+.papply { --navy: #0a1222; --navy-soft: #4a4a4a; }
+.papply .btn-red { background: linear-gradient(135deg, #e9d5a6, #c8a255); color: #0f1a2e; border: 0; }
 .papply .btn-glass { background: #fff; border: 1px solid #ece4d0; }
 .papply .glass { background: #fff; border: 1px solid #efe5c6; border-radius: 20px; }
 .wstep{ animation: wzin 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
 html[dir='rtl'] .wstep{ animation-name: wzin-rtl; }
 .err{ color: #8a1c1c; font-size: 14px; }
-.doc-grid .di, .doc-up .di{ flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: #fbf4dd; color: var(--gold-deep); }
+.doc-grid .di, .doc-up .di{ flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: #f9f3e6; color: var(--gold-deep); }
 .apply-steps{ list-style: none; margin: 0 0 18px; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; }
 .apply-steps li{ display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px; background: #fff; border: 1px solid #eee2bd; font: 600 13.5px var(--body); color: var(--navy-soft); }
 .apply-steps li span{ width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #f6eed3; color: var(--gold-deep); font-weight: 700; font-size: 13px; }
@@ -82,7 +82,7 @@ html[dir='rtl'] .wstep{ animation-name: wzin-rtl; }
 .aw-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
 .aw-card{ position: relative; display: flex; align-items: center; gap: 14px; min-height: 84px; padding: 14px 16px; border-radius: 18px; border: 1px solid #efe5c6; background: #fff; text-align: start; font: inherit; color: var(--navy); cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
 .aw-card:hover{ border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 16px 32px -24px rgba(0, 0, 0, 0.5); }
-.aw-ic{ flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: #fbf4dd; color: var(--gold-deep); transition: background 0.2s, color 0.2s; }
+.aw-ic{ flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: #f9f3e6; color: var(--gold-deep); transition: background 0.2s, color 0.2s; }
 .aw-tx b{ display: block; font: 700 15px/1.25 var(--body); }
 .aw-tx small{ display: block; margin-top: 3px; font-size: 13px; color: var(--navy-soft); }
 .aw-ok{ position: absolute; top: 10px; inset-inline-end: 10px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: var(--gold-light); opacity: 0; transform: scale(0.6); transition: opacity 0.2s, transform 0.2s; }
@@ -108,11 +108,11 @@ html[dir='rtl'] .wstep{ animation-name: wzin-rtl; }
 .papply .apply-done .wa-optin { width: min(520px, 100%); background: #fff; border: 1px solid rgba(212, 175, 55, .55); border-radius: 18px; padding: 18px; display: grid; gap: 12px; justify-items: center; box-shadow: 0 10px 30px rgba(20, 16, 6, .08); box-sizing: border-box; }
 .papply .apply-done .wa-optin p { margin: 0; font-size: 15px; line-height: 1.5; }
 .papply .apply-done .wa-optin .btn, .papply .apply-done .row-actions .btn { width: 100%; max-width: 100%; min-width: 0; white-space: normal; text-align: center; justify-content: center; line-height: 1.25; padding: 12px 18px; min-height: 52px; height: auto; font-size: 15px; box-sizing: border-box; }
-.papply .apply-done .btn-wa { background: #111; color: #f4d77a; border: 1px solid #111; font-weight: 700; }
+.papply .apply-done .btn-wa { background: #0f1a2e; color: #e9d5a6; border: 1px solid #0f1a2e; font-weight: 700; }
 .papply .apply-done .btn-wa svg { color: #25d366; }
-.papply .apply-done .wa-optin .btn-glass { background: #fffaf0; border: 1px solid rgba(212, 175, 55, .45); color: #14110a; font-weight: 600; font-size: 14px; min-height: 44px; }
+.papply .apply-done .wa-optin .btn-glass { background: #fffaf0; border: 1px solid rgba(212, 175, 55, .45); color: #0a1222; font-weight: 600; font-size: 14px; min-height: 44px; }
 .papply .apply-done .row-actions { width: min(520px, 100%); display: grid; gap: 10px; }
-.papply .apply-done .row-actions .btn-glass { background: #fff; border: 1px solid rgba(212, 175, 55, .45); color: #14110a; }
+.papply .apply-done .row-actions .btn-glass { background: #fff; border: 1px solid rgba(212, 175, 55, .45); color: #0a1222; }
 @media (max-width: 760px) {
   .papply .apply-done { padding: 26px 16px 30px; border-radius: 24px; }
   .papply .apply-done h2 { font-size: 26px; }

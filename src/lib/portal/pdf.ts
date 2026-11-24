@@ -51,7 +51,7 @@ let logoCache: Buffer | null | undefined;
 async function logoPng(src: string) {
   if (logoCache !== undefined) return logoCache;
   try {
-    const file = src && src.startsWith('/') && !src.startsWith('//') ? path.join(process.cwd(), 'public', src) : path.join(process.cwd(), 'public/brand/logo.png');
+    const file = src && src.startsWith('/') && !src.startsWith('//') ? path.join(process.cwd(), 'public', src) : path.join(process.cwd(), 'public/brand/rak-logo.png');
     logoCache = await sharp(await readFile(file)).resize({ height: 140 }).png().toBuffer();
   } catch {
     logoCache = null;
@@ -108,7 +108,7 @@ export async function makePdf(d: PdfDoc): Promise<Uint8Array> {
   };
 
   // header: logo left, document label right
-  const png = cfg.showLogo === false ? null : await logoPng(site.logo);
+  const png = cfg.showLogo === false ? null : await logoPng('/brand/rak-logo.png');
   let logoH = 0;
   if (png) {
     const img = await doc.embedPng(png);
